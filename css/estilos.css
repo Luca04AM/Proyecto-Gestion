@@ -36,7 +36,7 @@
 
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', sans-serif;
     background-color: var(--color-fondo);
     color: var(--color-texto);
 }
@@ -44,6 +44,7 @@ body {
 /* Títulos */
 
 h1, h2, h3, h4 {
+    font-family: 'Merriweather', serif;
     color: var(--color-dark-green);
     font-weight: 700;
 }
@@ -366,14 +367,18 @@ tbody tr:hover {
 .slider{
     position:relative;
     height:350px;
-    overflow:hidden;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 .slide{
     position:absolute;
-    width:100%;
-    height:100%;
-    object-fit:contain;
+
+    max-height:300px;
+    width:auto;
+
     opacity:0;
     transition:opacity .8s ease;
 }
@@ -392,6 +397,13 @@ tbody tr:hover {
     font-weight:bold;
 }
 
+.logo span{
+    font-family: 'Merriweather', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
 .logo-circle{
     width:70px;
     height:70px;
@@ -404,8 +416,35 @@ tbody tr:hover {
 }
 
 .logo-circle img{
-    width:52px;
-    height:52px;
+    width:70px;
+    height:70px;
     object-fit:contain;
 }
 
+.informacion p{
+    font-family:'Poppins', sans-serif;
+    font-size:16px;
+    line-height:1.9;
+    text-align:justify;
+}
+
+.menu li a{
+    display:block;
+    padding:15px 20px;
+    color:var(--color-beige);
+    text-decoration:none;
+
+    font-family:'Poppins', sans-serif;
+    font-weight:500;
+    font-size:15px;
+    letter-spacing:0.5px;
+}
+
+.submenu li a{
+    color:var(--color-texto);
+    padding:12px 15px;
+
+    font-family:'Poppins', sans-serif;
+    font-size:14px;
+    font-weight:500;
+}
