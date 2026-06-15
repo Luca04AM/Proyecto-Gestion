@@ -1,126 +1,360 @@
 /* =================================
-   MODULO AUTORES
+MODULO AUTOR
 ================================= */
 
 .modulo-header{
-    margin-bottom:20px;
+margin-bottom:20px;
 }
 
 .modulo-header h1{
-    margin-bottom:10px;
+margin-bottom:10px;
 }
 
 .modulo-header p{
-    color:var(--color-texto-suave);
-    margin:0;
+color:var(--color-texto-suave);
+margin:0;
 }
 
-.estadisticas{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
-    margin-bottom:25px;
-}
-
-.card-estadistica{
-    background:white;
-    border:1px solid var(--color-borde);
-    border-radius:12px;
-    padding:20px;
-    text-align:center;
-    box-shadow:0 4px 12px var(--color-sombra);
-}
-
-.card-estadistica h3{
-    margin:0;
-    font-size:16px;
-}
-
-.card-estadistica span{
-    display:block;
-    margin-top:10px;
-    font-size:32px;
-    font-weight:bold;
-    color:var(--color-midnight-green);
-}
+/* FORMULARIO */
 
 .form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
 }
 
 .form-group{
-    margin-bottom:15px;
+margin-bottom:15px;
 }
 
 .form-group-full{
-    grid-column:1 / -1;
+grid-column:1 / -1;
 }
 
 .acciones-form{
-    display:flex;
-    gap:10px;
-    margin-top:20px;
+display:flex;
+gap:10px;
+margin-top:20px;
 }
 
+/* BUSCADOR */
+
 .busqueda{
-    margin-bottom:20px;
+margin-bottom:20px;
 }
 
 .busqueda input{
-    max-width:400px;
+max-width:400px;
 }
 
-.acciones-tabla{
-    display:flex;
-    gap:8px;
-    justify-content:center;
+/* PREVIEW IMAGENES */
+
+.preview-imagen{
+
+
+text-align:center;
+
+padding:15px;
+
+border:1px dashed var(--color-borde);
+
+border-radius:12px;
+
+background:#fafafa;
+
+
 }
 
-.acciones-tabla .btn{
-    padding:6px 12px;
-    font-size:13px;
+.preview-imagen img{
+
+
+width:150px;
+height:180px;
+
+object-fit:cover;
+
+border-radius:10px;
+
+border:1px solid var(--color-borde);
+
+box-shadow:0 4px 10px var(--color-sombra);
+
+
 }
 
-.btn-editar{
-    background:var(--color-midnight-green);
-    color:white;
+.preview-imagen p{
+
+
+margin-top:10px;
+
+font-size:13px;
+
+color:var(--color-texto-suave);
+
+
 }
 
-.btn-editar:hover{
-    opacity:.9;
-}
+/* TABLA */
 
-.btn-eliminar{
-    background:var(--color-acento);
-    color:white;
-}
+.card-tabla{
 
-.btn-eliminar:hover{
-    opacity:.9;
+
+margin-top:20px;
+
+
 }
 
 table td{
-    vertical-align:middle;
+vertical-align:middle;
 }
 
 table th{
-    text-align:center;
+text-align:center;
 }
 
 table td:last-child{
-    text-align:center;
+text-align:center;
 }
+
+.tabla-imagen{
+
+
+width:70px;
+height:90px;
+
+object-fit:cover;
+
+border-radius:8px;
+
+border:1px solid var(--color-borde);
+
+box-shadow:0 2px 8px var(--color-sombra);
+
+
+}
+
+/* BOTONES TABLA */
+
+.acciones-tabla{
+
+
+display:flex;
+
+gap:8px;
+
+justify-content:center;
+
+
+}
+
+.acciones-tabla .btn{
+
+
+padding:6px 12px;
+
+font-size:13px;
+
+
+}
+
+.btn-editar{
+
+
+background:var(--color-midnight-green);
+
+color:white;
+
+
+}
+
+.btn-editar:hover{
+
+
+opacity:.9;
+
+
+}
+
+.btn-eliminar{
+
+
+background:var(--color-acento);
+
+color:white;
+
+
+}
+
+.btn-eliminar:hover{
+
+
+opacity:.9;
+
+
+}
+
+/* BIOGRAFIA */
+
+textarea{
+
+
+resize:none;
+
+min-height:120px;
+
+
+}
+
+/* MODAL DEMO */
+
+.modal-demo{
+
+
+margin-top:30px;
+
+border-left:6px solid var(--color-midnight-green);
+
+
+}
+
+.modal-demo h2{
+
+
+color:var(--color-midnight-green);
+
+
+}
+
+/* RESPONSIVE */
 
 @media(max-width:768px){
 
-    .form-grid{
-        grid-template-columns:1fr;
-    }
 
-    .acciones-form{
-        flex-direction:column;
-    }
+.form-grid{
+    grid-template-columns:1fr;
+}
 
+.acciones-form{
+    flex-direction:column;
+}
+
+
+}
+
+
+.biografia-demo{
+
+    min-height:120px;
+
+    padding:20px;
+
+    background:#fafafa;
+
+    border:1px solid var(--color-borde);
+
+    border-radius:12px;
+
+    line-height:1.8;
+
+    text-align:justify;
+
+    box-shadow:0 2px 8px var(--color-sombra);
+}
+/* =================================
+   DETALLE AUTOR
+================================= */
+
+.detalle-header{
+
+    background:var(--color-dark-green);
+
+    padding:20px 40px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 4px 12px var(--color-sombra);
+}
+
+.detalle-header .logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    text-decoration:none;
+
+    color:var(--color-beige);
+}
+
+.detalle-header .logo span{
+
+    font-family:'Merriweather', serif;
+
+    font-size:34px;
+
+    font-weight:700;
+}
+
+.detalle-autor{
+
+    max-width:1000px;
+
+    margin:auto;
+}
+
+.detalle-contenido{
+
+    display:flex;
+
+    gap:40px;
+
+    align-items:center;
+
+    margin:30px 0;
+}
+
+.detalle-foto img{
+
+    width:220px;
+
+    height:280px;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+    border:1px solid var(--color-borde);
+
+    box-shadow:0 4px 12px var(--color-sombra);
+}
+
+.detalle-info{
+
+    flex:1;
+}
+
+.detalle-info h2{
+
+    margin-top:0;
+}
+
+.detalle-info p{
+
+    font-size:16px;
+
+    margin-bottom:18px;
+}
+
+.biografia-card{
+
+    margin-top:20px;
+}
+
+.biografia-card p{
+
+    line-height:1.9;
+
+    text-align:justify;
 }

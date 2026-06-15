@@ -387,6 +387,10 @@ tbody tr:hover {
     opacity:1;
 }
 
+/* ==========================
+   LOGO
+   ========================== */
+
 .logo{
     display:flex;
     align-items:center;
@@ -421,12 +425,19 @@ tbody tr:hover {
     object-fit:contain;
 }
 
+/* ==========================
+   CONTENIDO
+   ========================== */
 .informacion p{
     font-family:'Poppins', sans-serif;
     font-size:16px;
     line-height:1.9;
     text-align:justify;
 }
+
+/* ==========================
+   MENU
+   ========================== */
 
 .menu li a{
     display:block;
@@ -449,6 +460,7 @@ tbody tr:hover {
     font-weight:500;
 }
 
+<<<<<<< HEAD
 
 
 
@@ -457,3 +469,5 @@ tbody tr:hover {
 
 
 
+=======
+>>>>>>> 7b496a94c28108308da381fb03051b560726a638
