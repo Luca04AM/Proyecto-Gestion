@@ -476,3 +476,237 @@ color:var(--color-midnight-green);
     }
 
 }
+
+/* =================================
+   MODULO ADMIN
+================================= */
+
+.admin-header{
+
+    border-left:8px solid var(--color-moss-green);
+
+}
+
+.estadisticas-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+    margin-bottom:25px;
+
+}
+
+.estadistica-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    transition:.3s;
+
+    min-height:140px;
+
+}
+
+.estadistica-card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.icono-estadistica{
+
+    width:90px;
+
+    height:90px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#f9f9f9;
+
+}
+
+.icono-estadistica img{
+
+    width:65px;
+
+    height:65px;
+
+    object-fit:contain;
+
+}
+
+.estadistica-card h3{
+
+    margin-bottom:5px;
+
+}
+
+.estadistica-card h2{
+
+    font-size:42px;
+
+    margin:0;
+
+}
+
+.estadistica-card span{
+
+    color:#666;
+
+    font-size:14px;
+
+}
+
+.usuarios{
+
+    border-left:6px solid var(--color-moss-green);
+
+}
+
+.libros{
+
+    border-left:6px solid var(--color-midnight-green);
+
+}
+
+.prestamos{
+
+    border-left:6px solid var(--color-rosy-brown);
+
+}
+
+.reservas{
+
+    border-left:6px solid var(--color-rosy-brown);
+
+}
+
+/* MODULOS */
+
+.modulos-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+    margin-top:20px;
+
+}
+
+.modulo-card{
+
+    background:white;
+
+    border:1px solid #eee;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    text-align:center;
+
+    transition:.3s;
+
+}
+
+.modulo-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.10);
+
+}
+
+.modulo-img{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:contain;
+
+    margin-bottom:15px;
+
+}
+
+.modulo-card p{
+
+    min-height:65px;
+
+}
+
+/* TABLA */
+
+.titulo-tabla{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.titulo-tabla p{
+
+    margin:0;
+
+}
+
+.estado-pendiente{
+
+    background:#fff1db;
+
+    color:#ff7a00;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:992px){
+
+    .estadisticas-grid{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    .modulos-grid{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .estadisticas-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .modulos-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
