@@ -2,481 +2,264 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Préstamos</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="../css/prestamos.css">
     <link rel="stylesheet" href="../css/estilos.css">
-
-    <script type="module" src="../Controllers/prestamoController.js"></script>
-
+    <script src="../components/Navbar.js" defer></script>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-
-    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-
-        <div class="container">
-
-            <a class="navbar-brand fw-bold" href="../index.html">
-                Biblioteca
-            </a>
-
-            <a class="btn btn-outline-secondary btn-sm" href="../index.html">
-                Volver
-            </a>
-
-        </div>
-
-    </nav>
-
-    <!-- CONTENIDO -->
+    <nav-bar></nav-bar>
 
     <main class="container py-4">
 
-        <!-- TITULO -->
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-
-            <div>
-
-                <h1>Gestión de Préstamos</h1>
-
-                <p class="text-muted">
-                    Registro y administración de préstamos bibliográficos
-                </p>
-
-            </div>
-
-        </div>
-
-        <!-- ESTADISTICAS -->
-
-        <div class="row mb-4">
-
-            <div class="col-md-3">
-
-                <div class="card text-center">
-
-                    <div class="card-body">
-
-                        <h5>Activos</h5>
-
-                        <h2 class="text-primary">52</h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="card text-center">
-
-                    <div class="card-body">
-
-                        <h5>Vencidos</h5>
-
-                        <h2 class="text-danger">8</h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="card text-center">
-
-                    <div class="card-body">
-
-                        <h5>Renovados</h5>
-
-                        <h2 class="text-warning">12</h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="card text-center">
-
-                    <div class="card-body">
-
-                        <h5>Total Mes</h5>
-
-                        <h2 class="text-success">140</h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- REGISTRAR PRESTAMO -->
-
-        <div class="card mb-4">
-
-            <div class="card-header">
-
-                <h4>Registrar Préstamo</h4>
-
-            </div>
-
-            <div class="card-body">
-
-                <form>
-
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Usuario
-                            </label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Buscar usuario">
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Libro
-                            </label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Buscar libro">
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Fecha Préstamo
-                            </label>
-
-                            <input
-                                type="date"
-                                class="form-control">
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Fecha Devolución
-                            </label>
-
-                            <input
-                                type="date"
-                                class="form-control">
-
-                        </div>
-
-                        <div class="col-12">
-
-                            <label class="form-label">
-                                Observaciones
-                            </label>
-
-                            <textarea
-                                class="form-control"
-                                rows="3"></textarea>
-
-                        </div>
-
-                    </div>
-
-                    <div class="mt-3">
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary">
-
-                            Registrar Préstamo
-
-                        </button>
-
-                        <button
-                            type="reset"
-                            class="btn btn-secondary">
-
-                            Limpiar
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-        </div>
-
-        <!-- INFORMACION -->
-
-        <div class="row mb-4">
-
-            <div class="col-md-6">
+        <h1 class="mb-4">Módulo de Préstamos</h1>
+
+        <ul class="nav nav-tabs mb-4">
+
+            <li class="nav-item">
+                <button class="nav-link active"
+                        data-bs-toggle="tab"
+                        data-bs-target="#solicitud">
+                    Solicitar préstamo
+                </button>
+            </li>
+
+            <li class="nav-item">
+                <button class="nav-link"
+                        data-bs-toggle="tab"
+                        data-bs-target="#activos">
+                    Préstamos activos
+                </button>
+            </li>
+
+            <li class="nav-item">
+                <button class="nav-link"
+                        data-bs-toggle="tab"
+                        data-bs-target="#renovacion">
+                    Renovar préstamo
+                </button>
+            </li>
+
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- SOLICITUD DE PRESTAMO -->
+            <section class="tab-pane fade show active" id="solicitud">
 
                 <div class="card">
 
                     <div class="card-header">
-
-                        <h5>Información del Usuario</h5>
-
+                        Solicitar préstamo de libro
                     </div>
 
                     <div class="card-body">
 
-                        <p><strong>Nombre:</strong> Juan Pérez</p>
+                        <div id="msgPrestamo"></div>
 
-                        <p><strong>Carnet:</strong> 20241001</p>
+                        <form id="formPrestamo">
 
-                        <p><strong>Correo:</strong> juan@ucr.ac.cr</p>
+                            <div class="row g-3">
 
-                        <p><strong>Teléfono:</strong> 8888-8888</p>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Usuario
+                                    </label>
 
-                        <p>
+                                    <select class="form-select" id="usuarioPrestamo">
+                                        <option>Seleccionar usuario</option>
+                                    </select>
+                                </div>
 
-                            <strong>Estado:</strong>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Libro
+                                    </label>
 
-                            <span class="badge bg-success">
-                                Activo
-                            </span>
+                                    <select class="form-select" id="libroPrestamo">
+                                        <option>Seleccionar libro</option>
+                                    </select>
+                                </div>
 
-                        </p>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Fecha préstamo
+                                    </label>
+
+                                    <input type="date"
+                                           class="form-control"
+                                           id="fechaPrestamo"
+                                           readonly>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Fecha devolución
+                                    </label>
+
+                                    <input type="date"
+                                           class="form-control"
+                                           id="fechaDevolucion"
+                                           readonly>
+                                </div>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-primary mt-4">
+                                Solicitar préstamo
+                            </button>
+
+                        </form>
 
                     </div>
 
                 </div>
 
-            </div>
+            </section>
 
-            <div class="col-md-6">
+            <!-- PRESTAMOS ACTIVOS -->
+            <section class="tab-pane fade" id="activos">
 
                 <div class="card">
 
                     <div class="card-header">
-
-                        <h5>Información del Libro</h5>
-
+                        Lista de préstamos activos
                     </div>
 
                     <div class="card-body">
 
-                        <p><strong>Título:</strong> El Principito</p>
+                        <div class="row g-3 mb-3">
 
-                        <p><strong>Autor:</strong> Antoine de Saint-Exupéry</p>
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    Buscar usuario
+                                </label>
 
-                        <p><strong>Género:</strong> Novela</p>
+                                <input type="text"
+                                       class="form-control"
+                                       id="buscarPrestamo">
+                            </div>
 
-                        <p><strong>ISBN:</strong> 9781234567890</p>
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    Estado
+                                </label>
 
-                        <p>
+                                <select class="form-select"
+                                        id="filtroPrestamo">
+                                    <option value="">
+                                        Todos
+                                    </option>
 
-                            <strong>Disponibilidad:</strong>
-
-                            <span class="badge bg-success">
-                                Disponible
-                            </span>
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- FILTROS -->
-
-        <div class="card mb-4">
-
-            <div class="card-header">
-
-                <h4>Consultar Préstamos</h4>
-
-            </div>
-
-            <div class="card-body">
-
-                <div class="row">
-
-                    <div class="col-md-3">
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="Usuario">
-
-                    </div>
-
-                    <div class="col-md-3">
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="Libro">
-
-                    </div>
-
-                    <div class="col-md-3">
-
-                        <select class="form-select">
-
-                            <option>Todos</option>
-                            <option>Activo</option>
-                            <option>Vencido</option>
-                            <option>Devuelto</option>
-                            <option>Renovado</option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-3">
-
-                        <button class="btn btn-primary w-100">
-                            Buscar
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- TABLA -->
-
-        <div class="card">
-
-            <div class="card-header">
-
-                <h4>Lista de Préstamos</h4>
-
-            </div>
-
-            <div class="card-body">
-
-                <div class="table-responsive">
-
-                    <table class="table table-striped table-hover">
-
-                        <thead class="table-dark">
-
-                            <tr>
-
-                                <th>ID</th>
-                                <th>Usuario</th>
-                                <th>Libro</th>
-                                <th>Fecha Préstamo</th>
-                                <th>Fecha Límite</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <tr>
-
-                                <td>PR001</td>
-                                <td>Juan Pérez</td>
-                                <td>El Principito</td>
-                                <td>01/06/2026</td>
-                                <td>15/06/2026</td>
-
-                                <td>
-
-                                    <span class="badge bg-success">
+                                    <option value="Activo">
                                         Activo
-                                    </span>
+                                    </option>
 
-                                </td>
-
-                                <td>
-
-                                    <button class="btn btn-info btn-sm">
-                                        Ver
-                                    </button>
-
-                                    <button class="btn btn-warning btn-sm">
-                                        Renovar
-                                    </button>
-
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <td>PR002</td>
-                                <td>María López</td>
-                                <td>1984</td>
-                                <td>15/05/2026</td>
-                                <td>30/05/2026</td>
-
-                                <td>
-
-                                    <span class="badge bg-danger">
+                                    <option value="Vencido">
                                         Vencido
-                                    </span>
+                                    </option>
+                                </select>
+                            </div>
 
-                                </td>
+                        </div>
 
-                                <td>
+                        <div class="table-responsive">
 
-                                    <button class="btn btn-info btn-sm">
-                                        Ver
-                                    </button>
+                            <table class="table table-bordered table-hover">
 
-                                    <button class="btn btn-warning btn-sm">
-                                        Renovar
-                                    </button>
+                                <thead class="table-light">
 
-                                </td>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Libro</th>
+                                        <th>Fecha préstamo</th>
+                                        <th>Fecha devolución</th>
+                                        <th>Renovaciones</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
 
-                            </tr>
+                                </thead>
 
-                        </tbody>
+                                <tbody id="tablaPrestamos"></tbody>
 
-                    </table>
+                            </table>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </div>
+            </section>
+
+            <!-- RENOVACION -->
+            <section class="tab-pane fade" id="renovacion">
+
+                <div class="card">
+
+                    <div class="card-header">
+                        Renovar préstamo
+                    </div>
+
+                    <div class="card-body">
+
+                        <div id="msgRenovacion"></div>
+
+                        <form id="formRenovacion">
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Préstamo activo
+                                    </label>
+
+                                    <select class="form-select"
+                                            id="prestamoRenovar">
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Nueva fecha devolución
+                                    </label>
+
+                                    <input type="date"
+                                           class="form-control"
+                                           id="nuevaFecha"
+                                           readonly>
+                                </div>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-success mt-4">
+                                Renovar préstamo
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </section>
 
         </div>
 
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/prestamos.js"></script>
 
 </body>
 
