@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Libro</title>
+
+    <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="../css/catalogo.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="container menu-container">
+
+            <a href="../index.html" class="logo">
+
+                <div class="logo-circle">
+                    <img src="../img/logo.png" alt="Logo SIGAB">
+                </div>
+
+                <span>SIGAB Libros</span>
+
+            </a>
+
+        </div>
+
+    </nav>
+
+    <!-- CONTENIDO -->
+
+    <main class="container">
+
+        <div class="card">
+
+            <h1>Detalle del Libro</h1>
+
+            <div class="detalle-libro">
+
+                <div class="detalle-portada">
+
+                    <img src="../img/catalogo/2.jpeg"
+                        alt="Portada del libro">
+
+                </div>
+
+                <div class="detalle-informacion">
+
+                    <h2>El Principito</h2>
+
+                    <p>
+                        <strong>Autor:</strong>
+                        Antoine de Saint-Exupéry
+                    </p>
+
+                    <p>
+                        <strong>Género:</strong>
+                        Novela
+                    </p>
+
+                    <p>
+                        <strong>ISBN:</strong>
+                        978-84-376-0494-7
+                    </p>
+
+                    <p>
+                        <strong>Año de publicación:</strong>
+                        1943
+                    </p>
+
+                    <p>
+                        <strong>Estado:</strong>
+
+                        <span class="badge badge-disponible">
+                            Disponible
+                        </span>
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- DESCRIPCIÓN -->
+
+            <div class="card descripcion-libro">
+
+                <h3>Descripción</h3>
+
+                <p>
+                    El Principito es una obra literaria que narra la historia de un pequeño príncipe que viaja por distintos planetas explorando temas como la amistad, el amor, la responsabilidad y el sentido de la vida.
+                </p>
+
+            </div>
+
+            <!-- BOTONES -->
+
+            <div class="acciones-detalle">
+
+                <a href="catalogo.html"
+                    class="btn btn-secondary">
+
+                    Volver al Catálogo
+
+                </a>
+
+                <button class="btn btn-primary">
+
+                    Reservar Libro
+
+                </button>
+
+                <button class="btn btn-accent"
+                    onclick="abrirEditar()">
+
+                    Editar
+
+                </button>
+
+                <button class="btn btn-danger"
+                    onclick="abrirEliminar()">
+
+                    Eliminar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- MODAL EDITAR -->
+
+    <div id="modalEditar" class="modal">
+
+        <div class="modal-contenido">
+
+            <span class="cerrar"
+                onclick="cerrarEditar()">
+
+                &times;
+
+            </span>
+
+            <h2>Editar Libro</h2>
+
+            <form>
+
+                <label>Título</label>
+
+                <input type="text"
+                    value="El Principito">
+
+                <label>Autor</label>
+
+                <input type="text"
+                    value="Antoine de Saint-Exupéry">
+
+                <label>Género</label>
+
+                <select>
+
+                    <option selected>
+                        Novela
+                    </option>
+
+                    <option>
+                        Fantasía
+                    </option>
+
+                    <option>
+                        Ciencia Ficción
+                    </option>
+
+                </select>
+
+                <label>ISBN</label>
+
+                <input type="text"
+                    value="978-84-376-0494-7">
+
+                <label>Año de Publicación</label>
+
+                <input type="number"
+                    value="1943">
+
+                <label>Descripción</label>
+
+                <textarea rows="5">
+El Principito es una obra literaria que narra la historia de un pequeño príncipe.
+                </textarea>
+
+                <label>Portada</label>
+
+                <input type="file">
+
+                <div class="acciones-modal">
+
+                    <button type="button"
+                        class="btn btn-secondary"
+                        onclick="cerrarEditar()">
+
+                        Cancelar
+
+                    </button>
+
+                    <button type="submit"
+                        class="btn btn-primary">
+
+                        Guardar Cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL ELIMINAR -->
+
+    <div id="modalEliminar" class="modal">
+
+        <div class="modal-contenido modal-pequeno">
+
+            <h2>Eliminar Libro</h2>
+
+            <p>
+                ¿Está seguro de que desea eliminar este libro?
+            </p>
+
+            <div class="acciones-modal">
+
+                <button class="btn btn-secondary"
+                    onclick="cerrarEliminar()">
+
+                    No
+
+                </button>
+
+                <button class="btn btn-danger">
+
+                    Sí, Eliminar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <p>
+            SIGAB Libros © 2026
+        </p>
+
+    </footer>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        function abrirEditar() {
+            document.getElementById("modalEditar").style.display = "block";
+        }
+
+        function cerrarEditar() {
+            document.getElementById("modalEditar").style.display = "none";
+        }
+
+        function abrirEliminar() {
+            document.getElementById("modalEliminar").style.display = "block";
+        }
+
+        function cerrarEliminar() {
+            document.getElementById("modalEliminar").style.display = "none";
+        }
+
+        window.onclick = function (event) {
+
+            let modalEditar = document.getElementById("modalEditar");
+            let modalEliminar = document.getElementById("modalEliminar");
+
+            if (event.target === modalEditar) {
+                modalEditar.style.display = "none";
+            }
+
+            if (event.target === modalEliminar) {
+                modalEliminar.style.display = "none";
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>

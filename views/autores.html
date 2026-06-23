@@ -111,221 +111,368 @@
 
     <main class="container">
 
-        <div class="card">
 
-            <h1>Gestión de Autores</h1>
 
-            <p>
-                Administre los autores registrados en el Sistema de Gestión
-                Bibliotecaria SIGAB Libros.
-            </p>
+            <div class="card">
 
-        </div>
+                <h1>Gestión de Autores</h1>
 
-        <br>
+                <p>
+                    Administre los autores registrados en el Sistema de Gestión Bibliotecaria SIGAB Libros.
+                </p>
 
-        <!-- FORMULARIO -->
+            </div>
 
-        <div class="card">
+            <br>
 
-            <h2>Registrar Autor</h2>
+            <!-- FORMULARIO -->
 
-            <form id="formAutor">
+            <div class="card">
+
+                <h2>Registrar Autor</h2>
+
+                <form>
+
+                        <input
+                            type="hidden"
+                            id="txtId">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label>
+                                    Fotografía del Autor
+                                </label>
+
+                                <div class="preview-imagen">
+
+                                    <img
+                                        src="../img/autores/gabriel.jpg"
+                                        alt="Autor">
+
+                                    <p>
+                                        gabriel.jpg
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label>
+                                    Estado
+                                </label>
+
+                                <select id="txtEstado">
+
+                                    <option>Activo</option>
+                                    <option>Inactivo</option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label>
+                                    Nombre Completo
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="txtNombre"
+                                    placeholder="Ingrese el nombre completo">
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label>
+                                    Nacionalidad
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="txtNacionalidad"
+                                    placeholder="Ingrese la nacionalidad">
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label>
+                                    Fecha de Nacimiento
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="txtFechaNacimiento">
+
+                            </div>
+
+                            <div class="form-group form-group-full">
+
+                                <label>
+                                    Biografía
+                                </label>
+
+                                <textarea
+                                    rows="5"
+                                    id="txtBiografia"
+                                    placeholder="Ingrese una breve biografía del autor"></textarea>
+
+                            </div>
+
+                        </div>
+
+                        <div class="acciones-form">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                Guardar
+
+                            </button>
+
+                            <button
+                                type="reset"
+                                class="btn btn-secondary">
+
+                                Limpiar
+
+                            </button>
+
+                        </div>
+
+                 </form>
+
+            </div>
+
+            <br>
+
+            <!-- BUSCADOR -->
+
+            <div class="card busqueda">
+
+                <h2>Buscar Autor</h2>
 
                 <input
-                    type="hidden"
-                    id="txtId">
+                    type="text"
+                    placeholder="Buscar por nombre">
 
-                <p>
+            </div>
 
-                    <label>
-                        Nombre Completo
-                    </label>
+            <br>
 
-                    <input
-                        type="text"
-                        id="txtNombre"
-                        placeholder="Ingrese el nombre del autor">
+            <!-- TABLA -->
 
-                </p>
+            <div class="card card-tabla">
 
-                <p>
+                <h2>Listado de Autores</h2>
 
-                    <label>
-                        Nacionalidad
-                    </label>
+                <table>
 
-                    <input
-                        type="text"
-                        id="txtNacionalidad"
-                        placeholder="Ingrese la nacionalidad">
+                        <thead>
 
-                </p>
+                            <tr>
 
-                <p>
+                                <th>ID</th>
+                                <th>Foto</th>
+                                <th>Nombre</th>
+                                <th>Nacionalidad</th>
+                                <th>Fecha Nacimiento</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
 
-                    <label>
-                        Fecha de Nacimiento
-                    </label>
+                            </tr>
 
-                    <input
-                        type="date"
-                        id="txtFechaNacimiento">
+                        </thead>
 
-                </p>
+                        <tbody>
 
-                <button
-                    type="submit"
-                    class="btn btn-primary">
+                            <tr>
 
-                    Guardar
+                                <td>1</td>
 
-                </button>
+                                <td>
 
-                <button
-                    type="reset"
-                    class="btn btn-secondary">
+                                    <img
+                                        src="../img/autores/gabriel.jpg"
+                                        class="tabla-imagen"
+                                        alt="Gabriel García Márquez">
 
-                    Limpiar
+                                </td>
 
-                </button>
+                                <td>Gabriel García Márquez</td>
 
-            </form>
+                                <td>Colombiana</td>
 
-        </div>
+                                <td>06/03/1927</td>
 
-        <br>
+                                <td>
 
-        <!-- BUSCADOR -->
+                                    <span class="badge badge-disponible">
 
-        <div class="card">
+                                        Activo
 
-            <h2>Buscar Autor</h2>
+                                    </span>
 
-            <input
-                type="text"
-                id="txtBuscar"
-                placeholder="Buscar por nombre">
+                                </td>
 
-        </div>
+                                <td>
 
-        <br>
+                                    <div class="acciones-tabla">
 
-        <!-- TABLA -->
+                                        <a
+                                            href="editarAutor.html"
+                                            class="btn btn-editar">
 
-        <table>
+                                            Editar
 
-            <thead>
+                                        </a>
 
-                <tr>
+                                        <button class="btn btn-accent">
 
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Nacionalidad</th>
-                    <th>Fecha Nacimiento</th>
-                    <th>Acciones</th>
+                                            Eliminar
 
-                </tr>
+                                        </button>
 
-            </thead>
+                                        <a href="detalleAutor.html" class="btn btn-secondary">
+                                            Información
+                                        </a>
 
-            <tbody>
+                                    </div>
 
-                <tr>
+                                </td>
 
-                    <td>1</td>
+                            </tr>
 
-                    <td>Gabriel García Márquez</td>
+                            <tr>
 
-                    <td>Colombiana</td>
+                                <td>2</td>
 
-                    <td>06/03/1927</td>
+                                <td>
 
-                    <td>
+                                    <img
+                                        src="../img/autores/cortazar.jpg"
+                                        class="tabla-imagen"
+                                        alt="Julio Cortázar">
 
-                        <button
-                            class="btn btn-primary">
+                                </td>
 
-                            Editar
+                                <td>Julio Cortázar</td>
 
-                        </button>
+                                <td>Argentina</td>
 
-                        <button
-                            class="btn btn-accent">
+                                <td>26/08/1914</td>
 
-                            Eliminar
+                                <td>
 
-                        </button>
+                                    <span class="badge badge-disponible">
 
-                    </td>
+                                        Activo
 
-                </tr>
+                                    </span>
 
-                <tr>
+                                </td>
 
-                    <td>2</td>
+                                <td>
 
-                    <td>Julio Cortázar</td>
+                                    <div class="acciones-tabla">
 
-                    <td>Argentina</td>
+                                          <a
+                                            href="editarAutor.html"
+                                            class="btn btn-editar">
 
-                    <td>26/08/1914</td>
+                                            Editar
 
-                    <td>
+                                        </a>
 
-                        <button
-                            class="btn btn-primary">
+                                        <button class="btn btn-accent">
 
-                            Editar
+                                            Eliminar
 
-                        </button>
+                                        </button>
 
-                        <button
-                            class="btn btn-accent">
+                                        <a href="detalleAutor.html" class="btn btn-secondary">
+                                            Información
+                                        </a>
 
-                            Eliminar
 
-                        </button>
+                                    </div>
 
-                    </td>
+                                </td>
 
-                </tr>
+                            </tr>
 
-                <tr>
+                            <tr>
 
-                    <td>3</td>
+                                <td>3</td>
 
-                    <td>Isabel Allende</td>
+                                <td>
 
-                    <td>Chilena</td>
+                                    <img
+                                        src="../img/autores/allende.jpg"
+                                        class="tabla-imagen"
+                                        alt="Isabel Allende">
 
-                    <td>02/08/1942</td>
+                                </td>
 
-                    <td>
+                                <td>Isabel Allende</td>
 
-                        <button
-                            class="btn btn-editar"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modalEditar">
+                                <td>Chilena</td>
 
-                            Editar
+                                <td>02/08/1942</td>
 
-                        </button>
+                                <td>
 
-                        <button
-                            class="btn btn-accent">
+                                    <span class="badge badge-disponible">
 
-                            Eliminar
+                                        Activo
 
-                        </button>
+                                    </span>
 
-                    </td>
+                                </td>
 
-                </tr>
+                                <td>
 
-            </tbody>
+                                    <div class="acciones-tabla">
 
-        </table>
+                                         <a
+                                            href="editarAutor.html"
+                                            class="btn btn-editar">
+
+                                            Editar
+
+                                        </a>
+
+                                        <button class="btn btn-accent">
+
+                                            Eliminar
+
+                                        </button>
+                                        <a href="detalleAutor.html" class="btn btn-secondary">
+                                            Información
+                                        </a>
+
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                </table>
+
+            </div>
+
+            <br>
+
 
     </main>
 

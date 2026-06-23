@@ -1,0 +1,456 @@
+/* ==============================
+   USUARIOS.CSS
+   Módulo visual de usuarios - Biblioteca
+   Usa la paleta oficial del sistema
+   ============================== */
+
+:root {
+    /* Colores principales */
+    --color-dark-green: #0A3323;
+    --color-moss-green: #839958;
+    --color-beige: #F7F4D5;
+    --color-rosy-brown: #D3968C;
+    --color-midnight-green: #105666;
+
+    /* Colores de uso general */
+    --color-fondo: #F7F4D5;
+    --color-fondo-secundario: #ffffff;
+    --color-texto: #0A3323;
+    --color-texto-suave: #105666;
+
+    /* Botones */
+    --color-boton-principal: #0A3323;
+    --color-boton-principal-hover: #105666;
+    --color-boton-secundario: #839958;
+    --color-boton-secundario-hover: #6f8348;
+
+    /* Bordes y sombras */
+    --color-borde: #839958;
+    --color-sombra: rgba(10, 51, 35, 0.18);
+
+    /* Alertas o detalles */
+    --color-acento: #D3968C;
+}
+
+/* ==============================
+   ESTILOS GENERALES
+   ============================== */
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+}
+
+main {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Merriweather', serif;
+    color: var(--color-dark-green);
+    font-weight: 700;
+}
+
+h1 {
+    margin-bottom: 25px;
+    border-left: 6px solid var(--color-moss-green);
+    padding-left: 15px;
+}
+
+/* ==============================
+   NAVBAR
+   ============================== */
+
+.navbar {
+    background-color: var(--color-dark-green) !important;
+    color: var(--color-beige);
+    padding: 15px 30px;
+    box-shadow: 0 4px 12px var(--color-sombra);
+}
+
+.navbar .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    color: var(--color-beige) !important;
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    font-size: 24px;
+    text-decoration: none;
+}
+
+.navbar-brand:hover {
+    color: var(--color-rosy-brown) !important;
+}
+
+.navbar .btn {
+    border: 1px solid var(--color-beige);
+    color: var(--color-beige);
+    background-color: transparent;
+}
+
+.navbar .btn:hover {
+    background-color: var(--color-rosy-brown);
+    border-color: var(--color-rosy-brown);
+    color: white;
+}
+
+/* ==============================
+   TABS / PESTAÑAS
+   ============================== */
+
+.nav-tabs {
+    border-bottom: 2px solid var(--color-moss-green);
+}
+
+.nav-tabs .nav-link {
+    color: var(--color-dark-green);
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 10px 10px 0 0;
+    padding: 12px 18px;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--color-midnight-green);
+    border-color: var(--color-moss-green);
+    background-color: rgba(131, 153, 88, 0.12);
+}
+
+.nav-tabs .nav-link.active {
+    background-color: var(--color-dark-green);
+    color: var(--color-beige);
+    border-color: var(--color-dark-green);
+}
+
+/* ==============================
+   CARDS
+   ============================== */
+
+.card {
+    background-color: var(--color-fondo-secundario);
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    box-shadow: 0 4px 12px var(--color-sombra);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: var(--color-dark-green);
+    color: var(--color-beige);
+    font-weight: 700;
+    font-family: 'Merriweather', serif;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.card-body {
+    padding: 25px;
+}
+
+/* ==============================
+   FORMULARIOS
+   ============================== */
+
+label,
+.form-label {
+    font-weight: 600;
+    color: var(--color-dark-green);
+}
+
+input,
+select,
+textarea,
+.form-control,
+.form-select {
+    width: 100%;
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    outline: none;
+    background-color: white;
+    color: var(--color-texto);
+    font-size: 15px;
+    padding: 10px 12px;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-midnight-green);
+    box-shadow: 0 0 5px rgba(16, 86, 102, 0.4);
+}
+
+small,
+.text-muted {
+    color: var(--color-texto-suave) !important;
+}
+
+/* ==============================
+   BOTONES
+   ============================== */
+
+.btn {
+    border-radius: 8px;
+    padding: 9px 15px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-boton-principal);
+    border-color: var(--color-boton-principal);
+    color: var(--color-beige);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-boton-principal-hover);
+    border-color: var(--color-boton-principal-hover);
+}
+
+.btn-secondary {
+    background-color: var(--color-boton-secundario);
+    border-color: var(--color-boton-secundario);
+    color: var(--color-dark-green);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-boton-secundario-hover);
+    border-color: var(--color-boton-secundario-hover);
+    color: white;
+}
+
+.btn-success {
+    background-color: var(--color-moss-green);
+    border-color: var(--color-moss-green);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: var(--color-boton-secundario-hover);
+    border-color: var(--color-boton-secundario-hover);
+}
+
+.btn-info {
+    background-color: var(--color-midnight-green);
+    border-color: var(--color-midnight-green);
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #0c4653;
+    border-color: #0c4653;
+    color: white;
+}
+
+.btn-warning {
+    background-color: var(--color-rosy-brown);
+    border-color: var(--color-rosy-brown);
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #bd7d73;
+    border-color: #bd7d73;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #8f3d38;
+    border-color: #8f3d38;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #742f2b;
+    border-color: #742f2b;
+    color: white;
+}
+
+.btn-sm {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+/* ==============================
+   TABLAS
+   ============================== */
+
+.table-responsive {
+    border-radius: 12px;
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(10, 51, 35, 0.10);
+}
+
+.table {
+    margin-bottom: 0;
+    background-color: white;
+    border-color: var(--color-borde);
+}
+
+.table thead,
+.table-light {
+    background-color: var(--color-dark-green) !important;
+    color: var(--color-beige) !important;
+}
+
+.table thead th {
+    background-color: var(--color-dark-green) !important;
+    color: var(--color-beige) !important;
+    border-color: var(--color-moss-green);
+    font-weight: 700;
+}
+
+.table td {
+    color: var(--color-texto);
+    vertical-align: middle;
+    border-color: rgba(131, 153, 88, 0.45);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(131, 153, 88, 0.18);
+}
+
+/* ==============================
+   BADGES / ESTADOS
+   ============================== */
+
+.badge {
+    padding: 7px 11px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.text-bg-success {
+    background-color: var(--color-moss-green) !important;
+    color: white !important;
+}
+
+.text-bg-danger {
+    background-color: var(--color-rosy-brown) !important;
+    color: white !important;
+}
+
+/* ==============================
+   ALERTAS
+   ============================== */
+
+.alert {
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: rgba(131, 153, 88, 0.20);
+    border-color: var(--color-moss-green);
+    color: var(--color-dark-green);
+}
+
+.alert-danger {
+    background-color: rgba(211, 150, 140, 0.25);
+    border-color: var(--color-rosy-brown);
+    color: #6f2823;
+}
+
+.alert-secondary {
+    background-color: rgba(247, 244, 213, 0.80);
+    border-color: var(--color-moss-green);
+    color: var(--color-dark-green);
+}
+
+/* ==============================
+   DETALLE DE USUARIO
+   ============================== */
+
+#detalleUsuario h5 {
+    font-family: 'Merriweather', serif;
+    color: var(--color-dark-green);
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+#detalleUsuario p {
+    margin-bottom: 8px;
+}
+
+/* ==============================
+   FORMULARIO DE EDICIÓN
+   ============================== */
+
+#cardEditarUsuario {
+    border: 2px solid var(--color-midnight-green);
+}
+
+#cardEditarUsuario .card-header {
+    background-color: var(--color-midnight-green);
+}
+
+/* ==============================
+   UTILIDADES
+   ============================== */
+
+.d-flex.flex-wrap.gap-1 {
+    gap: 6px !important;
+}
+
+::selection {
+    background-color: var(--color-moss-green);
+    color: white;
+}
+
+/* ==============================
+   RESPONSIVE
+   ============================== */
+
+@media (max-width: 768px) {
+    main {
+        width: 95%;
+        margin: 20px auto;
+    }
+
+    .navbar {
+        padding: 12px 15px;
+    }
+
+    .navbar .container {
+        width: 95%;
+    }
+
+    .navbar-brand {
+        font-size: 20px;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    .card-body {
+        padding: 18px;
+    }
+
+    .nav-tabs .nav-link {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .table {
+        font-size: 14px;
+    }
+
+    .btn-sm {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+}
