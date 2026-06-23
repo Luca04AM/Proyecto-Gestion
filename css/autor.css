@@ -710,3 +710,38 @@ color:var(--color-midnight-green);
     }
 
 }
+
+.tabla-dashboard{
+
+    width:100%;
+
+    table-layout:fixed;
+
+}
+.tabla-dashboard th,
+.tabla-dashboard td{
+
+    text-align:center;
+
+    vertical-align:middle;
+
+}
+.tabla-dashboard th:nth-child(1){
+    width:15%;
+}
+
+.tabla-dashboard th:nth-child(2){
+    width:35%;
+}
+
+.tabla-dashboard th:nth-child(3){
+    width:20%;
+}
+
+.tabla-dashboard th:nth-child(4){
+    width:15%;
+}
+
+.tabla-dashboard th:nth-child(5){
+    width:15%;
+}
