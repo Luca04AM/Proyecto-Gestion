@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Detalle del Autor - SIGAB Libros</title>
+
+    <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="../css/autor.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+ <!-- MENÚ PRINCIPAL AUTORES -->
+   <nav class="navbar">
+        <div class="container menu-container">
+
+            <a href="../index.html" class="logo">
+                <div class="logo-circle">
+                    <img src="../img/logo.png" alt="Logo SIGAB">
+                </div>
+                <span>SIGAB Libros</span>
+            </a>
+
+        </div>
+    </nav>
+    <!-- CONTENIDO -->
+
+    <main class="container">
+
+        <div
+                class="card modal-demo"
+                id="editarAutor">
+
+                <h2>Editar Autor</h2>
+
+                <p>
+                    Modifique la información del autor seleccionado.
+                </p>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Fotografía del Autor
+                        </label>
+
+                        <div class="preview-imagen">
+
+                            <img
+                                src="../img/autores/gabriel.jpg"
+                                alt="Gabriel García Márquez">
+
+                            <p>
+                                gabriel.jpg
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Estado
+                        </label>
+
+                        <select>
+
+                            <option selected>
+                                Activo
+                            </option>
+
+                            <option>
+                                Inactivo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Nombre Completo
+                        </label>
+
+                        <input
+                            type="text"
+                            value="Gabriel García Márquez">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Nacionalidad
+                        </label>
+
+                        <input
+                            type="text"
+                            value="Colombiana">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Fecha de Nacimiento
+                        </label>
+
+                        <input
+                            type="date"
+                            value="1927-03-06">
+
+                    </div>
+
+                    <div class="form-group form-group-full">
+
+                        <label>
+                            Biografía
+                        </label>
+
+                        <textarea rows="6">
+
+            Gabriel García Márquez fue un escritor, periodista y guionista colombiano,
+            ganador del Premio Nobel de Literatura en 1982 y reconocido mundialmente por sus obras de realismo mágico.
+
+                        </textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="acciones-form">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary">
+
+                        Guardar Cambios
+
+                    </button>
+
+                    <a href="autores.html" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+
+                </div>
+
+
+            </div>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <p>
+            SIGAB Libros © 2026
+        </p>
+
+    </footer>
+
+</body>
+
+</html>
