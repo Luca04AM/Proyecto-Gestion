@@ -1,171 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-
-<head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Detalle de Notificación - SIGAB Libros</title>
 
-    <link rel="stylesheet" href="../css/estilos.css">
-    <link rel="stylesheet" href="../css/autor.css">
+    <link rel="stylesheet" href="../css/estilos.css" />
+    <link rel="stylesheet" href="../css/autor.css" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <nav class="navbar">
-        <div class="container menu-container">
-
-            <a href="../index.html" class="logo">
-                <div class="logo-circle">
-                    <img src="../img/logo.png" alt="Logo SIGAB">
-                </div>
-                <span>SIGAB Libros</span>
-            </a>
-
-        </div>
+      <div class="container menu-container">
+        <a href="../index.html" class="logo">
+          <div class="logo-circle">
+            <img src="../img/logo.png" alt="Logo SIGAB" />
+          </div>
+          <span>SIGAB Libros</span>
+        </a>
+      </div>
     </nav>
 
     <main class="container">
+      <div class="card detalle-autor">
+        <h1>Detalle de Notificación</h1>
 
-        <div class="card detalle-autor">
+        <div class="detalle-contenido">
+          <div class="detalle-foto">
+            <img src="../img/autores/quijote.jpg" alt="Notificación" />
+          </div>
 
-            <h1>Detalle de Notificación</h1>
+          <div class="detalle-info">
+            <h2>Préstamo Atrasado</h2>
 
-            <div class="detalle-contenido">
+            <p>
+              <strong>ID Notificación:</strong>
+              NT-001
+            </p>
 
-                <div class="detalle-foto">
+            <p>
+              <strong>Fecha:</strong>
+              16/06/2026
+            </p>
 
-                    <img
-                        src="../img/autores/quijote.jpg"
-                        alt="Notificación">
+            <p>
+              <strong>Estado:</strong>
 
-                </div>
-
-                <div class="detalle-info">
-
-                    <h2>Préstamo Atrasado</h2>
-
-                    <p>
-                        <strong>ID Notificación:</strong>
-                        NT-001
-                    </p>
-
-                    <p>
-                        <strong>Fecha:</strong>
-                        16/06/2026
-                    </p>
-
-                    <p>
-                        <strong>Estado:</strong>
-
-                        <span class="badge badge-atrasado">
-
-                            No Leída
-
-                        </span>
-
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="card biografia-card">
-
-                <h3>Información del Préstamo</h3>
-
-                <p>
-                    <strong>Usuario:</strong>
-                    Juan Pérez
-                </p>
-
-                <p>
-                    <strong>Libro:</strong>
-                    Don Quijote de la Mancha
-                </p>
-
-                <p>
-                    <strong>Fecha de Préstamo:</strong>
-                    01/06/2026
-                </p>
-
-                <p>
-                    <strong>Fecha Límite de Devolución:</strong>
-                    10/06/2026
-                </p>
-
-            </div>
-
-            <br>
-
-            <div class="card biografia-card">
-
-                <h3>Mensaje</h3>
-
-                <p>
-
-                    El préstamo del libro
-                    <strong>Don Quijote de la Mancha</strong>
-                    ha superado la fecha límite de devolución.
-
-                    Se recomienda realizar la devolución lo antes posible
-                    para evitar la generación de nuevas multas y mantener
-                    actualizado su historial de préstamos.
-
-                </p>
-
-            </div>
-
-            <br>
-
-            <div class="acciones-form">
-
-                <button
-                    class="btn btn-secondary">
-
-                    Marcar como Leída
-
-                </button>
-
-                <button
-                    class="btn btn-accent">
-
-                    Eliminar
-
-                </button>
-
-                <a
-                    href="notificaciones.html"
-                    class="btn btn-primary">
-
-                    Volver
-
-                </a>
-
-            </div>
-
+              <span class="badge badge-atrasado"> No Leída </span>
+            </p>
+          </div>
         </div>
 
+        <div class="card biografia-card">
+          <h3>Información del Préstamo</h3>
+
+          <p>
+            <strong>Usuario:</strong>
+            Juan Pérez
+          </p>
+
+          <p>
+            <strong>Libro:</strong>
+            Don Quijote de la Mancha
+          </p>
+
+          <p>
+            <strong>Fecha de Préstamo:</strong>
+            01/06/2026
+          </p>
+
+          <p>
+            <strong>Fecha Límite de Devolución:</strong>
+            10/06/2026
+          </p>
+        </div>
+
+        <br />
+
+        <div class="card biografia-card">
+          <h3>Mensaje</h3>
+
+          <p>
+            El préstamo del libro
+            <strong>Don Quijote de la Mancha</strong>
+            ha superado la fecha límite de devolución. Se recomienda realizar la
+            devolución lo antes posible para evitar la generación de nuevas
+            multas y mantener actualizado su historial de préstamos.
+          </p>
+        </div>
+
+        <br />
+
+        <div class="acciones-form">
+          <button class="btn btn-secondary">Marcar como Leída</button>
+
+          <button class="btn btn-accent">Eliminar</button>
+
+          <a href="notificaciones.html" class="btn btn-primary"> Volver </a>
+        </div>
+      </div>
     </main>
 
     <footer class="footer">
-
-        <p>
-
-            SIGAB Libros © 2026
-
-        </p>
-
+      <p>SIGAB Libros © 2026</p>
     </footer>
-
-</body>
-
+  </body>
 </html>
