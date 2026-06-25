@@ -1,0 +1,18 @@
+CREATE DATABASE ProyectoGestion;
+
+USE ProyectoGestion;
+CREATE USER 'api_usergestion'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('12345');
+
+GRANT ALL PRIVILEGES ON ProyectoGestion.* TO 'api_usergestion'@'localhost';
+
+FLUSH PRIVILEGES;
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    token_recuperacion VARCHAR(255) NULL,
+    estado ENUM('Activo','Inactivo') DEFAULT 'Activo',
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
