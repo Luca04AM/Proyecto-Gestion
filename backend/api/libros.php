@@ -5,81 +5,162 @@ require_once "../config/database.php";
 
 $method = $_SERVER["REQUEST_METHOD"];
 
-if ($method !== "GET") {
-    http_response_code(405);
-    echo json_encode([
-        "success" => false,
-        "message" => "Método no permitido"
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
 try {
-    $id = isset($_GET["id"]) ? intval($_GET["id"]) : 0;
-    $buscar = isset($_GET["buscar"]) ? trim($_GET["buscar"]) : "";
 
-    if ($id > 0) {
-        $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
-                FROM libros
-                WHERE id = :id";
+    if ($method === "GET") {
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ":id" => $id
-        ]);
+        $id = isset($_GET["id"]) ? intval($_GET["id"]) : 0;
+        $buscar = isset($_GET["buscar"]) ? trim($_GET["buscar"]) : "";
 
-        $libro = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($id > 0) {
+            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
+                    FROM libros
+                    WHERE id = :id";
 
-        if ($libro) {
-            echo json_encode([
-                "success" => true,
-                "data" => $libro
-            ], JSON_UNESCAPED_UNICODE);
-        } else {
-            http_response_code(404);
-            echo json_encode([
-                "success" => false,
-                "message" => "El libro no existe"
-            ], JSON_UNESCAPED_UNICODE);
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ":id" => $id
+            ]);
+
+            $libro = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($libro) {
+                echo json_encode([
+                    "success" => true,
+                    "data" => $libro
+                ], JSON_UNESCAPED_UNICODE);
+            } else {
+                http_response_code(404);
+                echo json_encode([
+                    "success" => false,
+                    "message" => "El libro no existe"
+                ], JSON_UNESCAPED_UNICODE);
+            }
+
+            exit;
         }
+
+        if ($buscar !== "") {
+            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
+                    FROM libros
+                    WHERE titulo LIKE :buscar
+                       OR autor LIKE :buscar
+                       OR genero LIKE :buscar
+                    ORDER BY titulo ASC";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ":buscar" => "%" . $buscar . "%"
+            ]);
+        } else {
+            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
+                    FROM libros
+                    ORDER BY titulo ASC";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+        }
+
+        $libros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode([
+            "success" => true,
+            "cantidad" => count($libros),
+            "data" => $libros
+        ], JSON_UNESCAPED_UNICODE);
 
         exit;
     }
 
-    if ($buscar !== "") {
-        $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
-                FROM libros
-                WHERE titulo LIKE :buscar
-                   OR autor LIKE :buscar
-                   OR genero LIKE :buscar
-                ORDER BY titulo ASC";
+    if ($method === "POST") {
+
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        if (!$input) {
+            $input = $_POST;
+        }
+
+        $titulo = isset($input["titulo"]) ? trim($input["titulo"]) : "";
+        $autor = isset($input["autor"]) ? trim($input["autor"]) : "";
+        $genero = isset($input["genero"]) ? trim($input["genero"]) : "";
+        $descripcion = isset($input["descripcion"]) ? trim($input["descripcion"]) : "";
+        $portada = isset($input["portada"]) ? trim($input["portada"]) : "";
+        $estado = isset($input["estado"]) ? trim($input["estado"]) : "Disponible";
+
+        if ($titulo === "" || $autor === "" || $genero === "" || $descripcion === "") {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "Debe completar los campos obligatorios"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $estadosPermitidos = ["Disponible", "Prestado", "Reservado"];
+
+        if (!in_array($estado, $estadosPermitidos)) {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "El estado del libro no es válido"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $sqlValidar = "SELECT id FROM libros 
+                       WHERE titulo = :titulo 
+                       AND autor = :autor";
+
+        $stmtValidar = $pdo->prepare($sqlValidar);
+        $stmtValidar->execute([
+            ":titulo" => $titulo,
+            ":autor" => $autor
+        ]);
+
+        if ($stmtValidar->fetch(PDO::FETCH_ASSOC)) {
+            http_response_code(409);
+            echo json_encode([
+                "success" => false,
+                "message" => "El libro ya existe en el catálogo"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $sql = "INSERT INTO libros 
+                (titulo, autor, genero, descripcion, portada, estado)
+                VALUES 
+                (:titulo, :autor, :genero, :descripcion, :portada, :estado)";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            ":buscar" => "%" . $buscar . "%"
+            ":titulo" => $titulo,
+            ":autor" => $autor,
+            ":genero" => $genero,
+            ":descripcion" => $descripcion,
+            ":portada" => $portada,
+            ":estado" => $estado
         ]);
-    } else {
-        $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
-                FROM libros
-                ORDER BY titulo ASC";
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
+        echo json_encode([
+            "success" => true,
+            "message" => "Libro registrado correctamente",
+            "id" => $pdo->lastInsertId()
+        ], JSON_UNESCAPED_UNICODE);
+
+        exit;
     }
 
-    $libros = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    http_response_code(405);
     echo json_encode([
-        "success" => true,
-        "cantidad" => count($libros),
-        "data" => $libros
+        "success" => false,
+        "message" => "Método no permitido"
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode([
         "success" => false,
-        "message" => "Error al consultar los libros",
+        "message" => "Error en el proceso",
         "error" => $e->getMessage()
     ], JSON_UNESCAPED_UNICODE);
 }

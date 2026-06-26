@@ -4,129 +4,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Libro</title>
+    <title>Registrar Libro</title>
 
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="../css/catalogo.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script type="module" src="../components/Navbar.js"></script>
 </head>
 
 <body>
 
-    <nav class="navbar">
-        <div class="container menu-container">
-
-            <a href="../index.html" class="logo">
-                <div class="logo-circle">
-                    <img src="../img/logo.png" alt="Logo SIGAB">
-                </div>
-                <span>SIGAB Libros</span>
-            </a>
-
-        </div>
-    </nav>
+    <nav-bar></nav-bar>
 
     <main class="container">
 
         <div class="card">
 
-            <h1>Registro de Libro</h1>
+            <div class="encabezado-modulo">
+                <div>
+                    <h1>Registrar Libro</h1>
+                    <p>Complete la información para agregar un nuevo libro al catálogo.</p>
+                </div>
 
-            <p>
-                Complete la información requerida para registrar o actualizar un libro en el catálogo.
-            </p>
+                <div>
+                    <a href="catalogo.html" class="btn btn-secondary">
+                        Volver al catálogo
+                    </a>
+                </div>
+            </div>
 
-            <form>
+            <hr>
+
+            <div id="mensajeFormulario" class="mensaje-formulario" style="display:none;"></div>
+
+            <form id="formLibro">
 
                 <div class="form-grid">
 
                     <div>
-                        <label>Título *</label>
-                        <input type="text" placeholder="Ingrese el título del libro">
+                        <label for="titulo">Título</label>
+                        <input type="text" id="titulo" placeholder="Ingrese el título del libro">
                     </div>
 
                     <div>
-                        <label>Autor *</label>
-                        <input type="text" placeholder="Ingrese el autor">
+                        <label for="autor">Autor</label>
+                        <input type="text" id="autor" placeholder="Ingrese el autor del libro">
                     </div>
 
                     <div>
-                        <label>Género *</label>
-                        <select>
-                            <option>Seleccione un género</option>
-                            <option>Novela</option>
-                            <option>Ciencia Ficción</option>
-                            <option>Historia</option>
-                            <option>Educación</option>
+                        <label for="genero">Género</label>
+                        <input type="text" id="genero" placeholder="Ejemplo: Informática, Novela, Historia">
+                    </div>
+
+                    <div>
+                        <label for="estado">Estado</label>
+                        <select id="estado">
+                            <option value="Disponible">Disponible</option>
+                            <option value="Prestado">Prestado</option>
+                            <option value="Reservado">Reservado</option>
                         </select>
                     </div>
 
                     <div>
-                        <label>ISBN *</label>
-                        <input type="text" placeholder="Ingrese el ISBN">
-                    </div>
-
-                    <div>
-                        <label>Año de Publicación *</label>
-                        <input type="number" placeholder="Ej: 2024">
-                    </div>
-
-                    <div>
-                        <label>Estado *</label>
-                        <select>
-                            <option>Disponible</option>
-                            <option>Prestado</option>
-                            <option>Reservado</option>
-                        </select>
+                        <label for="portada">Portada</label>
+                        <input type="text" id="portada" placeholder="Ejemplo: libro.jpg">
                     </div>
 
                 </div>
 
                 <div class="campo-completo">
-
-                    <label>Descripción *</label>
-
-                    <textarea rows="5"
-                        placeholder="Ingrese una descripción del libro"></textarea>
-
-                </div>
-
-                <div class="campo-completo">
-
-                    <label>Portada *</label>
-
-                    <input type="file" accept="image/*">
-
-                </div>
-
-                <div class="vista-portada">
-
-                    <img src="../img/libros/1.jpg"
-                        alt="Vista previa">
-
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" rows="5" placeholder="Ingrese una descripción del libro"></textarea>
                 </div>
 
                 <div class="acciones-formulario">
-
                     <button type="submit" class="btn btn-primary">
                         Guardar
                     </button>
 
-                    <button type="button" class="btn btn-secondary">
-                        Guardar Cambios
+                    <button type="button" class="btn btn-secondary" id="btnLimpiarFormulario">
+                        Limpiar
                     </button>
-
-                    <button type="button" class="btn btn-accent">
-                        Eliminar
-                    </button>
-
-                    <a href="catalogo.html" class="btn btn-secondary">
-                        Cancelar
-                    </a>
-
                 </div>
 
             </form>
@@ -136,10 +98,11 @@
     </main>
 
     <footer class="footer">
-        <p>
-            SIGAB Libros © 2026
-        </p>
+        <p>SIGAB Libros © 2026</p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Controllers/formLibroController.js"></script>
 
 </body>
 
