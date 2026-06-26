@@ -62,8 +62,10 @@ class Navbar extends HTMLElement {
                                 <li><a href="${base}views/panelAdministrador.html">Panel</a></li>
                                 <li><a href="${base}views/autenticacion.html">Acceso</a></li>
                             </ul>
+                        </li>   
+                        <li>
+                            <a href="${base}views/login.html">Cerrar Sesión</a>
                         </li>
-
                     </ul>
 
                 </div>
