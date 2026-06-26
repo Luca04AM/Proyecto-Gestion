@@ -9,77 +9,20 @@
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
+    
     <link
         href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     <script type="module" src="Controllers/appController.js"></script>
+    <script src="../components/Navbar.js" defer></script>
 </head>
 
 
 <body>
 
     <!-- MENÚ PRINCIPAL -->
-    <nav class="navbar">
-        <div class="container menu-container">
-
-            <a href="index.html" class="logo">
-                <div class="logo-circle">
-                    <img src="../img/logo.png" alt="Logo SIGAB">
-                </div>
-                <span>SIGAB Libros</span>
-            </a>
-
-            <ul class="menu">
-
-                <li>
-                    <a href="index.html">Inicio</a>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Mantenimiento</a>
-
-                    <ul class="submenu">
-                        <li><a href="autores.html">Autores</a></li>
-                        <li><a href="genero.html">Géneros</a></li>
-                        <li><a href="portada.html">Portadas</a></li>
-                        <li><a href="usuario.html">Usuarios</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Circulación</a>
-
-                    <ul class="submenu">
-                        <li><a href="prestamo.html">Préstamos</a></li>
-                        <li><a href="devoluciones.html">Devoluciones</a></li>
-                        <li><a href="reservas.html">Reservas</a></li>
-                        <li><a href="multas.html">Multas</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Consultas</a>
-
-                    <ul class="submenu">
-                        <li><a href="catalogo.html">Catálogo</a></li>
-                        <li><a href="busqueda.html">Búsqueda</a></li>
-                        <li><a href="historial.html">Historial</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Administración</a>
-
-                    <ul class="submenu">
-                        <li><a href="notificaciones.html">Notificaciones</a></li>
-                        <li><a href="reportes.html">Reportes</a></li>
-                        <li><a href="panelAdministrador.html">Panel</a></li>
-                        <li><a href="autenticacion.html">Acceso</a></li>
-                    </ul>
-                </li>
-
-            </ul>
-
-        </div>
-    </nav>
+    <nav-bar></nav-bar>
 
     <main class="container">
         <div class="card">
