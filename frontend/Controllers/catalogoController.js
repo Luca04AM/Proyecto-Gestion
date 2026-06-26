@@ -47,6 +47,14 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on("click", ".btnEliminar", function () {
+        const idLibro = $(this).data("id");
+
+        if (confirm("¿Está seguro de que desea eliminar este libro?")) {
+            eliminarLibro(idLibro);
+        }
+    });
+
     function cargarLibros(buscar = "") {
         let url = "../../backend/api/libros.php";
 
@@ -139,6 +147,14 @@ $(document).ready(function () {
                         <a href="detalleLibro.html?id=${libro.id}" class="btn btn-secondary">
                             Ver
                         </a>
+
+                        <a href="formLibro.html?id=${libro.id}" class="btn btn-primary">
+                            Editar
+                        </a>
+
+                        <button class="btn btn-danger btnEliminar" data-id="${libro.id}">
+                            Eliminar
+                        </button>
                     </td>
                 </tr>
             `;
@@ -155,6 +171,31 @@ $(document).ready(function () {
         $("#tablaCatalogo").hide();
         $("#mensajeCatalogo").show();
         $("#paginaActual").text("0");
+    }
+
+    function eliminarLibro(id) {
+        $.ajax({
+            url: "../../backend/api/libros.php?id=" + encodeURIComponent(id),
+            type: "DELETE",
+            dataType: "json",
+            success: function (respuesta) {
+                if (respuesta.success) {
+                    alert(respuesta.message);
+                    cargarLibros($("#txtBuscar").val().trim());
+                } else {
+                    alert(respuesta.message);
+                }
+            },
+            error: function (xhr) {
+                let mensaje = "No se pudo eliminar el libro.";
+
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    mensaje = xhr.responseJSON.message;
+                }
+
+                alert(mensaje);
+            }
+        });
     }
 
 });

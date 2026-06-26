@@ -26,8 +26,8 @@
 
             <div class="encabezado-modulo">
                 <div>
-                    <h1>Registrar Libro</h1>
-                    <p>Complete la información para agregar un nuevo libro al catálogo.</p>
+                    <h1 id="tituloFormulario">Registrar Libro</h1>
+                    <p id="subtituloFormulario">Complete la información para agregar un nuevo libro al catálogo.</p>
                 </div>
 
                 <div>
@@ -42,6 +42,8 @@
             <div id="mensajeFormulario" class="mensaje-formulario" style="display:none;"></div>
 
             <form id="formLibro">
+
+                <input type="hidden" id="idLibro">
 
                 <div class="form-grid">
 
@@ -82,7 +84,7 @@
                 </div>
 
                 <div class="acciones-formulario">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">
                         Guardar
                     </button>
 

@@ -18,9 +18,7 @@ try {
                     WHERE id = :id";
 
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                ":id" => $id
-            ]);
+            $stmt->execute([":id" => $id]);
 
             $libro = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -145,6 +143,136 @@ try {
             "success" => true,
             "message" => "Libro registrado correctamente",
             "id" => $pdo->lastInsertId()
+        ], JSON_UNESCAPED_UNICODE);
+
+        exit;
+    }
+
+    if ($method === "PUT") {
+
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        $id = isset($input["id"]) ? intval($input["id"]) : 0;
+        $titulo = isset($input["titulo"]) ? trim($input["titulo"]) : "";
+        $autor = isset($input["autor"]) ? trim($input["autor"]) : "";
+        $genero = isset($input["genero"]) ? trim($input["genero"]) : "";
+        $descripcion = isset($input["descripcion"]) ? trim($input["descripcion"]) : "";
+        $portada = isset($input["portada"]) ? trim($input["portada"]) : "";
+        $estado = isset($input["estado"]) ? trim($input["estado"]) : "Disponible";
+
+        if ($id <= 0) {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "El id del libro es obligatorio"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($titulo === "" || $autor === "" || $genero === "" || $descripcion === "") {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "Debe completar los campos obligatorios"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $sqlExiste = "SELECT id FROM libros WHERE id = :id";
+        $stmtExiste = $pdo->prepare($sqlExiste);
+        $stmtExiste->execute([":id" => $id]);
+
+        if (!$stmtExiste->fetch(PDO::FETCH_ASSOC)) {
+            http_response_code(404);
+            echo json_encode([
+                "success" => false,
+                "message" => "El libro que desea editar no existe"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $sqlDuplicado = "SELECT id FROM libros
+                         WHERE titulo = :titulo
+                         AND autor = :autor
+                         AND id <> :id";
+
+        $stmtDuplicado = $pdo->prepare($sqlDuplicado);
+        $stmtDuplicado->execute([
+            ":titulo" => $titulo,
+            ":autor" => $autor,
+            ":id" => $id
+        ]);
+
+        if ($stmtDuplicado->fetch(PDO::FETCH_ASSOC)) {
+            http_response_code(409);
+            echo json_encode([
+                "success" => false,
+                "message" => "Ya existe otro libro con el mismo título y autor"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $sql = "UPDATE libros
+                SET titulo = :titulo,
+                    autor = :autor,
+                    genero = :genero,
+                    descripcion = :descripcion,
+                    portada = :portada,
+                    estado = :estado
+                WHERE id = :id";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ":titulo" => $titulo,
+            ":autor" => $autor,
+            ":genero" => $genero,
+            ":descripcion" => $descripcion,
+            ":portada" => $portada,
+            ":estado" => $estado,
+            ":id" => $id
+        ]);
+
+        echo json_encode([
+            "success" => true,
+            "message" => "Libro actualizado correctamente"
+        ], JSON_UNESCAPED_UNICODE);
+
+        exit;
+    }
+
+    if ($method === "DELETE") {
+
+        $id = isset($_GET["id"]) ? intval($_GET["id"]) : 0;
+
+        if ($id <= 0) {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "El id del libro es obligatorio"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $sqlExiste = "SELECT id FROM libros WHERE id = :id";
+        $stmtExiste = $pdo->prepare($sqlExiste);
+        $stmtExiste->execute([":id" => $id]);
+
+        if (!$stmtExiste->fetch(PDO::FETCH_ASSOC)) {
+            http_response_code(404);
+            echo json_encode([
+                "success" => false,
+                "message" => "El libro que desea eliminar no existe"
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $sql = "DELETE FROM libros WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([":id" => $id]);
+
+        echo json_encode([
+            "success" => true,
+            "message" => "Libro eliminado correctamente"
         ], JSON_UNESCAPED_UNICODE);
 
         exit;
