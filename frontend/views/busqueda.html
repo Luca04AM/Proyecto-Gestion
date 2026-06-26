@@ -11,215 +11,100 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <script type="module" src="../components/Navbar.js"></script>
 </head>
 
 <body>
 
-    <nav class="navbar">
-        <div class="container menu-container">
-
-            <a href="../index.html" class="logo">
-
-                <div class="logo-circle">
-                    <img src="../img/logo.png" alt="Logo">
-                </div>
-
-                <span>SIGAB Libros</span>
-
-            </a>
-
-        </div>
-    </nav>
+    <nav-bar></nav-bar>
 
     <main class="container">
 
         <div class="card">
 
-            <h1>Búsqueda de Libros</h1>
+            <div class="encabezado-modulo">
+                <div>
+                    <h1>Búsqueda de Libros</h1>
+                    <p>Busque libros por título, autor o palabras relacionadas.</p>
+                </div>
+            </div>
 
-            <p>
-                Encuentre libros por título, autor o palabras relacionadas.
-            </p>
-
-            <!-- FORMULARIO DE BÚSQUEDA -->
+            <hr>
 
             <div class="busqueda-form">
 
-                <div class="campo-busqueda">
-
-                    <label>Término de búsqueda</label>
-
-                    <input type="text"
-                        placeholder="Ingrese título o autor">
-
+                <div>
+                    <label for="txtBusqueda">Buscar libro</label>
+                    <input 
+                        type="text" 
+                        id="txtBusqueda" 
+                        placeholder="Ingrese título, autor o palabra clave"
+                    >
                 </div>
 
-                <div class="campo-busqueda">
-
-                    <label>Buscar por</label>
-
-                    <select>
-                        <option>Título</option>
-                        <option>Autor</option>
-                        <option>Todos</option>
+                <div>
+                    <label for="tipoBusqueda">Tipo de búsqueda</label>
+                    <select id="tipoBusqueda">
+                        <option value="general">General</option>
+                        <option value="titulo">Título</option>
+                        <option value="autor">Autor</option>
                     </select>
-
                 </div>
 
                 <div class="acciones-busqueda">
-
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary" id="btnBuscarLibro">
                         Buscar
                     </button>
 
-                    <button class="btn btn-secondary">
+                    <button class="btn btn-secondary" id="btnLimpiarBusqueda">
                         Limpiar
                     </button>
-
                 </div>
 
             </div>
 
         </div>
 
-        <!-- RESULTADOS -->
-
         <div class="card resultados-busqueda">
 
-            <h2>Resultados encontrados</h2>
+            <h2>Resultados de búsqueda</h2>
 
-            <table>
+            <div id="mensajeBusqueda" class="mensaje-vacio" style="display:none;">
+                <h3>No se encontraron resultados</h3>
+                <p>No existen libros relacionados con el término ingresado.</p>
+            </div>
+
+            <table id="tablaBusqueda">
 
                 <thead>
-
                     <tr>
+                        <th>Portada</th>
                         <th>Título</th>
                         <th>Autor</th>
+                        <th>Género</th>
                         <th>Estado</th>
-                        <th>Detalle</th>
+                        <th>Acciones</th>
                     </tr>
-
                 </thead>
 
-                <tbody>
-
-                    <tr>
-
-                        <td>El Principito</td>
-
-                        <td>
-                            Antoine de Saint-Exupéry
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-disponible">
-                                Disponible
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a href="detalleLibro.html"
-                                class="btn btn-primary">
-
-                                Ver
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>Cien Años de Soledad</td>
-
-                        <td>
-                            Gabriel García Márquez
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-prestado">
-                                Prestado
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a href="detalleLibro.html"
-                                class="btn btn-primary">
-
-                                Ver
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>Don Quijote de la Mancha</td>
-
-                        <td>
-                            Miguel de Cervantes
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-disponible">
-                                Disponible
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a href="detalleLibro.html"
-                                class="btn btn-primary">
-
-                                Ver
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
+                <tbody id="tbodyBusqueda">
+                    <!-- Los resultados se cargan desde el API -->
                 </tbody>
 
             </table>
 
         </div>
 
-        <!-- MENSAJE SIN RESULTADOS -->
-
-        <div class="card mensaje-vacio">
-
-            <h2>Sin resultados</h2>
-
-            <p>
-                No se encontraron resultados para la búsqueda realizada.
-            </p>
-
-        </div>
-
     </main>
 
     <footer class="footer">
-
-        <p>
-            SIGAB Libros © 2026
-        </p>
-
+        <p>SIGAB Libros © 2026</p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Controllers/busquedaController.js"></script>
 
 </body>
 
