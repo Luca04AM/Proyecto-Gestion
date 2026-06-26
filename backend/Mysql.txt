@@ -16,3 +16,15 @@ CREATE TABLE usuarios (
     estado ENUM('Activo','Inactivo') DEFAULT 'Activo',
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE libros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL,
+    autor VARCHAR(150) NOT NULL,
+    genero VARCHAR(100) NOT NULL,
+    descripcion TEXT NOT NULL,
+    portada VARCHAR(255),
+    estado ENUM('Disponible', 'Prestado', 'Reservado') DEFAULT 'Disponible',
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
