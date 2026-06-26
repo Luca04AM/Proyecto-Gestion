@@ -1,0 +1,228 @@
+/* =====================================
+   PALETA OFICIAL - SIGAB LIBROS
+   ===================================== */
+
+:root{
+    --color-dark-green:#0A3323;
+    --color-moss-green:#839958;
+    --color-beige:#F7F4D5;
+    --color-rosy-brown:#D3968C;
+    --color-midnight-green:#105666;
+
+    --color-fondo:#F7F4D5;
+    --color-fondo-secundario:#FFFFFF;
+    --color-texto:#0A3323;
+
+    --color-borde:#839958;
+    --color-sombra:rgba(10,51,35,.18);
+}
+
+/* =====================================
+   GENERALES
+   ===================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:var(--color-fondo);
+    color:var(--color-texto);
+}
+
+/* =====================================
+   LOGIN
+   ===================================== */
+
+.login-page{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:25px;
+    background:
+        linear-gradient(rgba(247,244,213,.88), rgba(247,244,213,.92)),
+        radial-gradient(circle at top left, rgba(131,153,88,.35), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(16,86,102,.25), transparent 35%);
+}
+
+.login-card{
+    width:100%;
+    max-width:430px;
+    background:var(--color-fondo-secundario);
+    padding:38px 34px;
+    border-radius:22px;
+    box-shadow:0 12px 35px var(--color-sombra);
+    border:1px solid rgba(131,153,88,.35);
+}
+
+/* =====================================
+   LOGO
+   ===================================== */
+
+.logo-container{
+    display:flex;
+    justify-content:center;
+    margin-bottom:20px;
+}
+
+.login-logo{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:50%;
+    border:4px solid var(--color-moss-green);
+    background:var(--color-beige);
+    padding:6px;
+    box-shadow:0 5px 18px rgba(10,51,35,.20);
+}
+
+/* =====================================
+   TEXTOS
+   ===================================== */
+
+.login-title{
+    font-family:'Merriweather',serif;
+    font-size:30px;
+    font-weight:700;
+    color:var(--color-dark-green);
+    margin-bottom:8px;
+}
+
+.login-subtitle{
+    color:var(--color-midnight-green);
+    font-size:15px;
+    line-height:1.6;
+}
+
+/* =====================================
+   FORMULARIO
+   ===================================== */
+
+.form-label{
+    font-weight:600;
+    color:var(--color-dark-green);
+    font-size:14px;
+    margin-bottom:6px;
+}
+
+.input-login{
+    height:48px;
+    border-radius:10px;
+    border:1px solid var(--color-borde);
+    color:var(--color-texto);
+    font-size:15px;
+    font-family:'Poppins',sans-serif;
+}
+
+.input-login::placeholder{
+    color:rgba(10,51,35,.55);
+}
+
+.input-login:focus{
+    border-color:var(--color-midnight-green);
+    box-shadow:0 0 0 .18rem rgba(16,86,102,.20);
+}
+
+/* =====================================
+   BOTONES
+   ===================================== */
+
+.btn-login{
+    background:var(--color-dark-green);
+    color:white;
+    border:none;
+    border-radius:10px;
+    height:48px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.btn-login:hover{
+    background:var(--color-midnight-green);
+    color:white;
+    transform:translateY(-2px);
+}
+
+.btn-outline-login{
+    border:1px solid var(--color-moss-green);
+    color:var(--color-dark-green);
+    background:white;
+    border-radius:10px;
+    height:48px;
+    font-weight:600;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.3s;
+}
+
+.btn-outline-login:hover{
+    background:var(--color-moss-green);
+    color:white;
+    transform:translateY(-2px);
+}
+
+/* =====================================
+   ENLACES
+   ===================================== */
+
+.register-text{
+    font-size:14px;
+    color:var(--color-midnight-green);
+}
+
+.register-text a{
+    color:var(--color-dark-green);
+    font-weight:700;
+    text-decoration:none;
+}
+
+.register-text a:hover{
+    color:var(--color-rosy-brown);
+    text-decoration:underline;
+}
+
+/* =====================================
+   ALERTAS
+   ===================================== */
+
+.alert{
+    border-radius:10px;
+    font-size:14px;
+    font-family:'Poppins',sans-serif;
+}
+
+.alert-success{
+    background:rgba(131,153,88,.18);
+    color:var(--color-dark-green);
+    border:1px solid var(--color-moss-green);
+}
+
+.alert-danger{
+    background:rgba(211,150,140,.20);
+    color:#7a2e25;
+    border:1px solid var(--color-rosy-brown);
+}
+
+/* =====================================
+   RESPONSIVE
+   ===================================== */
+
+@media(max-width:500px){
+    .login-card{
+        padding:30px 24px;
+    }
+
+    .login-title{
+        font-size:26px;
+    }
+
+    .login-logo{
+        width:105px;
+        height:105px;
+    }
+}
