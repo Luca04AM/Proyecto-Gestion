@@ -4,85 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo</title>
+    <title>Catálogo de Libros</title>
 
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="../css/catalogo.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <script type="module" src="Controllers/appController.js"></script>
+    <script type="module" src="../components/Navbar.js"></script>
 </head>
-
 
 <body>
 
-    <!-- MENÚ PRINCIPAL -->
-    <nav class="navbar">
-        <div class="container menu-container">
-
-            <a href="../index.html" class="logo">
-                <div class="logo-circle">
-                    <img src="../img/logo.png" alt="Logo SIGAB">
-                </div>
-                <span>SIGAB Libros</span>
-            </a>
-
-            <ul class="menu">
-
-                <li>
-                    <a href="../index.html">Inicio</a>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#">Mantenimiento</a>
-
-                    <ul class="submenu">
-                        <li><a href="autores.html">Autores</a></li>
-                        <li><a href="genero.html">Géneros</a></li>
-                        <li><a href="portada.html">Portadas</a></li>
-                        <li><a href="usuario.html">Usuarios</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#">Circulación</a>
-
-                    <ul class="submenu">
-                        <li><a href="prestamo.html">Préstamos</a></li>
-                        <li><a href="devoluciones.html">Devoluciones</a></li>
-                        <li><a href="reservas.html">Reservas</a></li>
-                        <li><a href="multas.html">Multas</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#">Consultas</a>
-
-                    <ul class="submenu">
-                        <li><a href="catalogo.html">Catálogo</a></li>
-                        <li><a href="busqueda.html">Búsqueda</a></li>
-                        <li><a href="historial.html">Historial</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#">Administración</a>
-
-                    <ul class="submenu">
-                        <li><a href="notificaciones.html">Notificaciones</a></li>
-                        <li><a href="reportes.html">Reportes</a></li>
-                        <li><a href="panelAdministrador.html">Panel</a></li>
-                        <li><a href="autenticacion.html">Acceso</a></li>
-                    </ul>
-                </li>
-
-            </ul>
-
-        </div>
-    </nav>
+    <nav-bar></nav-bar>
 
     <main class="container">
 
@@ -92,59 +28,56 @@
 
                 <div>
                     <h1>Catálogo de Libros</h1>
-                    <p>Consulta y administración del catálogo bibliográfico.</p>
-                </div>
-
-                <div>
-                    <a href="formLibro.html" class="btn btn-primary">
-                        Nuevo Libro
-                    </a>
+                    <p>Consulta los libros disponibles dentro del sistema.</p>
                 </div>
 
             </div>
 
             <hr>
 
-            <div class="filtros-catalogo">
+            <div class="busqueda-form">
 
                 <div>
-                    <label>Título</label>
-                    <input type="text" placeholder="Buscar por título">
-                </div>
-
-                <div>
-                    <label>Autor</label>
-                    <input type="text" placeholder="Buscar por autor">
-                </div>
-
-                <div>
-                    <label>Género</label>
-                    <select>
-                        <option>Todos</option>
-                        <option>Novela</option>
-                        <option>Ciencia Ficción</option>
-                        <option>Historia</option>
-                        <option>Educación</option>
-                    </select>
+                    <label>Buscar libro</label>
+                    <input 
+                        type="text" 
+                        id="txtBuscar" 
+                        placeholder="Buscar por título, autor o género"
+                    >
                 </div>
 
                 <div>
                     <label>Estado</label>
-                    <select>
-                        <option>Todos</option>
-                        <option>Disponible</option>
-                        <option>Prestado</option>
-                        <option>Reservado</option>
+                    <select id="selectEstado">
+                        <option value="">Todos</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Prestado">Prestado</option>
+                        <option value="Reservado">Reservado</option>
                     </select>
+                </div>
+
+                <div class="acciones-busqueda">
+                    <button class="btn btn-primary" id="btnBuscar">
+                        Buscar
+                    </button>
+
+                    <button class="btn btn-secondary" id="btnLimpiar">
+                        Limpiar
+                    </button>
                 </div>
 
             </div>
 
         </div>
 
-        <div class="card">
+        <div class="card resultados-busqueda">
 
-            <table>
+            <div id="mensajeCatalogo" class="mensaje-vacio" style="display:none;">
+                <h3>No hay libros disponibles</h3>
+                <p>No se encontraron libros relacionados con la búsqueda realizada.</p>
+            </div>
+
+            <table id="tablaCatalogo">
 
                 <thead>
                     <tr>
@@ -153,92 +86,26 @@
                         <th>Autor</th>
                         <th>Género</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
                     </tr>
                 </thead>
 
-                <tbody>
-
-                    <tr>
-                        <td>
-                            <img src="../img/catalogo/2.jpeg" class="mini-portada">
-                        </td>
-                        <td>El Principito</td>
-                        <td>Antoine de Saint-Exupéry</td>
-                        <td>Novela</td>
-                        <td>
-                            <span class="badge badge-disponible">
-                                Disponible
-                            </span>
-                        </td>
-                        <td>
-                            <a href="detalleLibro.html" class="btn btn-secondary">
-                                Ver
-                            </a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <img src="../img/catalogo/3.jpg" class="mini-portada">
-                        </td>
-                        <td>1984</td>
-                        <td>George Orwell</td>
-                        <td>Ciencia Ficción</td>
-                        <td>
-                            <span class="badge badge-prestado">
-                                Prestado
-                            </span>
-                        </td>
-                        <td>
-                            <a href="detalleLibro.html" class="btn btn-secondary">
-                                Ver
-                            </a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <img src="../img/catalogo/1.jpg" class="mini-portada">
-                        </td>
-                        <td>Don Quijote</td>
-                        <td>Miguel de Cervantes</td>
-                        <td>Novela</td>
-                        <td>
-                            <span class="badge badge-atrasado">
-                                Reservado
-                            </span>
-                        </td>
-                        <td>
-                            <a href="detalleLibro.html" class="btn btn-secondary">
-                                Ver
-                            </a>
-                        </td>
-                    </tr>
-
+                <tbody id="tbodyLibros">
+                    <!-- Los libros se cargan desde el API -->
                 </tbody>
 
             </table>
 
             <div class="paginacion">
 
-                <button class="btn btn-secondary">
+                <button class="btn btn-secondary" id="btnAnterior">
                     Anterior
                 </button>
 
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" id="paginaActual">
                     1
                 </button>
 
-                <button class="btn btn-secondary">
-                    2
-                </button>
-
-                <button class="btn btn-secondary">
-                    3
-                </button>
-
-                <button class="btn btn-secondary">
+                <button class="btn btn-secondary" id="btnSiguiente">
                     Siguiente
                 </button>
 
@@ -248,15 +115,12 @@
 
     </main>
 
-   
-    <!-- PIE DE PÁGINA -->
     <footer class="footer">
-        <p>
-            SIGAB Libros © 2026
-        </p>
+        <p>SIGAB Libros © 2026</p>
     </footer>
 
-    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Controllers/catalogoController.js"></script>
 
 </body>
 

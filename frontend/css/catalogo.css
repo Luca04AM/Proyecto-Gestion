@@ -235,3 +235,38 @@ table td{
     }
 
 }
+
+.mensaje-vacio {
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    border: 2px dashed var(--color-borde);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.mensaje-vacio h3 {
+    margin-bottom: 8px;
+}
+
+.badge-reservado {
+    background: var(--color-rosy-brown);
+    color: white;
+}
+
+.portada-placeholder {
+    width: 60px;
+    height: 90px;
+    border-radius: 6px;
+    border: 1px solid var(--color-borde);
+    background: var(--color-beige);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.badge-reservado {
+    background: var(--color-rosy-brown);
+    color: white;
+}
