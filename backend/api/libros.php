@@ -10,12 +10,41 @@ if ($method !== "GET") {
     echo json_encode([
         "success" => false,
         "message" => "Método no permitido"
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 try {
+    $id = isset($_GET["id"]) ? intval($_GET["id"]) : 0;
     $buscar = isset($_GET["buscar"]) ? trim($_GET["buscar"]) : "";
+
+    if ($id > 0) {
+        $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
+                FROM libros
+                WHERE id = :id";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ":id" => $id
+        ]);
+
+        $libro = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($libro) {
+            echo json_encode([
+                "success" => true,
+                "data" => $libro
+            ], JSON_UNESCAPED_UNICODE);
+        } else {
+            http_response_code(404);
+            echo json_encode([
+                "success" => false,
+                "message" => "El libro no existe"
+            ], JSON_UNESCAPED_UNICODE);
+        }
+
+        exit;
+    }
 
     if ($buscar !== "") {
         $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro

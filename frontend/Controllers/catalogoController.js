@@ -135,6 +135,11 @@ $(document).ready(function () {
                             ${libro.estado}
                         </span>
                     </td>
+                    <td>
+                        <a href="detalleLibro.html?id=${libro.id}" class="btn btn-secondary">
+                            Ver
+                        </a>
+                    </td>
                 </tr>
             `;
 
