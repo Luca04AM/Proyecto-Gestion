@@ -265,6 +265,262 @@
 
         <br>
 
+        <div class="card">
+
+            <h1>Historial de Multas</h1>
+
+            <p>
+                Consulte las multas generadas por retrasos en la devolución de libros,
+                permitiendo conocer cuáles se encuentran pendientes y cuáles ya fueron pagadas.
+            </p>
+
+        </div>
+
+        <br>
+        <div class="card">
+
+            <h2>Filtros de Multas</h2>
+
+            <form>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Estado</label>
+
+                        <select>
+
+                            <option>Todos</option>
+                            <option>Pendiente</option>
+                            <option>Pagada</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Libro</label>
+
+                        <input type="text" placeholder="Nombre del libro">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Fecha Inicio</label>
+
+                        <input type="date">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Fecha Fin</label>
+
+                        <input type="date">
+
+                    </div>
+
+                </div>
+
+                <div class="acciones-form">
+
+                    <button class="btn btn-primary">
+
+                        Buscar
+
+                    </button>
+
+                    <button type="reset" class="btn btn-secondary">
+
+                        Limpiar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <br>
+
+        <div class="card card-tabla">
+
+            <h2>Listado de Multas</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Libro</th>
+                        <th>Motivo</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>1</td>
+                        <td>Harry Potter</td>
+                        <td>Entrega tardía</td>
+                        <td>₡2 500</td>
+                        <td>12/06/2026</td>
+
+                        <td>
+
+                            <span class="badge badge-disponible">
+
+                                Pendiente
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a href="detalleMulta.html" class="btn btn-secondary">
+
+                                Ver Detalle
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>2</td>
+                        <td>Boulevard</td>
+                        <td>Entrega tardía</td>
+                        <td>₡1 500</td>
+                        <td>28/05/2026</td>
+
+                        <td>
+
+                            <span class="badge badge-disponible">
+
+                                Pagada
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a href="detalleMulta.html" class="btn btn-secondary">
+
+                                Ver Detalle
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>3</td>
+                        <td>El Principito</td>
+                        <td>Daño del libro</td>
+                        <td>₡5 000</td>
+                        <td>02/04/2026</td>
+
+                        <td>
+
+                            <span class="badge badge-disponible">
+
+                                Pagada
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a href="detalleMulta.html" class="btn btn-secondary">
+
+                                Ver Detalle
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <div style="margin-top:20px;">
+
+                <p>
+
+                    No existen multas registradas para este usuario.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Resumen de Multas</h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Total de Multas</label>
+
+                    <input type="text" value="3" readonly>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Pendientes</label>
+
+                    <input type="text" value="1" readonly>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Pagadas</label>
+
+                    <input type="text" value="2" readonly>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Total Adeudado</label>
+
+                    <input type="text" value="₡2 500" readonly>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <br>
+
     </main>
 
 
