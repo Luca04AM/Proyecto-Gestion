@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <link rel="stylesheet" href="../css/estilos.css">
+
+    <script src="../components/Navbar.js" defer></script>
+</head>
+
+<body>
+
+    <nav-bar></nav-bar>
+
+    <main class="container py-4">
+
+        <h1 class="mb-4">Módulo de Reportes</h1>
+
+        <ul class="nav nav-tabs mb-4">
+
+            <li class="nav-item">
+                <button class="nav-link active"
+                    data-bs-toggle="tab"
+                    data-bs-target="#prestamos">
+                    Reporte de préstamos
+                </button>
+            </li>
+
+            <li class="nav-item">
+                <button class="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#devoluciones">
+                    Reporte de devoluciones
+                </button>
+            </li>
+
+            <li class="nav-item">
+                <button class="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#multas">
+                    Reporte de multas
+                </button>
+            </li>
+
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- REPORTE PRESTAMOS -->
+            <section class="tab-pane fade show active" id="prestamos">
+
+                <div class="card">
+
+                    <div class="card-header">
+                        Reporte de préstamos
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    Fecha inicio
+                                </label>
+                                <input type="date"
+                                    class="form-control"
+                                    id="fechaInicioPrestamo">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    Fecha fin
+                                </label>
+                                <input type="date"
+                                    class="form-control"
+                                    id="fechaFinPrestamo">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    Estado
+                                </label>
+
+                                <select class="form-select"
+                                    id="estadoPrestamo">
+                                    <option value="">
+                                        Todos
+                                    </option>
+                                    <option value="Activo">
+                                        Activo
+                                    </option>
+                                    <option value="Devuelto">
+                                        Devuelto
+                                    </option>
+                                    <option value="Vencido">
+                                        Vencido
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-primary mb-3">
+                            Generar reporte
+                        </button>
+
+                        <button class="btn btn-success mb-3">
+                            Exportar Excel
+                        </button>
+
+                        <button class="btn btn-danger mb-3">
+                            Exportar PDF
+                        </button>
+
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered table-hover">
+
+                                <thead class="table-light">
+
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Libro</th>
+                                        <th>Fecha préstamo</th>
+                                        <th>Fecha devolución</th>
+                                        <th>Estado</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="tablaReportePrestamos"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- REPORTE DEVOLUCIONES -->
+            <section class="tab-pane fade" id="devoluciones">
+
+                <div class="card">
+
+                    <div class="card-header">
+                        Reporte de devoluciones
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Fecha inicio
+                                </label>
+
+                                <input type="date"
+                                    class="form-control">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Fecha fin
+                                </label>
+
+                                <input type="date"
+                                    class="form-control">
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-primary mb-3">
+                            Generar reporte
+                        </button>
+
+                        <button class="btn btn-success mb-3">
+                            Exportar Excel
+                        </button>
+
+                        <button class="btn btn-danger mb-3">
+                            Exportar PDF
+                        </button>
+
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered table-hover">
+
+                                <thead class="table-light">
+
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Libro</th>
+                                        <th>Fecha devolución</th>
+                                        <th>Días atraso</th>
+                                        <th>Multa</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="tablaReporteDevoluciones"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- REPORTE MULTAS -->
+            <section class="tab-pane fade" id="multas">
+
+                <div class="card">
+
+                    <div class="card-header">
+                        Reporte de multas
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    Estado
+                                </label>
+
+                                <select class="form-select">
+
+                                    <option value="">
+                                        Todas
+                                    </option>
+
+                                    <option value="Pendiente">
+                                        Pendientes
+                                    </option>
+
+                                    <option value="Pagada">
+                                        Pagadas
+                                    </option>
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    Fecha inicio
+                                </label>
+
+                                <input type="date"
+                                    class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    Fecha fin
+                                </label>
+
+                                <input type="date"
+                                    class="form-control">
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-primary mb-3">
+                            Generar reporte
+                        </button>
+
+                        <button class="btn btn-success mb-3">
+                            Exportar Excel
+                        </button>
+
+                        <button class="btn btn-danger mb-3">
+                            Exportar PDF
+                        </button>
+
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered table-hover">
+
+                                <thead class="table-light">
+
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Libro</th>
+                                        <th>Monto</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="tablaReporteMultas"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/reportes.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Autores - SIGAB Libros</title>
+
+    <link rel="stylesheet" href="../css/estilos.css" />
+    <link rel="stylesheet" href="../css/autor.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="module" src="../Controllers/autoresController.js"></script>
+  </head>
+
+  <body>
+    <!-- MENÚ PRINCIPAL -->
+
+    <nav class="navbar">
+      <div class="container menu-container">
+        <a href="../index.html" class="logo">
+          <div class="logo-circle">
+            <img src="../img/logo.png" alt="Logo SIGAB" />
+          </div>
+
+          <span>SIGAB Libros</span>
+        </a>
+
+        <ul class="menu">
+          <li>
+            <a href="../index.html">Inicio</a>
+          </li>
+
+          <li class="dropdown">
+            <a href="#">Mantenimiento</a>
+
+            <ul class="submenu">
+              <li><a href="autores.html">Autores</a></li>
+              <li><a href="genero.html">Géneros</a></li>
+              <li><a href="portada.html">Portadas</a></li>
+              <li><a href="usuario.html">Usuarios</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <a href="#">Circulación</a>
+
+            <ul class="submenu">
+              <li><a href="prestamo.html">Préstamos</a></li>
+              <li><a href="devoluciones.html">Devoluciones</a></li>
+              <li><a href="reservas.html">Reservas</a></li>
+              <li><a href="multas.html">Multas</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <a href="#">Consultas</a>
+
+            <ul class="submenu">
+              <li><a href="catalogo.html">Catálogo</a></li>
+              <li><a href="busqueda.html">Búsqueda</a></li>
+              <li><a href="historial.html">Historial</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <a href="#">Administración</a>
+
+            <ul class="submenu">
+              <li><a href="notificaciones.html">Notificaciones</a></li>
+              <li><a href="reportes.html">Reportes</a></li>
+              <li><a href="panelAdministrador.html">Panel</a></li>
+              <li><a href="autenticacion.html">Acceso</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+
+    <main class="container">
+      <div class="card">
+        <h1>Gestión de Autores</h1>
+
+        <p>
+          Administre los autores registrados en el Sistema de Gestión
+          Bibliotecaria SIGAB Libros.
+        </p>
+      </div>
+
+      <br />
+
+      <!-- FORMULARIO -->
+
+      <div class="card">
+        <h2>Registrar Autor</h2>
+
+        <form>
+          <input type="hidden" id="txtId" />
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label> Fotografía del Autor </label>
+
+              <div class="preview-imagen">
+                <img src="../img/autores/gabriel.jpg" alt="Autor" />
+
+                <p>gabriel.jpg</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label> Estado </label>
+
+              <select id="txtEstado">
+                <option>Activo</option>
+                <option>Inactivo</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label> Nombre Completo </label>
+
+              <input
+                type="text"
+                id="txtNombre"
+                placeholder="Ingrese el nombre completo"
+              />
+            </div>
+
+            <div class="form-group">
+              <label> Nacionalidad </label>
+
+              <input
+                type="text"
+                id="txtNacionalidad"
+                placeholder="Ingrese la nacionalidad"
+              />
+            </div>
+
+            <div class="form-group">
+              <label> Fecha de Nacimiento </label>
+
+              <input type="date" id="txtFechaNacimiento" />
+            </div>
+
+            <div class="form-group form-group-full">
+              <label> Biografía </label>
+
+              <textarea
+                rows="5"
+                id="txtBiografia"
+                placeholder="Ingrese una breve biografía del autor"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="acciones-form">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+
+            <button type="reset" class="btn btn-secondary">Limpiar</button>
+          </div>
+        </form>
+      </div>
+
+      <br />
+
+      <!-- BUSCADOR -->
+
+      <div class="card busqueda">
+        <h2>Buscar Autor</h2>
+
+        <input type="text" placeholder="Buscar por nombre" />
+      </div>
+
+      <br />
+
+      <!-- TABLA -->
+
+      <div class="card card-tabla">
+        <h2>Listado de Autores</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Foto</th>
+              <th>Nombre</th>
+              <th>Nacionalidad</th>
+              <th>Fecha Nacimiento</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>1</td>
+
+              <td>
+                <img
+                  src="../img/autores/gabriel.jpg"
+                  class="tabla-imagen"
+                  alt="Gabriel García Márquez"
+                />
+              </td>
+
+              <td>Gabriel García Márquez</td>
+
+              <td>Colombiana</td>
+
+              <td>06/03/1927</td>
+
+              <td>
+                <span class="badge badge-disponible"> Activo </span>
+              </td>
+
+              <td>
+                <div class="acciones-tabla">
+                  <a href="editarAutor.html" class="btn btn-editar"> Editar </a>
+
+                  <button class="btn btn-accent">Eliminar</button>
+
+                  <a href="detalleAutor.html" class="btn btn-secondary">
+                    Información
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>2</td>
+
+              <td>
+                <img
+                  src="../img/autores/cortazar.jpg"
+                  class="tabla-imagen"
+                  alt="Julio Cortázar"
+                />
+              </td>
+
+              <td>Julio Cortázar</td>
+
+              <td>Argentina</td>
+
+              <td>26/08/1914</td>
+
+              <td>
+                <span class="badge badge-disponible"> Activo </span>
+              </td>
+
+              <td>
+                <div class="acciones-tabla">
+                  <a href="editarAutor.html" class="btn btn-editar"> Editar </a>
+
+                  <button class="btn btn-accent">Eliminar</button>
+
+                  <a href="detalleAutor.html" class="btn btn-secondary">
+                    Información
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>3</td>
+
+              <td>
+                <img
+                  src="../img/autores/allende.jpg"
+                  class="tabla-imagen"
+                  alt="Isabel Allende"
+                />
+              </td>
+
+              <td>Isabel Allende</td>
+
+              <td>Chilena</td>
+
+              <td>02/08/1942</td>
+
+              <td>
+                <span class="badge badge-disponible"> Activo </span>
+              </td>
+
+              <td>
+                <div class="acciones-tabla">
+                  <a href="editarAutor.html" class="btn btn-editar"> Editar </a>
+
+                  <button class="btn btn-accent">Eliminar</button>
+                  <a href="detalleAutor.html" class="btn btn-secondary">
+                    Información
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <br />
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+      <p>SIGAB Libros © 2026</p>
+    </footer>
+  </body>
+</html>
