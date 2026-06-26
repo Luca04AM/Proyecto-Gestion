@@ -1,10 +1,10 @@
 <?php
 
 $host = "127.0.0.1";
-$port = "3315";
+$port = "3307";
 $dbname = "proyectogestion";
-$username = "api_usergestion";
-$password = "12345";
+$username = "root";
+$password = "";
 
 try {
     $pdo = new PDO(

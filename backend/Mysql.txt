@@ -18,6 +18,7 @@ CREATE TABLE usuarios (
 );
 
 
+<<<<<<< Updated upstream
 CREATE TABLE libros (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(150) NOT NULL,
@@ -27,4 +28,15 @@ CREATE TABLE libros (
     portada VARCHAR(255),
     estado ENUM('Disponible', 'Prestado', 'Reservado') DEFAULT 'Disponible',
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+=======
+
+CREATE TABLE autores(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    nacionalidad VARCHAR(100),
+    fecha_nacimiento DATE,
+    biografia TEXT,
+    fotografia VARCHAR(255),
+    estado ENUM('Activo','Inactivo') DEFAULT 'Activo'
+>>>>>>> Stashed changes
 );
