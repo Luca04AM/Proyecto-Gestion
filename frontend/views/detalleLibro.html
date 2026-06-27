@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Libro</title>
+
+    <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="../css/catalogo.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script type="module" src="../components/Navbar.js"></script>
+</head>
+
+<body>
+
+    <nav-bar></nav-bar>
+
+    <main class="container">
+
+        <div class="card">
+
+            <div class="encabezado-modulo">
+                <div>
+                    <h1>Detalle del Libro</h1>
+                    <p>Información completa del libro seleccionado.</p>
+                </div>
+
+                <div>
+                    <a href="catalogo.html" class="btn btn-secondary">
+                        Volver al catálogo
+                    </a>
+                </div>
+            </div>
+
+            <hr>
+
+            <div id="mensajeDetalle" class="mensaje-vacio" style="display:none;">
+                <h3>Libro no encontrado</h3>
+                <p>No se pudo cargar la información del libro solicitado.</p>
+            </div>
+
+            <section id="contenidoDetalle" class="detalle-libro">
+
+                <div class="detalle-portada">
+                    <img id="detallePortada" src="../img/catalogo/default.jpg" alt="Portada del libro">
+                </div>
+
+                <div class="detalle-informacion">
+                    <h2 id="detalleTitulo"></h2>
+
+                    <p>
+                        <strong>Autor:</strong>
+                        <span id="detalleAutor"></span>
+                    </p>
+
+                    <p>
+                        <strong>Género:</strong>
+                        <span id="detalleGenero"></span>
+                    </p>
+
+                    <p>
+                        <strong>Estado:</strong>
+                        <span id="detalleEstado" class="badge"></span>
+                    </p>
+
+                    <div class="descripcion-libro">
+                        <h3>Descripción</h3>
+                        <p id="detalleDescripcion"></p>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>SIGAB Libros © 2026</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Controllers/detalleLibroController.js"></script>
+
+</body>
+
+</html>

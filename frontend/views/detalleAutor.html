@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Detalle del Autor - SIGAB Libros</title>
+
+    <link rel="stylesheet" href="../css/estilos.css" />
+    <link rel="stylesheet" href="../css/autor.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="../Controllers/detalleAutorController.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="container menu-container">
+        <a href="../index.html" class="logo">
+          <div class="logo-circle">
+            <img src="../img/logo.png" alt="Logo SIGAB" />
+          </div>
+          <span>SIGAB Libros</span>
+        </a>
+      </div>
+    </nav>
+    <!-- CONTENIDO -->
+
+    <main class="container">
+
+    <div class="card detalle-autor">
+
+        <h1>Información del Autor</h1>
+
+        <div class="detalle-contenido">
+
+            <div class="detalle-foto">
+
+                <img
+                    id="fotoAutor"
+                    src="../img/autores/subir.png"
+                    alt="Autor">
+
+            </div>
+
+            <div class="detalle-info">
+
+                <h2 id="nombreAutor"></h2>
+
+                <p>
+
+                    <strong>Nacionalidad:</strong>
+
+                    <span id="nacionalidadAutor"></span>
+
+                </p>
+
+                <p>
+
+                    <strong>Fecha de Nacimiento:</strong>
+
+                    <span id="fechaAutor"></span>
+
+                </p>
+
+                <p>
+
+                    <strong>Estado:</strong>
+
+                    <span
+                        id="estadoAutor"
+                        class="badge badge-disponible">
+
+                    </span>
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="card biografia-card">
+
+            <h3>Biografía</h3>
+
+            <p id="biografiaAutor"></p>
+
+        </div>
+
+        <br>
+
+        <div class="acciones-form">
+
+            <a
+                href="autores.html"
+                class="btn btn-secondary">
+
+                Regresar
+
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+      <p>SIGAB Libros © 2026</p>
+    </footer>
+  </body>
+</html>

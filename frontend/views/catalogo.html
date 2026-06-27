@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Libros</title>
+
+    <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="../css/catalogo.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script type="module" src="../components/Navbar.js"></script>
+</head>
+
+<body>
+
+    <nav-bar></nav-bar>
+
+    <main class="container">
+
+        <div class="card">
+
+            <div class="encabezado-modulo">
+
+                <div>
+                    <h1>Catálogo de Libros</h1>
+                    <p>Consulta los libros disponibles dentro del sistema.</p>
+                </div>
+
+                <div>
+                    <a href="formLibro.html" class="btn btn-primary">
+                        Nuevo Libro
+                    </a>
+                </div>
+
+            </div>
+            <hr>
+
+            <div class="busqueda-form">
+
+                <div>
+                    <label>Buscar libro</label>
+                    <input 
+                        type="text" 
+                        id="txtBuscar" 
+                        placeholder="Buscar por título, autor o género"
+                    >
+                </div>
+
+                <div>
+                    <label>Estado</label>
+                    <select id="selectEstado">
+                        <option value="">Todos</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Prestado">Prestado</option>
+                        <option value="Reservado">Reservado</option>
+                    </select>
+                </div>
+
+                <div class="acciones-busqueda">
+                    <button class="btn btn-primary" id="btnBuscar">
+                        Buscar
+                    </button>
+
+                    <button class="btn btn-secondary" id="btnLimpiar">
+                        Limpiar
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card resultados-busqueda">
+
+            <div id="mensajeCatalogo" class="mensaje-vacio" style="display:none;">
+                <h3>No hay libros disponibles</h3>
+                <p>No se encontraron libros relacionados con la búsqueda realizada.</p>
+            </div>
+
+            <table id="tablaCatalogo">
+
+                <thead>
+                    <tr>
+                        <th>Portada</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Género</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbodyLibros">
+                    <!-- Los libros se cargan desde el API -->
+                </tbody>
+
+            </table>
+
+            <div class="paginacion">
+
+                <button class="btn btn-secondary" id="btnAnterior">
+                    Anterior
+                </button>
+
+                <button class="btn btn-primary" id="paginaActual">
+                    1
+                </button>
+
+                <button class="btn btn-secondary" id="btnSiguiente">
+                    Siguiente
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>SIGAB Libros © 2026</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Controllers/catalogoController.js"></script>
+
+</body>
+
+</html>

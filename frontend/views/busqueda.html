@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Libros</title>
+
+    <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="../css/catalogo.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script type="module" src="../components/Navbar.js"></script>
+</head>
+
+<body>
+
+    <nav-bar></nav-bar>
+
+    <main class="container">
+
+        <div class="card">
+
+            <div class="encabezado-modulo">
+                <div>
+                    <h1>Búsqueda de Libros</h1>
+                    <p>Busque libros por título, autor o palabras relacionadas.</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="busqueda-form">
+
+                <div>
+                    <label for="txtBusqueda">Buscar libro</label>
+                    <input 
+                        type="text" 
+                        id="txtBusqueda" 
+                        placeholder="Ingrese título, autor o palabra clave"
+                    >
+                </div>
+
+                <div>
+                    <label for="tipoBusqueda">Tipo de búsqueda</label>
+                    <select id="tipoBusqueda">
+                        <option value="general">General</option>
+                        <option value="titulo">Título</option>
+                        <option value="autor">Autor</option>
+                    </select>
+                </div>
+
+                <div class="acciones-busqueda">
+                    <button class="btn btn-primary" id="btnBuscarLibro">
+                        Buscar
+                    </button>
+
+                    <button class="btn btn-secondary" id="btnLimpiarBusqueda">
+                        Limpiar
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card resultados-busqueda">
+
+            <h2>Resultados de búsqueda</h2>
+
+            <div id="mensajeBusqueda" class="mensaje-vacio" style="display:none;">
+                <h3>No se encontraron resultados</h3>
+                <p>No existen libros relacionados con el término ingresado.</p>
+            </div>
+
+            <table id="tablaBusqueda">
+
+                <thead>
+                    <tr>
+                        <th>Portada</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Género</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbodyBusqueda">
+                    <!-- Los resultados se cargan desde el API -->
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>SIGAB Libros © 2026</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Controllers/busquedaController.js"></script>
+
+</body>
+
+</html>
