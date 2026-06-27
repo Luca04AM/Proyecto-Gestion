@@ -18,11 +18,17 @@ switch ($method) {
         break;
 
     case "POST":
-        guardarAutor();
-        break;
 
-    case "PUT":
-        actualizarAutor();
+        if (isset($_POST["accion"]) && $_POST["accion"] == "editar") {
+
+            actualizarAutor();
+
+        } else {
+
+            guardarAutor();
+
+        }
+
         break;
 
     case "DELETE":
@@ -99,7 +105,29 @@ function guardarAutor()
 {
     global $pdo;
 
-    $data = json_decode(file_get_contents("php://input"), true);
+   $nombre = $_POST["nombre"] ?? "";
+
+
+
+    $nacionalidad = $_POST["nacionalidad"] ?? "";
+    $fecha_nacimiento = $_POST["fecha_nacimiento"] ?? "";
+    $biografia = $_POST["biografia"] ?? "";
+    $estado = $_POST["estado"] ?? "Activo";
+
+    $fotografia = "";
+
+    if (isset($_FILES["fotografia"])) {
+
+        $fotografia = time() . "_" . basename($_FILES["fotografia"]["name"]);
+
+        $ruta = "../../frontend/img/autores/" . $fotografia;
+
+        move_uploaded_file(
+            $_FILES["fotografia"]["tmp_name"],
+            $ruta
+        );
+
+    }
 
     try {
 
@@ -124,13 +152,12 @@ function guardarAutor()
 
         $stmt = $pdo->prepare($sql);
 
-        $stmt->bindParam(":nombre", $data["nombre"]);
-        $stmt->bindParam(":nacionalidad", $data["nacionalidad"]);
-        $stmt->bindParam(":fecha_nacimiento", $data["fecha_nacimiento"]);
-        $stmt->bindParam(":biografia", $data["biografia"]);
-        $stmt->bindParam(":fotografia", $data["fotografia"]);
-        $stmt->bindParam(":estado", $data["estado"]);
-
+        $stmt->bindParam(":nombre", $nombre);
+        $stmt->bindParam(":nacionalidad", $nacionalidad);
+        $stmt->bindParam(":fecha_nacimiento", $fecha_nacimiento);
+        $stmt->bindParam(":biografia", $biografia);
+        $stmt->bindParam(":fotografia", $fotografia);
+        $stmt->bindParam(":estado", $estado);
         $stmt->execute();
 
         echo json_encode([
@@ -152,30 +179,65 @@ function actualizarAutor()
 {
     global $pdo;
 
-    $data = json_decode(file_get_contents("php://input"), true);
+    $id = $_POST["id"];
+    $nombre = $_POST["nombre"];
+    $nacionalidad = $_POST["nacionalidad"];
+    $fecha_nacimiento = $_POST["fecha_nacimiento"];
+    $biografia = $_POST["biografia"];
+    $estado = $_POST["estado"];
 
     try {
 
-        $sql = "UPDATE autores SET
+        // Obtener la fotografía actual
 
-            nombre=:nombre,
-            nacionalidad=:nacionalidad,
-            fecha_nacimiento=:fecha_nacimiento,
-            biografia=:biografia,
-            fotografia=:fotografia,
-            estado=:estado
-
-            WHERE id=:id";
+        $sql = "SELECT fotografia FROM autores WHERE id=:id";
 
         $stmt = $pdo->prepare($sql);
 
-        $stmt->bindParam(":id", $data["id"]);
-        $stmt->bindParam(":nombre", $data["nombre"]);
-        $stmt->bindParam(":nacionalidad", $data["nacionalidad"]);
-        $stmt->bindParam(":fecha_nacimiento", $data["fecha_nacimiento"]);
-        $stmt->bindParam(":biografia", $data["biografia"]);
-        $stmt->bindParam(":fotografia", $data["fotografia"]);
-        $stmt->bindParam(":estado", $data["estado"]);
+        $stmt->bindParam(":id", $id);
+
+        $stmt->execute();
+
+        $autor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $fotografia = $autor["fotografia"];
+
+        // Si seleccionó una nueva fotografía
+
+        if (isset($_FILES["fotografia"]) && $_FILES["fotografia"]["error"] == 0) {
+
+            $fotografia = time() . "_" . basename($_FILES["fotografia"]["name"]);
+
+            move_uploaded_file(
+
+                $_FILES["fotografia"]["tmp_name"],
+
+                "../../frontend/img/autores/" . $fotografia
+
+            );
+
+        }
+
+        $sql = "UPDATE autores SET
+
+                nombre=:nombre,
+                nacionalidad=:nacionalidad,
+                fecha_nacimiento=:fecha_nacimiento,
+                biografia=:biografia,
+                fotografia=:fotografia,
+                estado=:estado
+
+                WHERE id=:id";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":nombre", $nombre);
+        $stmt->bindParam(":nacionalidad", $nacionalidad);
+        $stmt->bindParam(":fecha_nacimiento", $fecha_nacimiento);
+        $stmt->bindParam(":biografia", $biografia);
+        $stmt->bindParam(":fotografia", $fotografia);
+        $stmt->bindParam(":estado", $estado);
 
         $stmt->execute();
 
@@ -193,7 +255,6 @@ function actualizarAutor()
 
     }
 }
-
 function eliminarAutor()
 {
     global $pdo;

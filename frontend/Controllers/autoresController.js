@@ -17,11 +17,30 @@ $(document).ready(function () {
         buscarAutor();
 
     });
-    let foto = $("#txtFotografia").val();
 
-    $("#previewFoto").attr("src", "../img/autores/" + foto);
+    $("#txtFotografia").change(function () {
 
-    $("#nombreFoto").text(foto);
+        let archivo = this.files[0];
+
+        if (archivo) {
+
+            let lector = new FileReader();
+
+            lector.onload = function (e) {
+
+                $("#previewFoto").attr("src", e.target.result);
+
+            };
+
+            lector.readAsDataURL(archivo);
+
+            $("#nombreFoto").text(archivo.name);
+
+        }
+
+    });
+
+    
 
 
     $(document).on("click", ".btnInfo", function () {
@@ -38,25 +57,25 @@ $(document).ready(function () {
 
 function guardarAutor() {
 
-    let autor = {
+    let formData = new FormData();
 
-        id: $("#txtId").val(),
+    formData.append("id", $("#txtId").val());
+    formData.append("nombre", $("#txtNombre").val().trim());
+    formData.append("nacionalidad", $("#txtNacionalidad").val().trim());
+    formData.append("fecha_nacimiento", $("#txtFechaNacimiento").val());
+    formData.append("biografia", $("#txtBiografia").val().trim());
+    formData.append("estado", $("#txtEstado").val());
 
-        nombre: $("#txtNombre").val().trim(),
+    // Imagen seleccionada
+    let archivo = $("#txtFotografia")[0].files[0];
 
-        nacionalidad: $("#txtNacionalidad").val().trim(),
+    if (archivo != undefined) {
 
-        fecha_nacimiento: $("#txtFechaNacimiento").val(),
+        formData.append("fotografia", archivo);
 
-        biografia: $("#txtBiografia").val().trim(),
+    }
 
-        fotografia: $("#txtFotografia").val(),
-
-        estado: $("#txtEstado").val()
-
-    };
-
-    if (autor.nombre == "") {
+    if ($("#txtNombre").val().trim() == "") {
 
         mostrarAlerta("Ingrese el nombre.", "danger");
 
@@ -64,11 +83,14 @@ function guardarAutor() {
 
     }
 
-    let metodo = "POST";
+    // Si tiene ID, es editar
+    if ($("#txtId").val() != "") {
 
-    if (autor.id != "") {
+        formData.append("accion", "editar");
 
-        metodo = "PUT";
+    } else {
+
+        formData.append("accion", "guardar");
 
     }
 
@@ -76,13 +98,15 @@ function guardarAutor() {
 
         url: API,
 
-        method: metodo,
+        method: "POST",
 
-        contentType: "application/json",
+        data: formData,
+
+        processData: false,
+
+        contentType: false,
 
         dataType: "json",
-
-        data: JSON.stringify(autor),
 
         success: function (respuesta) {
 
@@ -94,25 +118,23 @@ function guardarAutor() {
 
                 listarAutores();
 
-            }
+            } else {
 
-            else{
-
-                mostrarAlerta(respuesta.message,"danger");
+                mostrarAlerta(respuesta.message, "danger");
 
             }
 
         },
 
-        error:function(){
+        error: function () {
 
-            mostrarAlerta("Error al conectar.","danger");
+            mostrarAlerta("Error al conectar con el servidor.", "danger");
 
         }
 
     });
 
-}
+    }
 
 //============================
 // LISTAR AUTORES
@@ -232,18 +254,10 @@ $(document).on("click", ".btnEditar", function () {
     $("#txtNacionalidad").val($(this).data("nacionalidad"));
     $("#txtFechaNacimiento").val($(this).data("fecha"));
     $("#txtBiografia").val($(this).data("biografia"));
-    $("#txtFotografia").change(function () {
-
-    let foto = $(this).val();
-
-    $("#previewFoto").attr("src", "../img/autores/" + foto);
-
-    $("#nombreFoto").text(foto);
-
-});
-
-    $("#nombreFoto").text($(this).data("fotografia"));
-
+    $("#previewFoto").attr(
+    "src",
+    "../img/autores/" + $(this).data("fotografia")
+    );
     $("#nombreFoto").text($(this).data("fotografia"));
     $("#txtEstado").val($(this).data("estado"));
 
@@ -327,35 +341,30 @@ function buscarAutor() {
 
 }
 
-//============================
-// CAMBIAR FOTO
-//============================
 
-$("#txtFotografia").change(function () {
-
-    let foto = $(this).val();
-
-    $("#previewFoto").attr("src", "../img/autores/" + foto);
-
-    $("#nombreFoto").text(foto);
-
-});
 
 //============================
 // LIMPIAR FORMULARIO
 //============================
-
 function limpiarFormulario() {
 
+    // Limpiar todos los controles del formulario
     $("#formAutor")[0].reset();
 
+    // Quitar el ID para salir del modo edición
     $("#txtId").val("");
 
-    $("#txtFotografia").val("default.jpg");
+    // Limpiar el input file
+    $("#txtFotografia").val("");
 
-    $("#previewFoto").attr("src", "../img/autores/default.jpg");
+    // Volver a mostrar el icono de subir
+    $("#previewFoto").attr(
+        "src",
+        "../img/autores/subir.png"
+    );
 
-    $("#nombreFoto").text("default.jpg");
+    // Restaurar el texto
+    $("#nombreFoto").text("Ningún archivo seleccionado");
 
 }
 
