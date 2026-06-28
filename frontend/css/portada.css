@@ -798,3 +798,58 @@ body.modulo-portadas {
         padding: 12px;
     }
 }
+
+.alerta {
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.alerta-success {
+    color: #0a3323;
+    background: rgba(131, 153, 88, 0.2);
+    border-color: #839958;
+}
+
+.alerta-error {
+    color: #6b1f1f;
+    background: rgba(211, 150, 140, 0.2);
+    border-color: #d3968c;
+}
+
+.control-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.control-check input {
+    width: 18px;
+    min-height: 18px;
+    margin: 0;
+}
+
+.control-check label {
+    margin: 0;
+}
+
+.form-group-full small {
+    display: block;
+    margin: -8px 0 16px;
+    color: var(--color-texto-suave);
+}
+
+.acciones-tabla {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.estado-vacio {
+    padding: 28px !important;
+    color: var(--color-texto-suave);
+    text-align: center;
+}

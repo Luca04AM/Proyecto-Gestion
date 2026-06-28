@@ -10,6 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="../Controllers/portadaController.js" defer></script>
 </head>
 
 <body class="modulo modulo-portadas">
@@ -73,8 +75,8 @@
                 <p>Administra la identidad visual de los libros para mantener un catálogo claro y atractivo.</p>
             </div>
             <div class="resumen-modulo" aria-label="Resumen de portadas">
-                <span><strong>02</strong> registradas</span>
-                <span><strong>01</strong> activa</span>
+                <span><strong id="totalPortadas">00</strong> registradas</span>
+                <span><strong id="totalPortadasActivas">00</strong> activas</span>
             </div>
         </section>
 
@@ -86,12 +88,15 @@
                 </div>
                 <span class="section-number">01</span>
             </div>
+            <div id="alertaPortada" hidden></div>
             <form id="formPortada">
                 <input type="hidden" id="txtIdPortada">
                 <div class="form-grid">
                     <div>
                         <label for="txtLibroPortada">Libro</label>
-                        <input type="text" id="txtLibroPortada" placeholder="Título del libro">
+                        <select id="txtLibroPortada" required>
+                            <option value="">Cargando libros...</option>
+                        </select>
                     </div>
                     <div>
                         <label for="txtEstadoPortada">Estado</label>
@@ -102,15 +107,20 @@
                     </div>
                     <div class="form-group-full">
                         <label for="txtImagenPortada">Archivo de portada</label>
-                        <input type="file" id="txtImagenPortada" accept="image/*">
+                        <input type="file" id="txtImagenPortada" accept=".jpg,.jpeg,.png,.webp">
+                        <small>Formatos permitidos: JPG, PNG y WEBP. Tamaño máximo: 5 MB.</small>
+                    </div>
+                    <div class="control-check form-group-full">
+                        <input type="checkbox" id="txtPredeterminadaPortada">
+                        <label for="txtPredeterminadaPortada">Usar como portada predeterminada de este libro</label>
                     </div>
                     <div class="preview-imagen">
-                        <img src="../img/libros/1.jpg" alt="Portada de ejemplo">
-                        <p>Vista previa de la portada</p>
+                        <img id="previewPortada" src="../img/libros/1.jpg" alt="Vista previa de portada">
+                        <p id="nombrePortada">Vista previa de la portada</p>
                     </div>
                 </div>
                 <div class="acciones-form">
-                    <button type="submit" class="btn btn-primary">Guardar portada</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardarPortada">Guardar portada</button>
                     <button type="reset" class="btn btn-secondary">Limpiar</button>
                 </div>
             </form>
@@ -131,26 +141,12 @@
                             <th>ID</th>
                             <th>Libro</th>
                             <th>Imagen</th>
+                            <th>Predeterminada</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>PT-01</td>
-                            <td>El jardín secreto</td>
-                            <td><img class="thumb-img" src="../img/libros/1.jpg" alt="Portada"></td>
-                            <td><span class="badge badge-disponible">Activo</span></td>
-                            <td><button class="btn btn-secondary">Editar</button></td>
-                        </tr>
-                        <tr>
-                            <td>PT-02</td>
-                            <td>Mi planta de naranja lima</td>
-                            <td><img class="thumb-img" src="../img/libros/2.jpg" alt="Portada"></td>
-                            <td><span class="badge badge-atrasado">Inactivo</span></td>
-                            <td><button class="btn btn-secondary">Editar</button></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="tablaPortadas"></tbody>
                 </table>
             </div>
         </section>
