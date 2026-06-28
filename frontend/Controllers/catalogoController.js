@@ -128,6 +128,10 @@ $(document).ready(function () {
                 claseEstado = "badge-reservado";
             }
 
+            if (libro.estado === "No disponible") {
+                claseEstado = "badge-no-disponible";
+            }
+
             const portada = libro.portada
                 ? `<img src="../img/catalogo/${libro.portada}" class="mini-portada" alt="Portada del libro">`
                 : `<div class="portada-placeholder">📘</div>`;

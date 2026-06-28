@@ -1,75 +1,70 @@
-CREATE DATABASE IF NOT EXISTS ProyectoGestion
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE ProyectoGestion;
 
 USE ProyectoGestion;
+CREATE USER 'api_usergestion'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('12345');
 
-CREATE TABLE IF NOT EXISTS usuarios (
+GRANT ALL PRIVILEGES ON ProyectoGestion.* TO 'api_usergestion'@'localhost';
+
+FLUSH PRIVILEGES;
+
+CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     correo VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     token_recuperacion VARCHAR(255) NULL,
-    estado ENUM('Activo', 'Inactivo') NOT NULL DEFAULT 'Activo',
-    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    estado ENUM('Activo','Inactivo') DEFAULT 'Activo',
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS autores (
+CREATE TABLE autores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
-    nacionalidad VARCHAR(100) NULL,
-    fecha_nacimiento DATE NULL,
-    biografia TEXT NULL,
-    fotografia VARCHAR(255) NULL,
-    estado ENUM('Activo', 'Inactivo') NOT NULL DEFAULT 'Activo'
+    nacionalidad VARCHAR(100),
+    fecha_nacimiento DATE,
+    biografia TEXT,
+    fotografia VARCHAR(255),
+    estado ENUM('Activo','Inactivo') DEFAULT 'Activo'
 );
 
-CREATE TABLE IF NOT EXISTS generos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE,
-    descripcion TEXT NOT NULL,
-    estado ENUM('Activo', 'Inactivo') NOT NULL DEFAULT 'Activo',
-    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS libros (
+CREATE TABLE libros (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(150) NOT NULL,
     autor VARCHAR(150) NOT NULL,
     genero VARCHAR(100) NOT NULL,
     descripcion TEXT NOT NULL,
-    portada VARCHAR(255) NULL,
-    estado ENUM('Disponible', 'Prestado', 'Reservado') NOT NULL DEFAULT 'Disponible',
-    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    portada VARCHAR(255),
+    estado ENUM('Disponible', 'Prestado', 'Reservado', 'No disponible') DEFAULT 'Disponible',
+    condicion ENUM('Excelente','Bueno','Dañado','Muy dañado') NOT NULL,
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS portadas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_libro INT NOT NULL,
-    nombre_archivo VARCHAR(255) NOT NULL,
-    ruta_archivo VARCHAR(255) NOT NULL,
-    formato VARCHAR(10) NOT NULL,
-    tamano_archivo INT UNSIGNED NOT NULL,
-    fecha_carga DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    es_predeterminada TINYINT(1) NOT NULL DEFAULT 0,
-    estado ENUM('Activo', 'Inactivo') NOT NULL DEFAULT 'Activo',
-    CONSTRAINT fk_portadas_libro
-        FOREIGN KEY (id_libro) REFERENCES libros(id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    INDEX idx_portadas_libro (id_libro)
+CREATE TABLE prestamos (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT,
+    CONSTRAINT fk_id_usuario_prestamo FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    id_libro INT DEFAULT NULL,
+    CONSTRAINT fk_id_libro_prestamo FOREIGN KEY (id_libro) REFERENCES libros(id),
+	fecha_prestamo DATETIME DEFAULT CURRENT_TIMESTAMP,
+	fecha_devolucion DATETIME DEFAULT CURRENT_TIMESTAMP,
+	estado ENUM('Devuelto','Prestado','Perdido')
 );
 
-CREATE TABLE IF NOT EXISTS reportes (
+CREATE TABLE devoluciones (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	id_prestamo INT,
+	CONSTRAINT fk_id_prestamo_devolucion FOREIGN KEY (id_prestamo) REFERENCES prestamos(id),
+	fecha_devuelto DATETIME DEFAULT CURRENT_TIMESTAMP,
+	observaciones VARCHAR(150) NULL
+);
+
+CREATE TABLE multas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NULL,
-    tipo_reporte ENUM('Prestamos', 'Devoluciones', 'Multas') NOT NULL,
-    fecha_generacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fecha_inicio DATE NOT NULL,
-    fecha_fin DATE NOT NULL,
-    estado ENUM('Generado', 'Archivado') NOT NULL DEFAULT 'Generado',
-    CONSTRAINT fk_reportes_usuario
-        FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
-        ON UPDATE CASCADE ON DELETE SET NULL,
-    INDEX idx_reportes_tipo_fecha (tipo_reporte, fecha_generacion)
+    id_usuario INT,
+    CONSTRAINT fk_id_usuario_multa FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    id_libro INT DEFAULT NULL,
+    CONSTRAINT fk_id_libro_multa FOREIGN KEY (id_libro) REFERENCES libros(id), 
+    fecha_devolucion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tipo ENUM('Atraso','Daño','Perdida') DEFAULT 'Atraso',
+    dias_gracia INT DEFAULT 0
 );
