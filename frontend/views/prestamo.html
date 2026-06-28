@@ -77,14 +77,6 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">Estado del libro</label>
-                                    <select class="form-select" id="estadoLibro">
-                                        <option value="Reservado">Reservado</option>
-                                        <option value="Prestado">Prestado</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-6">
                                     <label class="form-label">Estado del préstamo</label>
                                     <select class="form-select" id="estadoPrestamo">
                                         <option value="Prestado">Prestado</option>
@@ -156,7 +148,6 @@
                                         <th>Libro</th>
                                         <th>Fecha préstamo</th>
                                         <th>Fecha devolución</th>
-                                        <th>Estado libro</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -186,17 +177,10 @@
                             <div id="msgEdicionPrestamo" class="mb-3"></div>
                             <input type="hidden" id="editarPrestamoId">
                             <div class="mb-3">
-                                <label class="form-label" for="editarEstadoLibro">Estado del libro</label>
-                                <select class="form-select" id="editarEstadoLibro">
-                                    <option value="Reservado">Reservado</option>
-                                    <option value="Prestado">Prestado</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
                                 <label class="form-label" for="editarEstadoPrestamo">Estado del préstamo</label>
                                 <select class="form-select" id="editarEstadoPrestamo">
                                     <option value="Prestado">Prestado</option>
-                                                                        <option value="Perdido">Perdido</option>
+                                    <option value="Perdido">Perdido</option>
                                 </select>
                             </div>
                         </div>

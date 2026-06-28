@@ -13,7 +13,7 @@ try {
         $buscar = isset($_GET["buscar"]) ? trim($_GET["buscar"]) : "";
 
         if ($id > 0) {
-            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
+            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, condicion, fecha_registro
                     FROM libros
                     WHERE id = :id";
 
@@ -39,7 +39,7 @@ try {
         }
 
         if ($buscar !== "") {
-            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
+            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, condicion, fecha_registro
                     FROM libros
                     WHERE titulo LIKE :buscar
                        OR autor LIKE :buscar
@@ -51,7 +51,7 @@ try {
                 ":buscar" => "%" . $buscar . "%"
             ]);
         } else {
-            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, fecha_registro
+            $sql = "SELECT id, titulo, autor, genero, descripcion, portada, estado, condicion, fecha_registro
                     FROM libros
                     ORDER BY titulo ASC";
 
@@ -84,8 +84,9 @@ try {
         $descripcion = isset($input["descripcion"]) ? trim($input["descripcion"]) : "";
         $portada = isset($input["portada"]) ? trim($input["portada"]) : "";
         $estado = isset($input["estado"]) ? trim($input["estado"]) : "Disponible";
+        $condicion = isset($input["condicion"]) ? trim($input["condicion"]) : "Excelente";
 
-        if ($titulo === "" || $autor === "" || $genero === "" || $descripcion === "") {
+        if ($titulo === "" || $autor === "" || $genero === "" || $descripcion === "" || $condicion === "") {
             http_response_code(400);
             echo json_encode([
                 "success" => false,
@@ -94,7 +95,7 @@ try {
             exit;
         }
 
-        $estadosPermitidos = ["Disponible", "Prestado", "Reservado"];
+        $estadosPermitidos = ["Disponible", "Prestado", "Reservado", "No disponible"];
 
         if (!in_array($estado, $estadosPermitidos)) {
             http_response_code(400);
@@ -125,9 +126,9 @@ try {
         }
 
         $sql = "INSERT INTO libros 
-                (titulo, autor, genero, descripcion, portada, estado)
+                (titulo, autor, genero, descripcion, portada, estado, condicion)
                 VALUES 
-                (:titulo, :autor, :genero, :descripcion, :portada, :estado)";
+                (:titulo, :autor, :genero, :descripcion, :portada, :estado, :condicion)";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -136,7 +137,8 @@ try {
             ":genero" => $genero,
             ":descripcion" => $descripcion,
             ":portada" => $portada,
-            ":estado" => $estado
+            ":estado" => $estado,
+            ":condicion" => $condicion
         ]);
 
         echo json_encode([
@@ -159,6 +161,7 @@ try {
         $descripcion = isset($input["descripcion"]) ? trim($input["descripcion"]) : "";
         $portada = isset($input["portada"]) ? trim($input["portada"]) : "";
         $estado = isset($input["estado"]) ? trim($input["estado"]) : "Disponible";
+        $condicion = isset($input["condicion"]) ? trim($input["condicion"]) : "Excelente";
 
         if ($id <= 0) {
             http_response_code(400);
@@ -169,7 +172,7 @@ try {
             exit;
         }
 
-        if ($titulo === "" || $autor === "" || $genero === "" || $descripcion === "") {
+        if ($titulo === "" || $autor === "" || $genero === "" || $descripcion === "" || $condicion === "") {
             http_response_code(400);
             echo json_encode([
                 "success" => false,
@@ -218,7 +221,8 @@ try {
                     genero = :genero,
                     descripcion = :descripcion,
                     portada = :portada,
-                    estado = :estado
+                    estado = :estado,
+                    condicion = :condicion
                 WHERE id = :id";
 
         $stmt = $pdo->prepare($sql);
@@ -229,6 +233,7 @@ try {
             ":descripcion" => $descripcion,
             ":portada" => $portada,
             ":estado" => $estado,
+            ":condicion" => $condicion,
             ":id" => $id
         ]);
 

@@ -58,7 +58,7 @@ function listarPrestamos()
 
     try {
         $sql = "SELECT p.id, p.id_usuario, p.id_libro, p.fecha_prestamo, p.fecha_devolucion, p.estado,
-                       u.nombre AS usuario, l.titulo AS libro, l.estado AS estado_libro
+                       u.nombre AS usuario, l.titulo AS libro
                 FROM prestamos p
                 INNER JOIN usuarios u ON u.id = p.id_usuario
                 INNER JOIN libros l ON l.id = p.id_libro
@@ -86,7 +86,7 @@ function obtenerPrestamo($id)
 
     try {
         $sql = "SELECT p.id, p.id_usuario, p.id_libro, p.fecha_prestamo, p.fecha_devolucion, p.estado,
-                       u.nombre AS usuario, l.titulo AS libro, l.estado AS estado_libro
+                       u.nombre AS usuario, l.titulo AS libro
                 FROM prestamos p
                 INNER JOIN usuarios u ON u.id = p.id_usuario
                 INNER JOIN libros l ON l.id = p.id_libro
@@ -147,12 +147,6 @@ function obtenerCatalogos($idPrestamo = 0)
         $sqlUsuarios = "SELECT u.id, u.nombre
                         FROM usuarios u
                         WHERE u.estado = 'Activo'
-                          AND NOT EXISTS (
-                              SELECT 1
-                              FROM multas m
-                              WHERE m.id_usuario = u.id
-                                AND m.estado <> 'Pagada'
-                          )
                         ORDER BY u.nombre ASC";
         $stmtUsuarios = $pdo->prepare($sqlUsuarios);
         $stmtUsuarios->execute();
@@ -160,7 +154,6 @@ function obtenerCatalogos($idPrestamo = 0)
 
         $sqlLibros = "SELECT l.id, l.titulo
                       FROM libros l
-                      WHERE l.estado = 'Disponible'
                       ORDER BY l.titulo ASC";
         $stmtLibros = $pdo->prepare($sqlLibros);
         $stmtLibros->execute();
@@ -234,25 +227,15 @@ function guardarPrestamo()
 
     $id_usuario = isset($data["id_usuario"]) ? intval($data["id_usuario"]) : 0;
     $id_libro = isset($data["id_libro"]) ? intval($data["id_libro"]) : 0;
-    $estado_libro = isset($data["estado_libro"]) ? trim($data["estado_libro"]) : "";
     $fecha_prestamo = isset($data["fecha_prestamo"]) ? trim($data["fecha_prestamo"]) : "";
     $fecha_devolucion = isset($data["fecha_devolucion"]) ? trim($data["fecha_devolucion"]) : "";
     $estado = isset($data["estado"]) ? trim($data["estado"]) : "Prestado";
 
-    if ($id_usuario <= 0 || $id_libro <= 0 || $estado_libro === "" || $fecha_prestamo === "" || $fecha_devolucion === "" || $estado === "") {
+    if ($id_usuario <= 0 || $id_libro <= 0 || $fecha_prestamo === "" || $fecha_devolucion === "" || $estado === "") {
         http_response_code(400);
         echo json_encode([
             "success" => false,
             "message" => "Debe completar los campos obligatorios."
-        ], JSON_UNESCAPED_UNICODE);
-        return;
-    }
-
-    if (!in_array($estado_libro, ["Reservado", "Prestado"], true)) {
-        http_response_code(400);
-        echo json_encode([
-            "success" => false,
-            "message" => "Debe seleccionar un estado de libro válido."
         ], JSON_UNESCAPED_UNICODE);
         return;
     }
@@ -301,7 +284,7 @@ function guardarPrestamo()
             ":estado" => $estado
         ]);
 
-        actualizarEstadoLibro($pdo, $id_libro, $estado_libro);
+        actualizarEstadoLibro($pdo, $id_libro, "Prestado");
 
         $pdo->commit();
 
@@ -332,23 +315,13 @@ function actualizarEstadosPrestamo()
     }
 
     $id = isset($data["id"]) ? intval($data["id"]) : 0;
-    $estado_libro = isset($data["estado_libro"]) ? trim($data["estado_libro"]) : "";
     $estado = isset($data["estado"]) ? trim($data["estado"]) : "";
 
-    if ($id <= 0 || $estado_libro === "" || $estado === "") {
+    if ($id <= 0 || $estado === "") {
         http_response_code(400);
         echo json_encode([
             "success" => false,
             "message" => "Debe completar los campos obligatorios."
-        ], JSON_UNESCAPED_UNICODE);
-        return;
-    }
-
-    if (!in_array($estado_libro, ["Reservado", "Prestado"], true)) {
-        http_response_code(400);
-        echo json_encode([
-            "success" => false,
-            "message" => "Debe seleccionar un estado de libro válido."
         ], JSON_UNESCAPED_UNICODE);
         return;
     }
@@ -374,7 +347,7 @@ function actualizarEstadosPrestamo()
         $prestamo = $stmtLibro->fetch(PDO::FETCH_ASSOC);
 
         if ($prestamo) {
-            $estadoLibroFinal = ($estado === "Devuelto") ? "Disponible" : $estado_libro;
+            $estadoLibroFinal = ($estado === "Devuelto") ? "Disponible" : "Prestado";
             actualizarEstadoLibro($pdo, intval($prestamo["id_libro"]), $estadoLibroFinal);
         }
 
@@ -441,25 +414,15 @@ function actualizarPrestamo()
     $id = isset($data["id"]) ? intval($data["id"]) : 0;
     $id_usuario = isset($data["id_usuario"]) ? intval($data["id_usuario"]) : 0;
     $id_libro = isset($data["id_libro"]) ? intval($data["id_libro"]) : 0;
-    $estado_libro = isset($data["estado_libro"]) ? trim($data["estado_libro"]) : "";
     $fecha_prestamo = isset($data["fecha_prestamo"]) ? trim($data["fecha_prestamo"]) : "";
     $fecha_devolucion = isset($data["fecha_devolucion"]) ? trim($data["fecha_devolucion"]) : "";
     $estado = isset($data["estado"]) ? trim($data["estado"]) : "Prestado";
 
-    if ($id <= 0 || $id_usuario <= 0 || $id_libro <= 0 || $estado_libro === "" || $fecha_prestamo === "" || $fecha_devolucion === "" || $estado === "") {
+    if ($id <= 0 || $id_usuario <= 0 || $id_libro <= 0 || $fecha_prestamo === "" || $fecha_devolucion === "" || $estado === "") {
         http_response_code(400);
         echo json_encode([
             "success" => false,
             "message" => "Debe completar los campos obligatorios."
-        ], JSON_UNESCAPED_UNICODE);
-        return;
-    }
-
-    if (!in_array($estado_libro, ["Reservado", "Prestado"], true)) {
-        http_response_code(400);
-        echo json_encode([
-            "success" => false,
-            "message" => "Debe seleccionar un estado de libro válido."
         ], JSON_UNESCAPED_UNICODE);
         return;
     }
@@ -525,7 +488,7 @@ function actualizarPrestamo()
             ":estado" => $estado
         ]);
 
-        actualizarEstadoLibro($pdo, $id_libro, $estado_libro);
+        actualizarEstadoLibro($pdo, $id_libro, "Prestado");
 
         if ((int) $actual["id_libro"] !== $id_libro) {
             $stmtLibroAnterior = $pdo->prepare("UPDATE libros SET estado = 'Disponible' WHERE id = :id");
@@ -555,8 +518,7 @@ function usuarioTieneMultasPendientes($pdo, $idUsuario)
 {
     $sql = "SELECT COUNT(*) AS total
             FROM multas
-            WHERE id_usuario = :id_usuario
-              AND estado <> 'Pagada'";
+            WHERE id_usuario = :id_usuario";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([":id_usuario" => $idUsuario]);

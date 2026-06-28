@@ -17,7 +17,8 @@ $(document).ready(function () {
             genero: $("#genero").val().trim(),
             descripcion: $("#descripcion").val().trim(),
             portada: $("#portada").val().trim(),
-            estado: $("#estado").val()
+            estado: $("#estado").val(),
+            condicion: $("#condicion").val()
         };
 
         if (modoEdicion) {
@@ -28,7 +29,8 @@ $(document).ready(function () {
             libro.titulo === "" ||
             libro.autor === "" ||
             libro.genero === "" ||
-            libro.descripcion === ""
+            libro.descripcion === "" ||
+            libro.condicion === ""
         ) {
             mostrarMensaje("Debe completar todos los campos obligatorios.", "error");
             return;
@@ -100,6 +102,7 @@ $(document).ready(function () {
         $("#descripcion").val(libro.descripcion);
         $("#portada").val(libro.portada);
         $("#estado").val(libro.estado);
+        $("#condicion").val(libro.condicion || "Excelente");
     }
 
     function limpiarFormulario() {
@@ -109,6 +112,7 @@ $(document).ready(function () {
         $("#descripcion").val("");
         $("#portada").val("");
         $("#estado").val("Disponible");
+        $("#condicion").val("Excelente");
     }
 
     function mostrarMensaje(texto, tipo) {

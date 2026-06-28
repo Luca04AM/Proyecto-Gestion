@@ -47,10 +47,16 @@ $(document).ready(function () {
             claseEstado = "badge-reservado";
         }
 
+        if (libro.estado === "No disponible") {
+            claseEstado = "badge-no-disponible";
+        }
+
         $("#detalleEstado")
             .removeClass()
             .addClass("badge " + claseEstado)
             .text(libro.estado);
+
+        $("#detalleCondicion").text(libro.condicion || "No especificada");
 
         if (libro.portada) {
             $("#detallePortada").attr("src", "../img/catalogo/" + libro.portada);
