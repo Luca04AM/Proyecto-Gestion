@@ -26,6 +26,20 @@ $(document).ready(function () {
         cargarMulta(id);
     });
 
+    $(document).on("click", ".btnVoucherMulta", function () {
+        generarVoucher({
+            id: $(this).data("id"),
+            usuario: $(this).data("usuario"),
+            libro: $(this).data("libro"),
+            fecha_devolucion: $(this).data("fecha"),
+            dias_retraso: $(this).data("retraso"),
+            dias_gracia: $(this).data("gracia"),
+            monto: $(this).data("monto"),
+            estado: $(this).data("estado"),
+            tipo: $(this).data("tipo")
+        });
+    });
+
     function cargarCatalogos() {
         $.ajax({
             url: API + "?accion=catalogos",
@@ -143,6 +157,22 @@ $(document).ready(function () {
                                     <button class="btn btn-secondary btnEditarMulta" data-id="${multa.id}">
                                         Editar
                                     </button>
+                                    ${multa.estado === "Pagada" ? `
+                                        <button
+                                            class="btn btn-primary btnVoucherMulta"
+                                            data-id="${multa.id}"
+                                            data-usuario="${multa.usuario}"
+                                            data-libro="${multa.libro}"
+                                            data-fecha="${multa.fecha_devolucion}"
+                                            data-retraso="${multa.dias_retraso}"
+                                            data-gracia="${multa.dias_gracia}"
+                                            data-monto="${multa.monto}"
+                                            data-estado="${multa.estado}"
+                                            data-tipo="${multa.tipo}"
+                                        >
+                                            Voucher
+                                        </button>
+                                    ` : ""}
                                 </td>
                             </tr>
                         `;
@@ -248,6 +278,34 @@ $(document).ready(function () {
 
         mensaje.text(texto);
         mensaje.attr("style", "display:block;");
+    }
+
+    function generarVoucher(multa) {
+        const pdf = new window.jspdf.jsPDF();
+        const fechaGeneracion = new Date().toLocaleString("es-CR");
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(16);
+        pdf.text("SIGAB Libros", 20, 20);
+
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "normal");
+        pdf.text("Comprobante de multa pagada", 20, 32);
+        pdf.text(`Fecha de generación: ${fechaGeneracion}`, 20, 42);
+        pdf.text(`ID de multa: ${multa.id}`, 20, 54);
+        pdf.text(`Usuario: ${multa.usuario}`, 20, 64);
+        pdf.text(`Libro: ${multa.libro}`, 20, 74);
+        pdf.text(`Fecha de devolución: ${multa.fecha_devolucion}`, 20, 84);
+        pdf.text(`Días de retraso: ${multa.dias_retraso}`, 20, 94);
+        pdf.text(`Días de gracia: ${multa.dias_gracia}`, 20, 104);
+        pdf.text(`Tipo: ${multa.tipo}`, 20, 114);
+        pdf.text(`Estado: ${multa.estado}`, 20, 124);
+        pdf.text(`Monto pagado: S/ ${Number(multa.monto).toFixed(2)}`, 20, 134);
+
+        pdf.setFontSize(10);
+        pdf.text("Documento generado automáticamente por SIGAB Libros.", 20, 150);
+
+        pdf.save(`voucher-multa-${multa.id}.pdf`);
     }
 
 });
