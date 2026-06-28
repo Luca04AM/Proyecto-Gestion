@@ -798,3 +798,43 @@ body.modulo-portadas {
         padding: 12px;
     }
 }
+
+.alerta {
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.alerta-success {
+    color: #0a3323;
+    background: rgba(131, 153, 88, 0.2);
+    border-color: #839958;
+}
+
+.alerta-error {
+    color: #6b1f1f;
+    background: rgba(211, 150, 140, 0.2);
+    border-color: #d3968c;
+}
+
+.busqueda-modulo {
+    padding: 20px 28px;
+}
+
+.busqueda-modulo input {
+    margin-bottom: 0;
+}
+
+.acciones-tabla {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.estado-vacio {
+    padding: 28px !important;
+    color: var(--color-texto-suave);
+    text-align: center;
+}

@@ -10,6 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="../Controllers/generoController.js" defer></script>
 </head>
 
 <body class="modulo modulo-genero">
@@ -73,8 +75,8 @@
                 <p>Organiza las categorías literarias que ayudan a encontrar cada libro con facilidad.</p>
             </div>
             <div class="resumen-modulo" aria-label="Resumen de géneros">
-                <span><strong>03</strong> registrados</span>
-                <span><strong>02</strong> activos</span>
+                <span><strong id="totalGeneros">00</strong> registrados</span>
+                <span><strong id="totalGenerosActivos">00</strong> activos</span>
             </div>
         </section>
 
@@ -86,12 +88,13 @@
                 </div>
                 <span class="section-number">01</span>
             </div>
+            <div id="alertaGenero" hidden></div>
             <form id="formGenero">
                 <input type="hidden" id="txtIdGenero">
                 <div class="form-grid">
                     <div>
                         <label for="txtNombreGenero">Nombre del género</label>
-                        <input type="text" id="txtNombreGenero" placeholder="Ej. Novela, Historia, Fantasía">
+                        <input type="text" id="txtNombreGenero" maxlength="100" placeholder="Ej. Novela, Historia, Fantasía" required>
                     </div>
                     <div>
                         <label for="txtEstadoGenero">Estado</label>
@@ -102,14 +105,19 @@
                     </div>
                     <div class="form-group-full">
                         <label for="txtDescripcionGenero">Descripción</label>
-                        <textarea id="txtDescripcionGenero" placeholder="Describe el género"></textarea>
+                        <textarea id="txtDescripcionGenero" placeholder="Describe el género" required></textarea>
                     </div>
                 </div>
                 <div class="acciones-form">
-                    <button type="submit" class="btn btn-primary">Guardar género</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardarGenero">Guardar género</button>
                     <button type="reset" class="btn btn-secondary">Limpiar</button>
                 </div>
             </form>
+        </section>
+
+        <section class="card busqueda-modulo">
+            <label for="txtBuscarGenero">Buscar género</label>
+            <input type="search" id="txtBuscarGenero" placeholder="Buscar por nombre o descripción">
         </section>
 
         <section class="card card-tabla">
@@ -131,29 +139,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>01</td>
-                            <td>Fantasía</td>
-                            <td>Mundos imaginarios con criaturas y magia.</td>
-                            <td><span class="badge badge-disponible">Activo</span></td>
-                            <td><button class="btn btn-secondary">Editar</button></td>
-                        </tr>
-                        <tr>
-                            <td>02</td>
-                            <td>Historia</td>
-                            <td>Relatos de hechos pasados y biografías.</td>
-                            <td><span class="badge badge-prestado">Activo</span></td>
-                            <td><button class="btn btn-secondary">Editar</button></td>
-                        </tr>
-                        <tr>
-                            <td>03</td>
-                            <td>Ciencia ficción</td>
-                            <td>Historias futuristas y tecnología avanzada.</td>
-                            <td><span class="badge badge-atrasado">Inactivo</span></td>
-                            <td><button class="btn btn-secondary">Editar</button></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="tablaGeneros"></tbody>
                 </table>
             </div>
         </section>
