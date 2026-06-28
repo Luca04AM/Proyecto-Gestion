@@ -17,17 +17,6 @@ CREATE TABLE usuarios (
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE libros (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(150) NOT NULL,
-    autor VARCHAR(150) NOT NULL,
-    genero VARCHAR(100) NOT NULL,
-    descripcion TEXT NOT NULL,
-    portada VARCHAR(255),
-    estado ENUM('Disponible', 'Prestado', 'Reservado') DEFAULT 'Disponible',
-    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE autores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
@@ -38,16 +27,16 @@ CREATE TABLE autores (
     estado ENUM('Activo','Inactivo') DEFAULT 'Activo'
 );
 
-CREATE TABLE multas (
-    id INT AUTO_INCREMENT PRIMARY KEY, 
-    id_usuario INT, 
-    CONSTRAINT fk_id_usuario_multa FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
-    id_libro INT DEFAULT NULL, 
-    CONSTRAINT fk_id_libro_multa FOREIGN KEY (id_libro) REFERENCES libros(id),
-    monto DOUBLE NOT NULL,
-    fecha_devolucion DATETIME DEFAULT CURRENT_TIMESTAMP, 
-    tipo ENUM('Atraso','Daño','Perdida') DEFAULT 'Atraso',
-    dias_gracia INT NOT NULL 
+CREATE TABLE libros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL,
+    autor VARCHAR(150) NOT NULL,
+    genero VARCHAR(100) NOT NULL,
+    descripcion TEXT NOT NULL,
+    portada VARCHAR(255),
+    estado ENUM('Disponible', 'Prestado', 'Reservado', 'No disponible') DEFAULT 'Disponible',
+    condicion ENUM('Excelente','Bueno','Dañado','Muy dañado') NOT NULL,
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE prestamos (
@@ -59,4 +48,23 @@ CREATE TABLE prestamos (
 	fecha_prestamo DATETIME DEFAULT CURRENT_TIMESTAMP,
 	fecha_devolucion DATETIME DEFAULT CURRENT_TIMESTAMP,
 	estado ENUM('Devuelto','Prestado','Perdido')
+);
+
+CREATE TABLE devoluciones (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	id_prestamo INT,
+	CONSTRAINT fk_id_prestamo_devolucion FOREIGN KEY (id_prestamo) REFERENCES prestamos(id),
+	fecha_devuelto DATETIME DEFAULT CURRENT_TIMESTAMP,
+	observaciones VARCHAR(150) NULL
+);
+
+CREATE TABLE multas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT,
+    CONSTRAINT fk_id_usuario_multa FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    id_libro INT DEFAULT NULL,
+    CONSTRAINT fk_id_libro_multa FOREIGN KEY (id_libro) REFERENCES libros(id), monto DOUBLE NOT NULL,
+    fecha_devolucion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tipo ENUM('Atraso','Daño','Perdida') DEFAULT 'Atraso',
+    dias_gracia INT DEFAULT 0
 );

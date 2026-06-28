@@ -24,16 +24,15 @@ $(document).ready(function () {
     });
 
     $(document).on("click", ".btnEditarPrestamo", function () {
-        abrirModalEdicion($(this).data("id"), $(this).data("estado-libro"), $(this).data("estado-prestamo"));
+        abrirModalEdicion($(this).data("id"), $(this).data("estado-prestamo"));
     });
 
     $("#btnGuardarEdicionPrestamo").on("click", function () {
         guardarEdicionPrestamo();
     });
 
-    function abrirModalEdicion(id, estadoLibro, estadoPrestamo) {
+    function abrirModalEdicion(id, estadoPrestamo) {
         $("#editarPrestamoId").val(id);
-        $("#editarEstadoLibro").val(estadoLibro || "Prestado");
         $("#editarEstadoPrestamo").val(estadoPrestamo || "Prestado");
         mostrarMensajeEdicion("", "exito", true);
         const modal = new bootstrap.Modal(document.getElementById("modalEditarPrestamo"));
@@ -42,10 +41,9 @@ $(document).ready(function () {
 
     function guardarEdicionPrestamo() {
         const id = $("#editarPrestamoId").val();
-        const estadoLibro = $("#editarEstadoLibro").val();
         const estadoPrestamo = $("#editarEstadoPrestamo").val();
 
-        if (id === "" || estadoLibro === "" || estadoPrestamo === "") {
+        if (id === "" || estadoPrestamo === "") {
             mostrarMensajeEdicion("Debe completar los campos obligatorios.", "error");
             return;
         }
@@ -57,7 +55,6 @@ $(document).ready(function () {
             dataType: "json",
             data: JSON.stringify({
                 id: id,
-                estado_libro: estadoLibro,
                 estado: estadoPrestamo
             }),
             success: function (respuesta) {
@@ -141,12 +138,10 @@ $(document).ready(function () {
                                 <td>${prestamo.libro}</td>
                                 <td>${prestamo.fecha_prestamo}</td>
                                 <td>${prestamo.fecha_devolucion}</td>
-                                <td>${prestamo.estado_libro}</td>
                                 <td>${prestamo.estado}</td>
                                 <td>
                                     <button class="btn btn-secondary btnEditarPrestamo"
                                             data-id="${prestamo.id}"
-                                            data-estado-libro="${prestamo.estado_libro}"
                                             data-estado-prestamo="${prestamo.estado}">
                                         Editar
                                     </button>
@@ -191,7 +186,6 @@ $(document).ready(function () {
         const prestamo = {
             id_usuario: $("#usuarioPrestamo").val(),
             id_libro: $("#libroPrestamo").val(),
-            estado_libro: $("#estadoLibro").val(),
             fecha_prestamo: $("#fechaPrestamo").val(),
             fecha_devolucion: $("#fechaDevolucion").val(),
             estado: $("#estadoPrestamo").val()
@@ -200,7 +194,6 @@ $(document).ready(function () {
         if (
             prestamo.id_usuario === "" ||
             prestamo.id_libro === "" ||
-            prestamo.estado_libro === "" ||
             prestamo.fecha_prestamo === "" ||
             prestamo.fecha_devolucion === "" ||
             prestamo.estado === ""
@@ -295,7 +288,6 @@ $(document).ready(function () {
                     $("#idPrestamo").val(prestamo.id);
                     $("#usuarioPrestamo").val(prestamo.id_usuario);
                     $("#libroPrestamo").val(prestamo.id_libro);
-                    $("#estadoLibro").val(prestamo.estado_libro || "Prestado");
                     $("#fechaPrestamo").val(String(prestamo.fecha_prestamo).slice(0, 10));
                     $("#fechaDevolucion").val(String(prestamo.fecha_devolucion).slice(0, 10));
                     $("#estadoPrestamo").val(prestamo.estado || "Prestado");
@@ -313,7 +305,6 @@ $(document).ready(function () {
         $("#idPrestamo").val("");
         $("#usuarioPrestamo").val("");
         $("#libroPrestamo").val("");
-        $("#estadoLibro").val("Prestado");
         $("#estadoPrestamo").val("Prestado");
         establecerFechasPorDefecto();
         modoEdicion = false;
@@ -327,7 +318,6 @@ $(document).ready(function () {
 
         $("#fechaPrestamo").val(fechaPrestamo);
         $("#fechaDevolucion").val(fechaDevolucion.toISOString().slice(0, 10));
-        $("#estadoLibro").val("Prestado");
         $("#estadoPrestamo").val("Prestado");
     }
 
