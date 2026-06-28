@@ -44,7 +44,6 @@
 
         <div class="tab-content">
 
-            <!-- SOLICITUD DE PRESTAMO -->
             <section class="tab-pane fade show active" id="solicitud">
 
                 <div class="card">
@@ -59,42 +58,48 @@
 
                         <form id="formPrestamo">
 
+                            <input type="hidden" id="idPrestamo">
+
                             <div class="row g-3">
 
                                 <div class="col-md-6">
-                                    <label class="form-label">
-                                        Usuario
-                                    </label>
-
+                                    <label class="form-label">Usuario</label>
                                     <select class="form-select" id="usuarioPrestamo">
-                                        <option>Seleccionar usuario</option>
+                                        <option value="">Seleccionar usuario</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">
-                                        Libro
-                                    </label>
-
+                                    <label class="form-label">Libro</label>
                                     <select class="form-select" id="libroPrestamo">
-                                        <option>Seleccionar libro</option>
+                                        <option value="">Seleccionar libro</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">
-                                        Fecha préstamo
-                                    </label>
-
-                                    <input type="date" class="form-control" id="fechaPrestamo" readonly>
+                                    <label class="form-label">Estado del libro</label>
+                                    <select class="form-select" id="estadoLibro">
+                                        <option value="Reservado">Reservado</option>
+                                        <option value="Prestado">Prestado</option>
+                                    </select>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">
-                                        Fecha devolución
-                                    </label>
+                                    <label class="form-label">Estado del préstamo</label>
+                                    <select class="form-select" id="estadoPrestamo">
+                                        <option value="Prestado">Prestado</option>
+                                                                                <option value="Perdido">Perdido</option>
+                                    </select>
+                                </div>
 
-                                    <input type="date" class="form-control" id="fechaDevolucion" readonly>
+                                <div class="col-md-6">
+                                    <label class="form-label">Fecha préstamo</label>
+                                    <input type="date" class="form-control" id="fechaPrestamo">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Fecha devolución</label>
+                                    <input type="date" class="form-control" id="fechaDevolucion">
                                 </div>
 
                             </div>
@@ -111,8 +116,6 @@
 
             </section>
 
-          
-            <!-- LOS PRESTAMOS ACTIVOS QUE TENEMOS -->
             <section class="tab-pane fade" id="activos">
 
                 <div class="card">
@@ -126,30 +129,16 @@
                         <div class="row g-3 mb-3">
 
                             <div class="col-md-4">
-                                <label class="form-label">
-                                    Buscar usuario
-                                </label>
-
+                                <label class="form-label">Buscar usuario</label>
                                 <input type="text" class="form-control" id="buscarPrestamo">
                             </div>
 
                             <div class="col-md-4">
-                                <label class="form-label">
-                                    Estado
-                                </label>
-
+                                <label class="form-label">Estado</label>
                                 <select class="form-select" id="filtroPrestamo">
-                                    <option value="">
-                                        Todos
-                                    </option>
-
-                                    <option value="Activo">
-                                        Activo
-                                    </option>
-
-                                    <option value="Vencido">
-                                        Vencido
-                                    </option>
+                                    <option value="">Todos</option>
+                                    <option value="Prestado">Prestado</option>
+                                                                        <option value="Perdido">Perdido</option>
                                 </select>
                             </div>
 
@@ -167,7 +156,7 @@
                                         <th>Libro</th>
                                         <th>Fecha préstamo</th>
                                         <th>Fecha devolución</th>
-                                        <th>Renovaciones</th>
+                                        <th>Estado libro</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -186,7 +175,39 @@
 
             </section>
 
-            <!-- RENOVACION -->
+            <div class="modal fade" id="modalEditarPrestamo" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar préstamo activo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="msgEdicionPrestamo" class="mb-3"></div>
+                            <input type="hidden" id="editarPrestamoId">
+                            <div class="mb-3">
+                                <label class="form-label" for="editarEstadoLibro">Estado del libro</label>
+                                <select class="form-select" id="editarEstadoLibro">
+                                    <option value="Reservado">Reservado</option>
+                                    <option value="Prestado">Prestado</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="editarEstadoPrestamo">Estado del préstamo</label>
+                                <select class="form-select" id="editarEstadoPrestamo">
+                                    <option value="Prestado">Prestado</option>
+                                                                        <option value="Perdido">Perdido</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" id="btnGuardarEdicionPrestamo">Guardar cambios</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <section class="tab-pane fade" id="renovacion">
 
                 <div class="card">
@@ -204,20 +225,13 @@
                             <div class="row g-3">
 
                                 <div class="col-md-6">
-                                    <label class="form-label">
-                                        Préstamo activo
-                                    </label>
-
-                                    <select class="form-select" id="prestamoRenovar">
-                                    </select>
+                                    <label class="form-label">Préstamo activo</label>
+                                    <select class="form-select" id="prestamoRenovar"></select>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">
-                                        Nueva fecha devolución
-                                    </label>
-
-                                    <input type="date" class="form-control" id="nuevaFecha" readonly>
+                                    <label class="form-label">Nueva fecha devolución</label>
+                                    <input type="date" class="form-control" id="nuevaFecha">
                                 </div>
 
                             </div>
@@ -238,8 +252,9 @@
 
     </main>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/prestamos.js"></script>
+    <script src="../Controllers/prestamoController.js"></script>
 
 </body>
 
