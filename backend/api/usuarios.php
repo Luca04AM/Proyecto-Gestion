@@ -5,6 +5,22 @@ require_once "../config/database.php";
 
 $method = $_SERVER["REQUEST_METHOD"];
 
+if ($method === "GET") {
+
+    $sql = "SELECT id, nombre, correo FROM usuarios ORDER BY nombre";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode([
+        "success" => true,
+        "data" => $usuarios
+    ], JSON_UNESCAPED_UNICODE);
+
+    exit;
+}
+
 if ($method !== "POST") {
     echo json_encode([
         "success" => false,
