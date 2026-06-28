@@ -6,176 +6,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multas - SIGAB Libros</title>
 
-    <link rel="stylesheet" href="../css/multas.css">
+    <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="../css/catalogo.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script type="module" src="../components/Navbar.js"></script>
 </head>
 
-<body class="modulo modulo-multas">
-    <nav class="navbar">
-        <div class="container menu-container">
-            <a href="../index.html" class="logo">
-                <div class="logo-circle">
-                    <img src="../img/logo.png" alt="Logo SIGAB">
-                </div>
-                <span>SIGAB Libros</span>
-            </a>
+<body>
 
-            <ul class="menu">
-                <li>
-                    <a href="../index.html">Inicio</a>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Mantenimiento</a>
-                    <ul class="submenu">
-                        <li><a href="autores.html">Autores</a></li>
-                        <li><a href="genero.html">Géneros</a></li>
-                        <li><a href="portada.html">Portadas</a></li>
-                        <li><a href="usuario.html">Usuarios</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="menu-activo">Circulación</a>
-                    <ul class="submenu">
-                        <li><a href="prestamo.html">Préstamos</a></li>
-                        <li><a href="devoluciones.html">Devoluciones</a></li>
-                        <li><a href="reservas.html">Reservas</a></li>
-                        <li><a href="multas.html" aria-current="page">Multas</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Consultas</a>
-                    <ul class="submenu">
-                        <li><a href="catalogo.html">Catálogo</a></li>
-                        <li><a href="busqueda.html">Búsqueda</a></li>
-                        <li><a href="historial.html">Historial</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Administración</a>
-                    <ul class="submenu">
-                        <li><a href="notificaciones.html">Notificaciones</a></li>
-                        <li><a href="reportes.html">Reportes</a></li>
-                        <li><a href="panelAdministrador.html">Panel</a></li>
-                        <li><a href="autenticacion.html">Acceso</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <nav-bar></nav-bar>
 
     <main class="container">
-        <section class="card modulo-header">
-            <div class="modulo-copy">
-                <span class="eyebrow">Control de circulación</span>
-                <h1>Gestión de multas</h1>
-                <p>Consulta y administra los cargos asociados a devoluciones fuera de plazo.</p>
-            </div>
-            <div class="resumen-modulo" aria-label="Resumen de multas">
-                <span><strong>02</strong> registradas</span>
-                <span><strong>01</strong> pendiente</span>
-            </div>
-        </section>
 
-        <section class="card card-formulario">
-            <div class="section-heading">
+        <div class="card">
+
+            <div class="encabezado-modulo">
                 <div>
-                    <span class="section-kicker">Nuevo registro</span>
-                    <h2>Registrar multa</h2>
+                    <h1 id="tituloFormulario">Registrar Multa</h1>
+                    <p id="subtituloFormulario">Complete la información para registrar o modificar una multa.</p>
                 </div>
-                <span class="section-number">01</span>
+
+                <div>
+                    <a href="prestamo.html" class="btn btn-secondary">
+                        Volver a circulación
+                    </a>
+                </div>
             </div>
+
+            <hr>
+
+            <div id="mensajeFormulario" class="mensaje-formulario" style="display:none;"></div>
+
             <form id="formMulta">
-                <input type="hidden" id="txtIdMulta">
+
+                <input type="hidden" id="idMulta">
+
                 <div class="form-grid">
+
                     <div>
-                        <label for="txtUsuarioMulta">Usuario</label>
-                        <input type="text" id="txtUsuarioMulta" placeholder="Nombre del usuario">
+                        <label for="idUsuario">Usuario</label>
+                        <select id="idUsuario">
+                            <option value="">Cargando usuarios...</option>
+                        </select>
                     </div>
+
                     <div>
-                        <label for="txtLibroMulta">Libro</label>
-                        <input type="text" id="txtLibroMulta" placeholder="Título del libro">
+                        <label for="idLibro">Libro</label>
+                        <select id="idLibro">
+                            <option value="">Cargando libros...</option>
+                        </select>
                     </div>
+
                     <div>
-                        <label for="txtFechaDevolucion">Fecha de devolución</label>
-                        <input type="date" id="txtFechaDevolucion">
+                        <label for="fechaDevolucion">Fecha de devolución</label>
+                        <input type="date" id="fechaDevolucion">
                     </div>
+
                     <div>
-                        <label for="txtDiasRetraso">Días de retraso</label>
-                        <input type="number" id="txtDiasRetraso" min="0" placeholder="0">
+                        <label for="diasRetraso">Días de retraso</label>
+                        <input type="number" id="diasRetraso" min="0" placeholder="0">
                     </div>
+
                     <div>
-                        <label for="txtMontoMulta">Monto</label>
-                        <input type="text" id="txtMontoMulta" placeholder="S/ 0.00">
+                        <label for="diasGracia">Días de gracia</label>
+                        <input type="number" id="diasGracia" min="0" placeholder="0">
                     </div>
+
                     <div>
-                        <label for="txtEstadoMulta">Estado</label>
-                        <select id="txtEstadoMulta">
+                        <label for="tipoMulta">Tipo</label>
+                        <select id="tipoMulta">
+                            <option value="Atraso">Atraso</option>
+                            <option value="Daño">Daño</option>
+                            <option value="Perdida">Perdida</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="montoMulta">Monto</label>
+                        <input type="number" id="montoMulta" min="0" step="0.01" placeholder="0.00" readonly>
+                    </div>
+
+                    <div>
+                        <label for="estadoMulta">Estado</label>
+                        <select id="estadoMulta">
                             <option value="Pendiente">Pendiente</option>
                             <option value="Pagada">Pagada</option>
                         </select>
                     </div>
-                </div>
-                <div class="acciones-form">
-                    <button type="submit" class="btn btn-primary">Guardar multa</button>
-                    <button type="reset" class="btn btn-secondary">Limpiar</button>
-                </div>
-            </form>
-        </section>
 
-        <section class="card card-tabla">
-            <div class="section-heading">
-                <div>
-                    <span class="section-kicker">Seguimiento actual</span>
-                    <h2>Multas registradas</h2>
                 </div>
-                <span class="section-number">02</span>
+
+                <div class="acciones-formulario">
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">
+                        Guardar
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" id="btnLimpiarFormulario">
+                        Limpiar
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="card resultados-busqueda">
+
+            <div class="encabezado-modulo">
+                <div>
+                    <h2>Multas registradas</h2>
+                    <p>Consulta y edita los registros existentes.</p>
+                </div>
             </div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Usuario</th>
-                            <th>Libro</th>
-                            <th>Fecha devolución</th>
-                            <th>Días atraso</th>
-                            <th>Monto</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>MU-01</td>
-                            <td>María Pérez</td>
-                            <td>El niño con el pijama de rayas</td>
-                            <td>2026-06-12</td>
-                            <td>6</td>
-                            <td>S/ 18.00</td>
-                            <td><span class="badge badge-atrasado">Pendiente</span></td>
-                            <td><button class="btn btn-accent">Marcar pagada</button></td>
-                        </tr>
-                        <tr>
-                            <td>MU-02</td>
-                            <td>Carlos García</td>
-                            <td>Historia del mundo</td>
-                            <td>2026-06-18</td>
-                            <td>0</td>
-                            <td>S/ 0.00</td>
-                            <td><span class="badge badge-disponible">Pagada</span></td>
-                            <td><button class="btn btn-secondary">Ver detalle</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+
+            <table id="tablaMultas">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Libro</th>
+                        <th>Fecha devolución</th>
+                        <th>Días atraso</th>
+                        <th>Gracia</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbodyMultas">
+                    <!-- Las multas se cargan desde el API -->
+                </tbody>
+
+            </table>
+
+        </div>
+
     </main>
 
     <footer class="footer">
         <p>SIGAB Libros © 2026</p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Controllers/multasController.js"></script>
+
 </body>
 
 </html>

@@ -39,7 +39,7 @@ switch ($method) {
 
         echo json_encode([
             "success" => false,
-            "message" => "Método no permitido."
+            "message" => "Método no permitido.",
         ]);
 
         break;
@@ -59,14 +59,14 @@ function listarAutores()
 
         echo json_encode([
             "success" => true,
-            "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)
+            "data" => $stmt->fetchAll(PDO::FETCH_ASSOC),
         ]);
 
     } catch (PDOException $e) {
 
         echo json_encode([
             "success" => false,
-            "message" => $e->getMessage()
+            "message" => $e->getMessage(),
         ]);
 
     }
@@ -88,14 +88,14 @@ function obtenerAutor($id)
 
         echo json_encode([
             "success" => true,
-            "data" => $stmt->fetch(PDO::FETCH_ASSOC)
+            "data" => $stmt->fetch(PDO::FETCH_ASSOC),
         ]);
 
     } catch (PDOException $e) {
 
         echo json_encode([
             "success" => false,
-            "message" => $e->getMessage()
+            "message" => $e->getMessage(),
         ]);
 
     }
@@ -105,7 +105,7 @@ function guardarAutor()
 {
     global $pdo;
 
-   $nombre = $_POST["nombre"] ?? "";
+    $nombre = $_POST["nombre"] ?? "";
 
 
 
@@ -162,14 +162,14 @@ function guardarAutor()
 
         echo json_encode([
             "success" => true,
-            "message" => "Autor registrado correctamente."
+            "message" => "Autor registrado correctamente.",
         ]);
 
     } catch (PDOException $e) {
 
         echo json_encode([
             "success" => false,
-            "message" => $e->getMessage()
+            "message" => $e->getMessage(),
         ]);
 
     }
@@ -209,11 +209,8 @@ function actualizarAutor()
             $fotografia = time() . "_" . basename($_FILES["fotografia"]["name"]);
 
             move_uploaded_file(
-
                 $_FILES["fotografia"]["tmp_name"],
-
                 "../../frontend/img/autores/" . $fotografia
-
             );
 
         }
@@ -243,14 +240,14 @@ function actualizarAutor()
 
         echo json_encode([
             "success" => true,
-            "message" => "Autor actualizado correctamente."
+            "message" => "Autor actualizado correctamente.",
         ]);
 
     } catch (PDOException $e) {
 
         echo json_encode([
             "success" => false,
-            "message" => $e->getMessage()
+            "message" => $e->getMessage(),
         ]);
 
     }
@@ -273,14 +270,14 @@ function eliminarAutor()
 
         echo json_encode([
             "success" => true,
-            "message" => "Autor eliminado correctamente."
+            "message" => "Autor eliminado correctamente.",
         ]);
 
     } catch (PDOException $e) {
 
         echo json_encode([
             "success" => false,
-            "message" => $e->getMessage()
+            "message" => $e->getMessage(),
         ]);
 
     }

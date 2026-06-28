@@ -1,1 +1,7 @@
 database.php
+.codex/
+.agents/
+.php-cs-fixer.dist.php
+backend/api/.php-cs-fixer.cache
+backend/api/.php-cs-fixer.dist.php
+backend/api/composer.json
