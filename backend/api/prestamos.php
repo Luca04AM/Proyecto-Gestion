@@ -22,6 +22,11 @@ switch ($method) {
             break;
         }
 
+        if (isset($_GET["accion"]) && $_GET["accion"] === "pendientes") {
+            listarPrestamosPendientes();
+            break;
+        }
+
         listarPrestamos();
         break;
 
@@ -121,6 +126,36 @@ function listarPrestamosActivos()
                 INNER JOIN usuarios u ON u.id = p.id_usuario
                 INNER JOIN libros l ON l.id = p.id_libro
                 WHERE p.estado = 'Prestado'
+                ORDER BY p.id DESC";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+
+        echo json_encode([
+            "success" => true,
+            "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)
+        ], JSON_UNESCAPED_UNICODE);
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode([
+            "success" => false,
+            "message" => $e->getMessage()
+        ], JSON_UNESCAPED_UNICODE);
+    }
+}
+
+
+function listarPrestamosPendientes()
+{
+    global $pdo;
+
+    try {
+        $sql = "SELECT p.id, p.id_usuario, p.id_libro, p.fecha_prestamo, p.fecha_devolucion, p.estado,
+                       u.nombre AS usuario, l.titulo AS libro
+                FROM prestamos p
+                INNER JOIN usuarios u ON u.id = p.id_usuario
+                INNER JOIN libros l ON l.id = p.id_libro
+                WHERE p.estado <> 'Devuelto'
                 ORDER BY p.id DESC";
 
         $stmt = $pdo->prepare($sql);
