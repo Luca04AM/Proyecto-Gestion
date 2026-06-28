@@ -130,7 +130,10 @@ try {
             if ($diasRetraso > 0) {
                 $multasAInsertar[] = [
                     "tipo" => "Atraso",
+<<<<<<< HEAD
                     "dias_retraso" => $diasRetraso,
+=======
+>>>>>>> e68cf88 (Multas backend, logica)
                     "dias_gracia" => 0
                 ];
             }
@@ -139,7 +142,10 @@ try {
         if (mb_strtolower($estado_libro, "UTF-8") === "dañado") {
             $multasAInsertar[] = [
                 "tipo" => "Daño",
+<<<<<<< HEAD
                 "dias_retraso" => 0,
+=======
+>>>>>>> e68cf88 (Multas backend, logica)
                 "dias_gracia" => 0
             ];
         }
@@ -147,7 +153,10 @@ try {
         if (mb_strtolower($estado_libro, "UTF-8") === "muy dañado") {
             $multasAInsertar[] = [
                 "tipo" => "Perdida",
+<<<<<<< HEAD
                 "dias_retraso" => 0,
+=======
+>>>>>>> e68cf88 (Multas backend, logica)
                 "dias_gracia" => 0
             ];
         }
@@ -185,6 +194,13 @@ try {
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (PDOException $e) {
+<<<<<<< HEAD
+=======
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+>>>>>>> e68cf88 (Multas backend, logica)
     http_response_code(500);
     echo json_encode([
         "success" => false,

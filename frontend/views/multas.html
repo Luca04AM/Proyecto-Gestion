@@ -67,11 +67,6 @@
                     </div>
 
                     <div>
-                        <label for="diasRetraso">Días de retraso</label>
-                        <input type="number" id="diasRetraso" min="0" placeholder="0">
-                    </div>
-
-                    <div>
                         <label for="diasGracia">Días de gracia</label>
                         <input type="number" id="diasGracia" min="0" placeholder="0">
                     </div>
@@ -87,15 +82,7 @@
 
                     <div>
                         <label for="montoMulta">Monto</label>
-                        <input type="number" id="montoMulta" min="0" step="0.01" placeholder="0.00" readonly>
-                    </div>
-
-                    <div>
-                        <label for="estadoMulta">Estado</label>
-                        <select id="estadoMulta">
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Pagada">Pagada</option>
-                        </select>
+                        <input type="text" id="montoMulta" placeholder="0.00" readonly>
                     </div>
 
                 </div>
@@ -131,10 +118,9 @@
                         <th>Usuario</th>
                         <th>Libro</th>
                         <th>Fecha devolución</th>
-                        <th>Días atraso</th>
                         <th>Gracia</th>
+                        <th>Tipo</th>
                         <th>Monto</th>
-                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -154,7 +140,6 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="../Controllers/multasController.js"></script>
 
 </body>

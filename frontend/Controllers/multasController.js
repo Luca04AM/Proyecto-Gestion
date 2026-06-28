@@ -1,18 +1,18 @@
 $(document).ready(function () {
-
     const API = "../../backend/api/multas.php";
 
     let modoEdicion = false;
 
     cargarCatalogos();
     listarMultas();
+    actualizarMonto();
 
     $("#formMulta").on("submit", function (e) {
         e.preventDefault();
         guardarMulta();
     });
 
-    $("#tipoMulta, #diasRetraso, #diasGracia").on("input change", function () {
+    $("#tipoMulta, #fechaDevolucion, #diasGracia").on("input change", function () {
         actualizarMonto();
     });
 
@@ -24,20 +24,6 @@ $(document).ready(function () {
     $(document).on("click", ".btnEditarMulta", function () {
         const id = $(this).data("id");
         cargarMulta(id);
-    });
-
-    $(document).on("click", ".btnVoucherMulta", function () {
-        generarVoucher({
-            id: $(this).data("id"),
-            usuario: $(this).data("usuario"),
-            libro: $(this).data("libro"),
-            fecha_devolucion: $(this).data("fecha"),
-            dias_retraso: $(this).data("retraso"),
-            dias_gracia: $(this).data("gracia"),
-            monto: $(this).data("monto"),
-            estado: $(this).data("estado"),
-            tipo: $(this).data("tipo")
-        });
     });
 
     function cargarCatalogos() {
@@ -64,6 +50,7 @@ $(document).ready(function () {
 
                 $("#idUsuario").html(usuarios);
                 $("#idLibro").html(libros);
+                actualizarMonto();
             },
             error: function () {
                 mostrarMensaje("No se pudieron cargar los catálogos.", "error");
@@ -72,24 +59,15 @@ $(document).ready(function () {
     }
 
     function guardarMulta() {
-        actualizarMonto();
-
         const multa = {
             id_usuario: $("#idUsuario").val(),
             id_libro: $("#idLibro").val(),
             fecha_devolucion: $("#fechaDevolucion").val(),
-            dias_retraso: $("#diasRetraso").val(),
             dias_gracia: $("#diasGracia").val(),
-            monto: $("#montoMulta").val(),
-            estado: $("#estadoMulta").val(),
             tipo: $("#tipoMulta").val()
         };
 
-        if (
-            multa.id_usuario === "" ||
-            multa.id_libro === "" ||
-            multa.fecha_devolucion === ""
-        ) {
+        if (multa.id_usuario === "" || multa.id_libro === "" || multa.fecha_devolucion === "") {
             mostrarMensaje("Debe completar los campos obligatorios.", "error");
             return;
         }
@@ -119,11 +97,9 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 let mensaje = "No se pudo guardar la multa.";
-
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     mensaje = xhr.responseJSON.message;
                 }
-
                 mostrarMensaje(mensaje, "error");
             }
         });
@@ -145,34 +121,13 @@ $(document).ready(function () {
                                 <td>${multa.usuario}</td>
                                 <td>${multa.libro}</td>
                                 <td>${multa.fecha_devolucion}</td>
-                                <td>${multa.dias_retraso}</td>
                                 <td>${multa.dias_gracia}</td>
-                                <td>S/ ${Number(multa.monto).toFixed(2)}</td>
-                                <td>
-                                    <span class="badge ${multa.estado === "Pagada" ? "badge-disponible" : "badge-prestado"}">
-                                        ${multa.estado}
-                                    </span>
-                                </td>
+                                <td>${multa.tipo}</td>
+                                <td>S/ ${formatearMonto(calcularMontoDesdeFila(multa))}</td>
                                 <td>
                                     <button class="btn btn-secondary btnEditarMulta" data-id="${multa.id}">
                                         Editar
                                     </button>
-                                    ${multa.estado === "Pagada" ? `
-                                        <button
-                                            class="btn btn-primary btnVoucherMulta"
-                                            data-id="${multa.id}"
-                                            data-usuario="${multa.usuario}"
-                                            data-libro="${multa.libro}"
-                                            data-fecha="${multa.fecha_devolucion}"
-                                            data-retraso="${multa.dias_retraso}"
-                                            data-gracia="${multa.dias_gracia}"
-                                            data-monto="${multa.monto}"
-                                            data-estado="${multa.estado}"
-                                            data-tipo="${multa.tipo}"
-                                        >
-                                            Voucher
-                                        </button>
-                                    ` : ""}
                                 </td>
                             </tr>
                         `;
@@ -204,17 +159,14 @@ $(document).ready(function () {
                 $("#idUsuario").val(multa.id_usuario);
                 $("#idLibro").val(multa.id_libro);
                 $("#fechaDevolucion").val(String(multa.fecha_devolucion).slice(0, 10));
-                $("#diasRetraso").val(multa.dias_retraso);
                 $("#diasGracia").val(multa.dias_gracia);
-                $("#estadoMulta").val(multa.estado);
                 $("#tipoMulta").val(multa.tipo);
+                actualizarMonto();
 
                 modoEdicion = true;
                 $("#tituloFormulario").text("Editar Multa");
                 $("#subtituloFormulario").text("Modifique los datos del registro seleccionado.");
                 $("#btnGuardar").text("Actualizar");
-                $("#tipoMulta").trigger("change");
-                actualizarMonto();
                 window.scrollTo({ top: 0, behavior: "smooth" });
             },
             error: function () {
@@ -228,41 +180,65 @@ $(document).ready(function () {
         $("#idUsuario").val("");
         $("#idLibro").val("");
         $("#fechaDevolucion").val("");
-        $("#diasRetraso").val("");
         $("#diasGracia").val("");
-        $("#montoMulta").val("");
-        $("#estadoMulta").val("Pendiente");
         $("#tipoMulta").val("Atraso");
-        actualizarMonto();
+        $("#montoMulta").val("0.00");
         modoEdicion = false;
         $("#tituloFormulario").text("Registrar Multa");
         $("#subtituloFormulario").text("Complete la información para registrar o modificar una multa.");
         $("#btnGuardar").text("Guardar");
+        actualizarMonto();
     }
 
     function actualizarMonto() {
         const tipo = $("#tipoMulta").val();
-        const diasRetraso = parseInt($("#diasRetraso").val(), 10) || 0;
+        const fechaDevolucion = $("#fechaDevolucion").val();
         const diasGracia = parseInt($("#diasGracia").val(), 10) || 0;
 
-        let montoBase = 0;
+        const monto = calcularMonto(tipo, fechaDevolucion, diasGracia);
+        $("#montoMulta").val(formatearMonto(monto));
+    }
 
-        if (tipo === "Atraso") {
-            montoBase = 1000;
+    function calcularMonto(tipo, fechaDevolucion, diasGracia) {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        let daysLate = 0;
+
+        if (fechaDevolucion) {
+            const fecha = new Date(fechaDevolucion + "T00:00:00");
+            fecha.setHours(0, 0, 0, 0);
+
+            const diffMs = hoy - fecha;
+            if (diffMs > 0) {
+                daysLate = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            }
         }
 
+        const diasCobro = Math.max(daysLate - diasGracia, 1);
+
+        let fixedFee = 1000;
+
         if (tipo === "Daño") {
-            montoBase = 3000;
+            fixedFee = 3000;
         }
 
         if (tipo === "Perdida") {
-            montoBase = 10000;
+            fixedFee = 10000;
         }
 
-        const diasCobro = Math.max(diasRetraso - diasGracia, 1);
-        const monto = montoBase * diasCobro;
+        return fixedFee * diasCobro;
+    }
 
-        $("#montoMulta").val(monto.toFixed(2));
+    function calcularMontoDesdeFila(multa) {
+        const tipo = multa.tipo || "Atraso";
+        const fechaDevolucion = multa.fecha_devolucion ? String(multa.fecha_devolucion).slice(0, 10) : "";
+        const diasGracia = parseInt(multa.dias_gracia, 10) || 0;
+        return calcularMonto(tipo, fechaDevolucion, diasGracia);
+    }
+
+    function formatearMonto(monto) {
+        return Number(monto || 0).toFixed(2);
     }
 
     function mostrarMensaje(texto, tipo) {
@@ -279,33 +255,4 @@ $(document).ready(function () {
         mensaje.text(texto);
         mensaje.attr("style", "display:block;");
     }
-
-    function generarVoucher(multa) {
-        const pdf = new window.jspdf.jsPDF();
-        const fechaGeneracion = new Date().toLocaleString("es-CR");
-
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.text("SIGAB Libros", 20, 20);
-
-        pdf.setFontSize(12);
-        pdf.setFont("helvetica", "normal");
-        pdf.text("Comprobante de multa pagada", 20, 32);
-        pdf.text(`Fecha de generación: ${fechaGeneracion}`, 20, 42);
-        pdf.text(`ID de multa: ${multa.id}`, 20, 54);
-        pdf.text(`Usuario: ${multa.usuario}`, 20, 64);
-        pdf.text(`Libro: ${multa.libro}`, 20, 74);
-        pdf.text(`Fecha de devolución: ${multa.fecha_devolucion}`, 20, 84);
-        pdf.text(`Días de retraso: ${multa.dias_retraso}`, 20, 94);
-        pdf.text(`Días de gracia: ${multa.dias_gracia}`, 20, 104);
-        pdf.text(`Tipo: ${multa.tipo}`, 20, 114);
-        pdf.text(`Estado: ${multa.estado}`, 20, 124);
-        pdf.text(`Monto pagado: S/ ${Number(multa.monto).toFixed(2)}`, 20, 134);
-
-        pdf.setFontSize(10);
-        pdf.text("Documento generado automáticamente por SIGAB Libros.", 20, 150);
-
-        pdf.save(`voucher-multa-${multa.id}.pdf`);
-    }
-
 });

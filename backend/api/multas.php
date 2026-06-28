@@ -42,8 +42,8 @@ function listarMultas()
     global $pdo;
 
     try {
-        $sql = "SELECT m.id, m.id_usuario, m.id_libro, m.fecha_devolucion, m.dias_retraso, m.dias_gracia,
-                       m.monto, m.estado, m.tipo, u.nombre AS usuario, l.titulo AS libro
+        $sql = "SELECT m.id, m.id_usuario, m.id_libro, m.fecha_devolucion, m.dias_gracia,
+                       m.tipo, u.nombre AS usuario, l.titulo AS libro
                 FROM multas m
                 INNER JOIN usuarios u ON u.id = m.id_usuario
                 INNER JOIN libros l ON l.id = m.id_libro
@@ -70,8 +70,8 @@ function obtenerMulta($id)
     global $pdo;
 
     try {
-        $sql = "SELECT m.id, m.id_usuario, m.id_libro, m.fecha_devolucion, m.dias_retraso, m.dias_gracia,
-                       m.monto, m.estado, m.tipo, u.nombre AS usuario, l.titulo AS libro
+        $sql = "SELECT m.id, m.id_usuario, m.id_libro, m.fecha_devolucion, m.dias_gracia,
+                       m.tipo, u.nombre AS usuario, l.titulo AS libro
                 FROM multas m
                 INNER JOIN usuarios u ON u.id = m.id_usuario
                 INNER JOIN libros l ON l.id = m.id_libro
@@ -135,10 +135,7 @@ function guardarMulta()
     $id_usuario = isset($data["id_usuario"]) ? intval($data["id_usuario"]) : 0;
     $id_libro = isset($data["id_libro"]) ? intval($data["id_libro"]) : 0;
     $fecha_devolucion = isset($data["fecha_devolucion"]) ? trim($data["fecha_devolucion"]) : "";
-    $dias_retraso = isset($data["dias_retraso"]) ? intval($data["dias_retraso"]) : 0;
     $dias_gracia = isset($data["dias_gracia"]) ? intval($data["dias_gracia"]) : 0;
-    $monto = isset($data["monto"]) ? floatval($data["monto"]) : 0;
-    $estado = isset($data["estado"]) ? trim($data["estado"]) : "Pendiente";
     $tipo = isset($data["tipo"]) ? trim($data["tipo"]) : "Atraso";
 
     if ($id_usuario <= 0 || $id_libro <= 0 || $fecha_devolucion === "") {
@@ -152,19 +149,16 @@ function guardarMulta()
 
     try {
         $sql = "INSERT INTO multas
-                (id_usuario, id_libro, fecha_devolucion, dias_retraso, dias_gracia, monto, estado, tipo)
+                (id_usuario, id_libro, fecha_devolucion, dias_gracia, tipo)
                 VALUES
-                (:id_usuario, :id_libro, :fecha_devolucion, :dias_retraso, :dias_gracia, :monto, :estado, :tipo)";
+                (:id_usuario, :id_libro, :fecha_devolucion, :dias_gracia, :tipo)";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ":id_usuario" => $id_usuario,
             ":id_libro" => $id_libro,
             ":fecha_devolucion" => $fecha_devolucion,
-            ":dias_retraso" => $dias_retraso,
             ":dias_gracia" => $dias_gracia,
-            ":monto" => $monto,
-            ":estado" => $estado,
             ":tipo" => $tipo
         ]);
 
@@ -191,10 +185,7 @@ function actualizarMulta()
     $id_usuario = isset($data["id_usuario"]) ? intval($data["id_usuario"]) : 0;
     $id_libro = isset($data["id_libro"]) ? intval($data["id_libro"]) : 0;
     $fecha_devolucion = isset($data["fecha_devolucion"]) ? trim($data["fecha_devolucion"]) : "";
-    $dias_retraso = isset($data["dias_retraso"]) ? intval($data["dias_retraso"]) : 0;
     $dias_gracia = isset($data["dias_gracia"]) ? intval($data["dias_gracia"]) : 0;
-    $monto = isset($data["monto"]) ? floatval($data["monto"]) : 0;
-    $estado = isset($data["estado"]) ? trim($data["estado"]) : "Pendiente";
     $tipo = isset($data["tipo"]) ? trim($data["tipo"]) : "Atraso";
 
     if ($id <= 0 || $id_usuario <= 0 || $id_libro <= 0 || $fecha_devolucion === "") {
@@ -211,10 +202,7 @@ function actualizarMulta()
                 SET id_usuario = :id_usuario,
                     id_libro = :id_libro,
                     fecha_devolucion = :fecha_devolucion,
-                    dias_retraso = :dias_retraso,
                     dias_gracia = :dias_gracia,
-                    monto = :monto,
-                    estado = :estado,
                     tipo = :tipo
                 WHERE id = :id";
 
@@ -224,10 +212,7 @@ function actualizarMulta()
             ":id_usuario" => $id_usuario,
             ":id_libro" => $id_libro,
             ":fecha_devolucion" => $fecha_devolucion,
-            ":dias_retraso" => $dias_retraso,
             ":dias_gracia" => $dias_gracia,
-            ":monto" => $monto,
-            ":estado" => $estado,
             ":tipo" => $tipo
         ]);
 

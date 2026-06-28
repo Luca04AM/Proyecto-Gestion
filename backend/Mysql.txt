@@ -63,7 +63,7 @@ CREATE TABLE multas (
     id_usuario INT,
     CONSTRAINT fk_id_usuario_multa FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
     id_libro INT DEFAULT NULL,
-    CONSTRAINT fk_id_libro_multa FOREIGN KEY (id_libro) REFERENCES libros(id), monto DOUBLE NOT NULL,
+    CONSTRAINT fk_id_libro_multa FOREIGN KEY (id_libro) REFERENCES libros(id), 
     fecha_devolucion DATETIME DEFAULT CURRENT_TIMESTAMP,
     tipo ENUM('Atraso','Daño','Perdida') DEFAULT 'Atraso',
     dias_gracia INT DEFAULT 0
