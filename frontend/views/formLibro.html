@@ -82,10 +82,24 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label for="portada">Portada</label>
-                        <input type="text" id="portada" placeholder="Ejemplo: libro.jpg">
-                    </div>
+                    <div class="campo-completo">
+    <label for="archivoPortada">Portada del Libro</label>
+
+    <div class="zona-archivo" id="zonaPortada">
+            <div id="previewPortada" class="preview-portada">
+                <p id="textoPortada">Ninguna portada seleccionada</p>
+            </div>
+        </div>
+
+        <input 
+            type="file" 
+            id="archivoPortada" 
+            accept="image/*"
+            class="input-archivo"
+        >
+
+        <input type="hidden" id="portada">
+    </div>
 
                 </div>
 

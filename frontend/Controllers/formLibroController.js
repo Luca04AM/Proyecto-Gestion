@@ -8,6 +8,28 @@ $(document).ready(function () {
         prepararFormularioEdicion(idLibro);
     }
 
+    $("#txtPortada").on("change", function () {
+        const archivo = this.files[0];
+
+        if (!archivo) {
+            $("#portada").val("");
+            $("#previewPortada").attr("src", "../img/autores/subir.png");
+            $("#nombrePortada").text("Ningún archivo seleccionado");
+            return;
+        }
+
+        $("#portada").val(archivo.name);
+        $("#nombrePortada").text(archivo.name);
+
+        const lector = new FileReader();
+
+        lector.onload = function (e) {
+            $("#previewPortada").attr("src", e.target.result);
+        };
+
+        lector.readAsDataURL(archivo);
+    });
+
     $("#formLibro").on("submit", function (e) {
         e.preventDefault();
 
@@ -103,6 +125,14 @@ $(document).ready(function () {
         $("#portada").val(libro.portada);
         $("#estado").val(libro.estado);
         $("#condicion").val(libro.condicion || "Excelente");
+
+        if (libro.portada) {
+            $("#previewPortada").attr("src", "../img/catalogo/" + libro.portada);
+            $("#nombrePortada").text(libro.portada);
+        } else {
+            $("#previewPortada").attr("src", "../img/autores/subir.png");
+            $("#nombrePortada").text("Ningún archivo seleccionado");
+        }
     }
 
     function limpiarFormulario() {
@@ -111,8 +141,12 @@ $(document).ready(function () {
         $("#genero").val("");
         $("#descripcion").val("");
         $("#portada").val("");
+        $("#txtPortada").val("");
         $("#estado").val("Disponible");
         $("#condicion").val("Excelente");
+
+        $("#previewPortada").attr("src", "../img/autores/subir.png");
+        $("#nombrePortada").text("Ningún archivo seleccionado");
     }
 
     function mostrarMensaje(texto, tipo) {
