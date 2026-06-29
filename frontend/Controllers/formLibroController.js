@@ -4,9 +4,15 @@ $(document).ready(function () {
     const idLibro = parametros.get("id");
     const modoEdicion = idLibro !== null;
 
-    if (modoEdicion) {
-        prepararFormularioEdicion(idLibro);
-    }
+    cargarOpcionesFormulario().then(function () {
+        if (modoEdicion) {
+            prepararFormularioEdicion(idLibro);
+        }
+    });
+
+    $("#previewPortada").on("click", function () {
+        $("#txtPortada").click();
+    });
 
     $("#txtPortada").on("change", function () {
         const archivo = this.files[0];
@@ -30,15 +36,19 @@ $(document).ready(function () {
         lector.readAsDataURL(archivo);
     });
 
+    $("#previewPortada").on("error", function () {
+        $(this).attr("src", "../img/autores/subir.png");
+    });
+
     $("#formLibro").on("submit", function (e) {
         e.preventDefault();
 
         const libro = {
-            titulo: $("#titulo").val().trim(),
-            autor: $("#autor").val().trim(),
-            genero: $("#genero").val().trim(),
-            descripcion: $("#descripcion").val().trim(),
-            portada: $("#portada").val().trim(),
+            titulo: ($("#titulo").val() || "").trim(),
+            autor: ($("#autor").val() || "").trim(),
+            genero: ($("#genero").val() || "").trim(),
+            descripcion: ($("#descripcion").val() || "").trim(),
+            portada: ($("#portada").val() || "").trim(),
             estado: $("#estado").val(),
             condicion: $("#condicion").val()
         };
@@ -94,6 +104,55 @@ $(document).ready(function () {
         $("#mensajeFormulario").hide();
     });
 
+    function cargarOpcionesFormulario() {
+        return $.ajax({
+            url: "../../backend/api/opcionesLibro.php",
+            type: "GET",
+            dataType: "json",
+            success: function (respuesta) {
+                if (respuesta.success) {
+                    cargarAutores(respuesta.autores);
+                    cargarGeneros(respuesta.generos);
+                } else {
+                    mostrarMensaje("No se pudieron cargar autores y géneros.", "error");
+                }
+            },
+            error: function () {
+                mostrarMensaje("Error al cargar autores y géneros.", "error");
+            }
+        });
+    }
+
+    function cargarAutores(autores) {
+        const selectAutor = $("#autor");
+
+        selectAutor.empty();
+        selectAutor.append(`<option value="">Seleccione un autor</option>`);
+
+        autores.forEach(function (autor) {
+            selectAutor.append(`
+                <option value="${autor.nombre}">
+                    ${autor.nombre}
+                </option>
+            `);
+        });
+    }
+
+    function cargarGeneros(generos) {
+        const selectGenero = $("#genero");
+
+        selectGenero.empty();
+        selectGenero.append(`<option value="">Seleccione un género</option>`);
+
+        generos.forEach(function (genero) {
+            selectGenero.append(`
+                <option value="${genero.nombre}">
+                    ${genero.nombre}
+                </option>
+            `);
+        });
+    }
+
     function prepararFormularioEdicion(id) {
         $("#tituloFormulario").text("Editar Libro");
         $("#subtituloFormulario").text("Modifique la información del libro seleccionado.");
@@ -122,7 +181,7 @@ $(document).ready(function () {
         $("#autor").val(libro.autor);
         $("#genero").val(libro.genero);
         $("#descripcion").val(libro.descripcion);
-        $("#portada").val(libro.portada);
+        $("#portada").val(libro.portada || "");
         $("#estado").val(libro.estado);
         $("#condicion").val(libro.condicion || "Excelente");
 
@@ -136,6 +195,7 @@ $(document).ready(function () {
     }
 
     function limpiarFormulario() {
+        $("#idLibro").val("");
         $("#titulo").val("");
         $("#autor").val("");
         $("#genero").val("");
