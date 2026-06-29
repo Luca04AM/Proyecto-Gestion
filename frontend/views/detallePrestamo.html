@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de Multa | SIGAB Libros</title>
+    <title>Detalle del Préstamo | SIGAB Libros</title>
 
     <link rel="stylesheet" href="../css/estilos.css">
 
@@ -25,9 +25,9 @@
     <main class="container">
 
         <div class="card">
-            <h1>Detalle de Multa</h1>
+            <h1>Detalle del Préstamo</h1>
             <p>
-                Consulte la información detallada de la multa seleccionada.
+                Consulte la información detallada del préstamo seleccionado en el historial.
             </p>
         </div>
 
@@ -35,22 +35,22 @@
 
         <div class="card">
 
-            <h2>Información de la Multa</h2>
+            <h2>Información del Préstamo</h2>
 
-            <div id="mensajeDetalleMulta" style="display:none; margin-bottom:15px;">
-                No se encontró la información de la multa seleccionada.
+            <div id="mensajeDetalle" style="display:none; margin-bottom:15px;">
+                No se encontró la información del préstamo seleccionado.
             </div>
 
             <div class="form-grid">
 
                 <div class="form-group">
-                    <label>ID de Multa</label>
-                    <input type="text" id="txtIdMulta" readonly>
+                    <label>ID del Préstamo</label>
+                    <input type="text" id="txtIdPrestamo" readonly>
                 </div>
 
                 <div class="form-group">
                     <label>Usuario</label>
-                    <input type="text" id="txtUsuarioMulta" readonly>
+                    <input type="text" id="txtUsuarioPrestamo" readonly>
                 </div>
 
                 <div class="form-group">
@@ -60,7 +60,7 @@
 
                 <div class="form-group">
                     <label>Libro</label>
-                    <input type="text" id="txtLibroMulta" readonly>
+                    <input type="text" id="txtLibroPrestamo" readonly>
                 </div>
 
                 <div class="form-group">
@@ -69,8 +69,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Motivo</label>
-                    <input type="text" id="txtMotivoMulta" readonly>
+                    <label>Fecha de Préstamo</label>
+                    <input type="text" id="txtFechaPrestamo" readonly>
                 </div>
 
                 <div class="form-group">
@@ -79,8 +79,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Monto Calculado</label>
-                    <input type="text" id="txtMontoMulta" readonly>
+                    <label>Estado</label>
+                    <input type="text" id="txtEstadoPrestamo" readonly>
                 </div>
 
             </div>
@@ -106,7 +106,7 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script type="module" src="../Controllers/detalleMultaController.js"></script>
+    <script type="module" src="../Controllers/detallePrestamoController.js"></script>
 
 </body>
 

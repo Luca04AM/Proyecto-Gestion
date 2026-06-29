@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo</title>
+    <title>Historial de Préstamos y Multas</title>
 
     <link rel="stylesheet" href="../css/estilos.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -14,34 +15,36 @@
         href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <script type="module" src="Controllers/appController.js"></script>
     <script src="../components/Navbar.js" defer></script>
 </head>
 
-
 <body>
 
-    <!-- MENÚ PRINCIPAL -->
     <nav-bar></nav-bar>
 
     <main class="container">
+
         <div class="card">
             <h1>Historial de Préstamos</h1>
             <p>
-                Consulte el Historial de Préstamos realizados por los usuarios del Sistema de Gestion Bibliotecaria
+                Consulte el historial de préstamos realizados por los usuarios del Sistema de Gestión Bibliotecaria
                 SIGAB Libros.
             </p>
         </div>
+
         <br>
+
         <div class="card">
-            <h2>Filtros de Busqueda</h2>
-            <form>
+            <h2>Filtros de Búsqueda</h2>
+
+            <form id="formPrestamos">
                 <div class="form-grid">
+
                     <div class="form-group">
                         <label>Usuario</label>
-                        <input type="text" id="txtUsuario" placeholder="Nombre del usuario:">
-
+                        <input type="text" id="txtUsuario" placeholder="Nombre del usuario">
                     </div>
+
                     <div class="form-group">
                         <label>Estado</label>
                         <select id="txtEstado">
@@ -51,6 +54,7 @@
                             <option value="Atrasado">Atrasado</option>
                         </select>
                     </div>
+
                     <div class="form-group">
                         <label>Fecha Inicio del Préstamo</label>
                         <input type="date" id="txtFechaInicio">
@@ -60,24 +64,26 @@
                         <label>Fecha Fin del Préstamo</label>
                         <input type="date" id="txtFechaFin">
                     </div>
+
                     <div class="form-group">
                         <label>Ordenar Por:</label>
                         <select id="txtOrdenar">
-                            <option>Fecha más reciente</option>
-                            <option>Fecha más antigua</option>
-                            <option>Título del libro</option>
-                            <option>Estado</option>
+                            <option value="reciente">Fecha más reciente</option>
+                            <option value="antigua">Fecha más antigua</option>
+                            <option value="libro">Título del libro</option>
+                            <option value="estado">Estado</option>
                         </select>
                     </div>
 
                 </div>
+
                 <div class="acciones-form">
                     <button type="submit" class="btn">Buscar</button>
                     <button type="reset" class="btn btn-secondary">Limpiar</button>
                 </div>
-
             </form>
         </div>
+
         <br>
 
         <div class="card card-tabla">
@@ -85,123 +91,29 @@
             <h2>Listado de Préstamos</h2>
 
             <table>
-
                 <thead>
-
                     <tr>
-
                         <th>ID</th>
+                        <th>Usuario</th>
                         <th>Libro</th>
                         <th>Fecha Préstamo</th>
                         <th>Fecha Devolución</th>
                         <th>Estado</th>
                         <th>Acciones</th>
-
                     </tr>
-
                 </thead>
 
-                <tbody>
-
+                <tbody id="tablaPrestamos">
                     <tr>
-
-                        <td>1</td>
-
-                        <td>
-                            Boulevard
-                        </td>
-
-                        <td>
-                            01/06/2026
-                        </td>
-
-                        <td>
-                            15/06/2026
-                        </td>
-
-                        <td>
-                            <span class="badge badge-disponible">Devuelt</span>
-                        </td>
-
-                        <td>
-                            <div class="acciones-tabla">
-                                <a href="detallePrestamo.html" class="btn btn-secondary"> Ver Detalle </a>
-                                <a href="detalleLibro.html" class="btn btn-editar"> Libro </a>
-                            </div>
-                        </td>
-
+                        <td colspan="6" style="text-align:center;">Cargando préstamos...</td>
                     </tr>
-
-                    <tr>
-
-                        <td>2</td>
-
-                        <td>
-                            El Principito
-                        </td>
-
-                        <td>
-                            10/06/2026
-                        </td>
-
-                        <td>
-                            24/06/2026
-                        </td>
-
-                        <td>
-                            <span class="badge badge-disponible"> Activo </span>
-                        </td>
-
-                        <td>
-                            <div class="acciones-tabla">
-                                <a href="detallePrestamo.html" class="btn btn-secondary"> Ver Detalle </a>
-                                <a href="detalleLibro.html" class="btn btn-editar"> Libro </a>
-                            </div>
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>3</td>
-
-                        <td>
-                            Las ventajas de ser invisible
-                        </td>
-
-                        <td>
-                            20/05/2026
-                        </td>
-
-                        <td>
-                            03/06/2026
-                        </td>
-
-                        <td>
-                            <span class="badge badge-disponible">Devuelto </span>
-                        </td>
-
-                        <td>
-                            <div class="acciones-tabla">
-                                <a href="detallePrestamo.html" class="btn btn-secondary"> Ver Detalle </a>
-                                <a href="detalleLibro.html" class="btn btn-editar"> Libro </a>
-                            </div>
-                        </td>
-
-                    </tr>
-
                 </tbody>
-
             </table>
 
             <div style="margin-top:20px;">
-
-                <p id="mensajeSinRegistros">
-
+                <p id="mensajeSinRegistros" style="display:none;">
                     No existen registros para mostrar.
-
                 </p>
-
             </div>
 
         </div>
@@ -220,68 +132,34 @@
         </div>
 
         <br>
+
         <div class="card">
 
             <h2>Filtros de Multas</h2>
 
-            <form>
+            <form id="formMultas">
 
                 <div class="form-grid">
 
                     <div class="form-group">
-
                         <label>Estado</label>
-
-                        <select>
-
-                            <option>Todos</option>
-                            <option>Pendiente</option>
-                            <option>Pagada</option>
-
+                        <select id="txtEstadoMulta">
+                            <option value="">Todos</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Pagada">Pagada</option>
                         </select>
-
                     </div>
 
                     <div class="form-group">
-
                         <label>Libro</label>
-
-                        <input type="text" placeholder="Nombre del libro">
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>Fecha Inicio</label>
-
-                        <input type="date">
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>Fecha Fin</label>
-
-                        <input type="date">
-
+                        <input type="text" id="txtLibroMulta" placeholder="Nombre del libro">
                     </div>
 
                 </div>
 
                 <div class="acciones-form">
-
-                    <button class="btn btn-primary">
-
-                        Buscar
-
-                    </button>
-
-                    <button type="reset" class="btn btn-secondary">
-
-                        Limpiar
-
-                    </button>
-
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <button type="reset" class="btn btn-secondary">Limpiar</button>
                 </div>
 
             </form>
@@ -295,131 +173,33 @@
             <h2>Listado de Multas</h2>
 
             <table>
-
                 <thead>
-
                     <tr>
-
                         <th>ID</th>
                         <th>Libro</th>
                         <th>Motivo</th>
                         <th>Monto</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
+                        <th>Fecha de devolución</th>
+                        <th>Dias de gracia</th>
                         <th>Acciones</th>
-
                     </tr>
-
                 </thead>
 
-                <tbody>
-
+                <tbody id="tablaMultas">
                     <tr>
-
-                        <td>1</td>
-                        <td>Harry Potter</td>
-                        <td>Entrega tardía</td>
-                        <td>₡2 500</td>
-                        <td>12/06/2026</td>
-
-                        <td>
-
-                            <span class="badge badge-disponible">
-
-                                Pendiente
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a href="detalleMulta.html" class="btn btn-secondary">
-
-                                Ver Detalle
-
-                            </a>
-
-                        </td>
-
+                        <td colspan="7" style="text-align:center;">Cargando multas...</td>
                     </tr>
-
-                    <tr>
-
-                        <td>2</td>
-                        <td>Boulevard</td>
-                        <td>Entrega tardía</td>
-                        <td>₡1 500</td>
-                        <td>28/05/2026</td>
-
-                        <td>
-
-                            <span class="badge badge-disponible">
-
-                                Pagada
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a href="detalleMulta.html" class="btn btn-secondary">
-
-                                Ver Detalle
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>3</td>
-                        <td>El Principito</td>
-                        <td>Daño del libro</td>
-                        <td>₡5 000</td>
-                        <td>02/04/2026</td>
-
-                        <td>
-
-                            <span class="badge badge-disponible">
-
-                                Pagada
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a href="detalleMulta.html" class="btn btn-secondary">
-
-                                Ver Detalle
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
                 </tbody>
-
             </table>
 
             <div style="margin-top:20px;">
-
-                <p>
-
+                <p id="mensajeSinMultas" style="display:none;">
                     No existen multas registradas para este usuario.
-
                 </p>
-
             </div>
 
         </div>
-        
+
         <br>
 
         <div class="card">
@@ -429,35 +209,23 @@
             <div class="form-grid">
 
                 <div class="form-group">
-
                     <label>Total de Multas</label>
-
-                    <input type="text" value="3" readonly>
-
+                    <input type="text" id="totalMultas" readonly>
                 </div>
 
                 <div class="form-group">
-
                     <label>Pendientes</label>
-
-                    <input type="text" value="1" readonly>
-
+                    <input type="text" id="multasPendientes" readonly>
                 </div>
 
                 <div class="form-group">
-
                     <label>Pagadas</label>
-
-                    <input type="text" value="2" readonly>
-
+                    <input type="text" id="multasPagadas" readonly>
                 </div>
 
                 <div class="form-group">
-
                     <label>Total Adeudado</label>
-
-                    <input type="text" value="₡2 500" readonly>
-
+                    <input type="text" id="totalAdeudado" readonly>
                 </div>
 
             </div>
@@ -468,15 +236,12 @@
 
     </main>
 
-
-    <!-- PIE DE PÁGINA -->
     <footer class="footer">
-        <p>
-            SIGAB Libros © 2026
-        </p>
+        <p>SIGAB Libros © 2026</p>
     </footer>
 
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="module" src="../Controllers/historialController.js"></script>
 
 </body>
 
