@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Autores - SIGAB Libros</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - SIGAB Libros</title>
 
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="../css/autor.css">
@@ -12,13 +12,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-
-    <script type="module" src="../Controllers/notificacionesController.js"></script>
 </head>
+
 <body>
-     <!-- MENÚ PRINCIPAL -->
+
     <nav class="navbar">
         <div class="container menu-container">
 
@@ -83,302 +83,51 @@
         </div>
     </nav>
 
-    
     <main class="container">
 
-            
-            <!-- ENCABEZADO -->
+        <div class="card modulo-header">
 
-            <div class="card modulo-header">
+            <h1>Gestión de Notificaciones</h1>
 
-                <h1>Gestión de Notificaciones</h1>
+            <p>
+                Consulte las alertas generadas por préstamos, reservas,
+                devoluciones y multas registradas en el sistema bibliotecario.
+            </p>
 
-                <p>
-                    Consulte las alertas generadas por préstamos, reservas,
-                    devoluciones y multas registradas en el sistema bibliotecario.
-                </p>
+        </div>
 
-            </div>
+        <br>
 
-            <br>
+        <div class="card busqueda">
 
-            <!-- BUSCADOR -->
+            <h2>Buscar Notificación</h2>
 
-            <div class="card busqueda">
+            <input type="text" id="txtBuscarNotificacion" placeholder="Buscar por libro, tipo de notificación o estado">
 
-                <h2>Buscar Notificación</h2>
+        </div>
 
-                <input
-                    type="text"
-                    placeholder="Buscar por libro, tipo de notificación o estado">
+        <br>
 
-            </div>
-
-            <br>
-
-            <!-- NOTIFICACIÓN 1 -->
-
-            <div class="card notificacion-card proxima">
-
-                <div class="notificacion-icono">
-
-                    <img
-                        src="../img/autores/devolucion.png"
-                        alt="Devolución">
-
-                </div>
-
-                <div class="notificacion-info">
-
-                    <h3>Devolución Próxima</h3>
-
-                    <p>
-                        <strong>Libro:</strong>
-                        Cien años de soledad
-                    </p>
-
-                    <p>
-                        <strong>Fecha límite:</strong>
-                        15/06/2026
-                    </p>
-
-                    <div class="estado-notificacion">
-
-                        <span class="badge badge-atrasado">
-
-                            No Leída
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="notificacion-acciones">
-
-                    <a
-                        href="detalleDevolucion.html"
-                        class="btn btn-primary">
-
-                        Ver Detalle
-
-                    </a>
-
-                    <button class="btn btn-secondary">
-
-                        Marcar Leída
-
-                    </button>
-
-                    <button class="btn btn-accent">
-
-                        Eliminar
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            <!-- NOTIFICACIÓN 2 -->
-
-            <div class="card notificacion-card atrasado">
-
-                <div class="notificacion-icono">
-
-                    <img
-                        src="../img/autores/donacion.png"
-                        alt="Préstamo atrasado">
-
-                </div>
-
-                <div class="notificacion-info">
-
-                    <h3>Préstamo Atrasado</h3>
-
-                    <p>
-                        <strong>Libro:</strong>
-                        Don Quijote de la Mancha
-                    </p>
-
-                    <p>
-                        <strong>Fecha vencimiento:</strong>
-                        10/06/2026
-                    </p>
-
-                    <div class="estado-notificacion">
-
-                        <span class="badge badge-atrasado">
-
-                            No Leída
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="notificacion-acciones">
-
-                    <a
-                        href="detalleNotificaciones.html"
-                        class="btn btn-primary">
-
-                        Ver Detalle
-
-                    </a>
-
-                    <button class="btn btn-secondary">
-
-                        Marcar Leída
-
-                    </button>
-
-                    <button class="btn btn-accent">
-
-                        Eliminar
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            <!-- NOTIFICACIÓN 3 -->
-
-            <div class="card notificacion-card multa">
-
-                <div class="notificacion-icono">
-
-                    <img
-                        src="../img/autores/cuenta.png"
-                        alt="Multa">
-
-                </div>
-
-                <div class="notificacion-info">
-
-                    <h3>Multa Generada</h3>
-
-                    <p>
-                        <strong>Libro:</strong>
-                        La Odisea
-                    </p>
-
-                    <p>
-                        <strong>Monto:</strong>
-                        ₡1.500
-                    </p>
-
-                    <div class="estado-notificacion">
-
-                        <span class="badge badge-disponible">
-
-                            Leída
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="notificacion-acciones">
-
-                    <a
-                        href="detalleMulta.html"
-                        class="btn btn-primary">
-
-                        Ver Detalle
-
-                    </a>
-
-                    <button class="btn btn-accent">
-
-                        Eliminar
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            <!-- NOTIFICACIÓN 4 -->
-
-            <div class="card notificacion-card reserva">
-
-                <div class="notificacion-icono">
-
-                    <img
-                        src="../img/autores/calendario.png"
-                        alt="Reserva">
-
-                </div>
-
-                <div class="notificacion-info">
-
-                    <h3>Reserva Disponible</h3>
-
-                    <p>
-                        <strong>Libro:</strong>
-                        El Principito
-                    </p>
-
-                    <p>
-                        <strong>Fecha:</strong>
-                        14/06/2026
-                    </p>
-
-                    <div class="estado-notificacion">
-
-                        <span class="badge badge-atrasado">
-
-                            No Leída
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="notificacion-acciones">
-
-                    <a href="detalleReserva.html" class="btn btn-primary">
-                        Ver Detalle
-                    </a>
-
-                    <button class="btn btn-secondary">
-
-                        Marcar Leída
-
-                    </button>
-
-                    <button class="btn btn-accent">
-
-                        Eliminar
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            <br>
-
-            <!-- ESCENARIO SIN NOTIFICACIONES -->
+        <div id="contenedorNotificaciones">
 
             <div class="card sin-notificaciones">
-
-                <h3>No hay notificaciones disponibles</h3>
-
-                <p>
-                    Actualmente no existen notificaciones registradas para mostrar.
-                </p>
-
+                <h3>Cargando notificaciones...</h3>
+                <p>Espere un momento mientras se consultan los registros del sistema.</p>
             </div>
 
-    </main>
+        </div>
 
-     <!-- FOOTER -->
+        <div class="card sin-notificaciones" id="mensajeSinNotificaciones" style="display:none;">
+
+            <h3>No hay notificaciones disponibles</h3>
+
+            <p>
+                Actualmente no existen notificaciones registradas para mostrar.
+            </p>
+
+        </div>
+
+    </main>
 
     <footer class="footer">
 
@@ -387,4 +136,11 @@
         </p>
 
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="../Controllers/notificacionesController.js?v=20"></script>
+
+</body>
+
 </html>

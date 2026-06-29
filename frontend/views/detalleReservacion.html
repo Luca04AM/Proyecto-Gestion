@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Reservación | SIGAB Libros</title>
+
+    <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="../css/autor.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container menu-container">
+
+            <a href="../index.html" class="logo">
+                <div class="logo-circle">
+                    <img src="../img/logo.png" alt="Logo SIGAB">
+                </div>
+                <span>SIGAB Libros</span>
+            </a>
+
+            <ul class="menu">
+                <li><a href="../index.html">Inicio</a></li>
+
+                <li class="dropdown">
+                    <a href="#">Mantenimiento</a>
+                    <ul class="submenu">
+                        <li><a href="autores.html">Autores</a></li>
+                        <li><a href="genero.html">Géneros</a></li>
+                        <li><a href="portada.html">Portadas</a></li>
+                        <li><a href="usuario.html">Usuarios</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#">Circulación</a>
+                    <ul class="submenu">
+                        <li><a href="prestamo.html">Préstamos</a></li>
+                        <li><a href="devoluciones.html">Devoluciones</a></li>
+                        <li><a href="reservas.html">Reservas</a></li>
+                        <li><a href="multas.html">Multas</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#">Consultas</a>
+                    <ul class="submenu">
+                        <li><a href="catalogo.html">Catálogo</a></li>
+                        <li><a href="busqueda.html">Búsqueda</a></li>
+                        <li><a href="historial.html">Historial</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#">Administración</a>
+                    <ul class="submenu">
+                        <li><a href="notificaciones.html">Notificaciones</a></li>
+                        <li><a href="reportes.html">Reportes</a></li>
+                        <li><a href="panelAdministrador.html">Panel</a></li>
+                        <li><a href="autenticacion.html">Acceso</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <div class="card modulo-header">
+            <h1>Detalle de Reservación</h1>
+            <p>
+                Consulte la información completa de la reserva seleccionada,
+                incluyendo usuario, libro, fechas, estado y posición en lista de espera.
+            </p>
+        </div>
+
+        <br>
+
+        <div id="mensajeDetalle" class="card sin-notificaciones" style="display:none;">
+            <h3>No se encontró la reservación</h3>
+            <p>
+                No fue posible cargar la información de la reserva seleccionada.
+            </p>
+        </div>
+
+        <div id="contenidoDetalle">
+
+            <div class="card">
+
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+                    <div>
+                        <h2 id="tituloReserva">Reservación</h2>
+                        <p id="subtituloReserva">
+                            Información general de la reservación.
+                        </p>
+                    </div>
+
+                    <div>
+                        <span id="badgeEstadoReserva" class="badge">
+                            Estado
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="card">
+
+                <h2>Información Principal</h2>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>ID de Reserva</label>
+                        <input type="text" id="txtIdReserva" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Usuario</label>
+                        <input type="text" id="txtUsuario" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ID Usuario</label>
+                        <input type="text" id="txtIdUsuario" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Libro</label>
+                        <input type="text" id="txtLibro" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ID Libro</label>
+                        <input type="text" id="txtIdLibro" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado del Libro</label>
+                        <input type="text" id="txtEstadoLibro" readonly>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="card">
+
+                <h2>Fechas y Lista de Espera</h2>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Fecha de Reserva</label>
+                        <input type="text" id="txtFechaReserva" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha Límite</label>
+                        <input type="text" id="txtFechaLimite" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Posición en Lista</label>
+                        <input type="text" id="txtPosicion" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado de Reserva</label>
+                        <input type="text" id="txtEstadoReserva" readonly>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="card">
+
+                <h2>Observaciones</h2>
+
+                <div class="form-group">
+                    <textarea id="txtObservaciones" rows="5" readonly></textarea>
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="card">
+
+                <h2>Acciones</h2>
+
+                <div class="acciones-form">
+
+                    <button type="button" id="btnVolver" class="btn btn-secondary">
+                        Volver
+                    </button>
+
+                    <button type="button" id="btnIrReservas" class="btn btn-primary">
+                        Ir a Reservas
+                    </button>
+
+                    <button type="button" id="btnVerLibro" class="btn btn-editar">
+                        Ver Libro
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>SIGAB Libros © 2026</p>
+    </footer>
+
+    <script src="../Controllers/detalleReservacionController.js"></script>
+
+</body>
+
+</html>
