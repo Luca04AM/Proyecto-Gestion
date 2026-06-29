@@ -1,23 +1,160 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portada</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/estilos.css">
-    <script type="module" src="../Controllers/portadaController.js"></script>
+    <title>Portadas - SIGAB Libros</title>
+
+    <link rel="stylesheet" href="../css/portada.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="../Controllers/portadaController.js" defer></script>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">Biblioteca</a>
-            <a class="btn btn-outline-secondary btn-sm" href="../index.html">Volver</a>
+
+<body class="modulo modulo-portadas">
+    <nav class="navbar">
+        <div class="container menu-container">
+            <a href="../index.html" class="logo">
+                <div class="logo-circle">
+                    <img src="../img/logo.png" alt="Logo SIGAB">
+                </div>
+                <span>SIGAB Libros</span>
+            </a>
+
+            <ul class="menu">
+                <li>
+                    <a href="../index.html">Inicio</a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="menu-activo">Mantenimiento</a>
+                    <ul class="submenu">
+                        <li><a href="autores.html">Autores</a></li>
+                        <li><a href="genero.html">Géneros</a></li>
+                        <li><a href="portada.html" aria-current="page">Portadas</a></li>
+                        <li><a href="usuario.html">Usuarios</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Circulación</a>
+                    <ul class="submenu">
+                        <li><a href="prestamo.html">Préstamos</a></li>
+                        <li><a href="devoluciones.html">Devoluciones</a></li>
+                        <li><a href="reservas.html">Reservas</a></li>
+                        <li><a href="multas.html">Multas</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Consultas</a>
+                    <ul class="submenu">
+                        <li><a href="catalogo.html">Catálogo</a></li>
+                        <li><a href="busqueda.html">Búsqueda</a></li>
+                        <li><a href="historial.html">Historial</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Administración</a>
+                    <ul class="submenu">
+                        <li><a href="notificaciones.html">Notificaciones</a></li>
+                        <li><a href="reportes.html">Reportes</a></li>
+                        <li><a href="panelAdministrador.html">Panel</a></li>
+                        <li><a href="autenticacion.html">Acceso</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </nav>
-    <main class="container py-4">
-        <h1>Portada</h1>
+
+    <main class="container">
+        <section class="card modulo-header">
+            <div class="modulo-copy">
+                <span class="eyebrow">Mantenimiento del catálogo</span>
+                <h1>Gestión de portadas</h1>
+                <p>Administra la identidad visual de los libros para mantener un catálogo claro y atractivo.</p>
+            </div>
+            <div class="resumen-modulo" aria-label="Resumen de portadas">
+                <span><strong id="totalPortadas">00</strong> registradas</span>
+                <span><strong id="totalPortadasActivas">00</strong> activas</span>
+            </div>
+        </section>
+
+        <section class="card card-formulario">
+            <div class="section-heading">
+                <div>
+                    <span class="section-kicker">Nuevo registro</span>
+                    <h2>Registrar portada</h2>
+                </div>
+                <span class="section-number">01</span>
+            </div>
+            <div id="alertaPortada" hidden></div>
+            <form id="formPortada">
+                <input type="hidden" id="txtIdPortada">
+                <div class="form-grid">
+                    <div>
+                        <label for="txtLibroPortada">Libro</label>
+                        <select id="txtLibroPortada" required>
+                            <option value="">Cargando libros...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="txtEstadoPortada">Estado</label>
+                        <select id="txtEstadoPortada">
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="form-group-full">
+                        <label for="txtImagenPortada">Archivo de portada</label>
+                        <input type="file" id="txtImagenPortada" accept=".jpg,.jpeg,.png,.webp">
+                        <small>Formatos permitidos: JPG, PNG y WEBP. Tamaño máximo: 5 MB.</small>
+                    </div>
+                    <div class="control-check form-group-full">
+                        <input type="checkbox" id="txtPredeterminadaPortada">
+                        <label for="txtPredeterminadaPortada">Usar como portada predeterminada de este libro</label>
+                    </div>
+                    <div class="preview-imagen">
+                        <img id="previewPortada" src="../img/libros/1.jpg" alt="Vista previa de portada">
+                        <p id="nombrePortada">Vista previa de la portada</p>
+                    </div>
+                </div>
+                <div class="acciones-form">
+                    <button type="submit" class="btn btn-primary" id="btnGuardarPortada">Guardar portada</button>
+                    <button type="reset" class="btn btn-secondary">Limpiar</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card card-tabla">
+            <div class="section-heading">
+                <div>
+                    <span class="section-kicker">Galería actual</span>
+                    <h2>Portadas registradas</h2>
+                </div>
+                <span class="section-number">02</span>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Libro</th>
+                            <th>Imagen</th>
+                            <th>Predeterminada</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPortadas"></tbody>
+                </table>
+            </div>
+        </section>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <footer class="footer">
+        <p>SIGAB Libros © 2026</p>
+    </footer>
 </body>
+
 </html>

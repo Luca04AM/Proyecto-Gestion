@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Préstamo | SIGAB Libros</title>
+
+    <link rel="stylesheet" href="../css/estilos.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script src="../components/Navbar.js" defer></script>
+</head>
+
+<body>
+
+    <nav-bar></nav-bar>
+
+    <main class="container">
+
+        <div class="card">
+            <h1>Detalle del Préstamo</h1>
+            <p>
+                Consulte la información detallada del préstamo seleccionado en el historial.
+            </p>
+        </div>
+
+        <br>
+
+        <div class="card">
+
+            <h2>Información del Préstamo</h2>
+
+            <div id="mensajeDetalle" style="display:none; margin-bottom:15px;">
+                No se encontró la información del préstamo seleccionado.
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>ID del Préstamo</label>
+                    <input type="text" id="txtIdPrestamo" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" id="txtUsuarioPrestamo" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>ID Usuario</label>
+                    <input type="text" id="txtIdUsuario" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Libro</label>
+                    <input type="text" id="txtLibroPrestamo" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>ID Libro</label>
+                    <input type="text" id="txtIdLibro" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha de Préstamo</label>
+                    <input type="text" id="txtFechaPrestamo" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha de Devolución</label>
+                    <input type="text" id="txtFechaDevolucion" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Estado</label>
+                    <input type="text" id="txtEstadoPrestamo" readonly>
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="acciones-form">
+                <button type="button" id="btnVolver" class="btn btn-secondary">
+                    Volver
+                </button>
+
+                <button type="button" id="btnVerLibro" class="btn btn-editar">
+                    Ver Libro
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>SIGAB Libros © 2026</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="module" src="../Controllers/detallePrestamoController.js"></script>
+
+</body>
+
+</html>

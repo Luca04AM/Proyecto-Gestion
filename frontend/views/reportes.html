@@ -4,311 +4,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reportes</title>
-
+    <title>Reportes - SIGAB Libros</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/reportes.css">
     <link rel="stylesheet" href="../css/estilos.css">
-
+    <link rel="stylesheet" href="../css/reportes.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="../components/Navbar.js" defer></script>
+    <script src="../Controllers/reportesController.js" defer></script>
 </head>
 
 <body>
-
     <nav-bar></nav-bar>
 
-    <main class="container py-4">
+    <main class="container py-4 reportes-page">
+        <header class="reportes-header">
+            <div>
+                <span class="reportes-kicker">Administración</span>
+                <h1>Módulo de Reportes</h1>
+                <p>Consulte movimientos reales por rango de fechas y exporte los resultados.</p>
+            </div>
+            <div class="reportes-total">
+                <strong id="totalReportes">0</strong>
+                <span>resultados mostrados</span>
+            </div>
+        </header>
 
-        <h1 class="mb-4">Módulo de Reportes</h1>
+        <div id="alertaReportes" aria-live="polite"></div>
 
-        <ul class="nav nav-tabs mb-4">
+        <section class="reportes-resumen" id="resumenReportes" hidden>
+            <div class="resumen-totales">
+                <div><strong id="resumenPrestamos">0</strong><span>Préstamos</span></div>
+                <div><strong id="resumenDevoluciones">0</strong><span>Devoluciones</span></div>
+                <div><strong id="resumenMultas">0</strong><span>Multas</span></div>
+            </div>
+            <div class="resumen-rankings">
+                <div>
+                    <h2>Libros más prestados</h2>
+                    <ol class="list-group" id="librosMasPrestados"></ol>
+                </div>
+                <div>
+                    <h2>Usuarios más activos</h2>
+                    <ol class="list-group" id="usuariosMasActivos"></ol>
+                </div>
+            </div>
+        </section>
 
-            <li class="nav-item">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#prestamos">
-                    Reporte de préstamos
-                </button>
-            </li>
-
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#devoluciones">
-                    Reporte de devoluciones
-                </button>
-            </li>
-
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#multas">
-                    Reporte de multas
-                </button>
-            </li>
-
+        <ul class="nav nav-tabs mb-4" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#prestamos" type="button">Préstamos</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#devoluciones" type="button">Devoluciones</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#multas" type="button">Multas</button></li>
         </ul>
 
         <div class="tab-content">
-
-            <!-- REPORTE PRESTAMOS QUE SE OBTIENEN -->
             <section class="tab-pane fade show active" id="prestamos">
-
-                <div class="card">
-
-                    <div class="card-header">
-                        Reporte de préstamos
-                    </div>
-
-                    <div class="card-body">
-
-                        <div class="row g-3 mb-4">
-
-                            <div class="col-md-4">
-                                <label class="form-label">
-                                    Fecha inicio
-                                </label>
-                                <input type="date" class="form-control" id="fechaInicioPrestamo">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">
-                                    Fecha fin
-                                </label>
-                                <input type="date" class="form-control" id="fechaFinPrestamo">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">
-                                    Estado
-                                </label>
-
-                                <select class="form-select" id="estadoPrestamo">
-                                    <option value="">
-                                        Todos
-                                    </option>
-                                    <option value="Activo">
-                                        Activo
-                                    </option>
-                                    <option value="Devuelto">
-                                        Devuelto
-                                    </option>
-                                    <option value="Vencido">
-                                        Vencido
-                                    </option>
-                                </select>
-                            </div>
-
+                <div class="card reporte-card"><div class="card-body">
+                    <h2>Reporte de préstamos</h2>
+                    <form class="formReporte" data-tipo="Prestamos">
+                        <div class="row g-3">
+                            <div class="col-md-4"><label class="form-label">Fecha inicio</label><input type="date" class="form-control reporte-inicio" required></div>
+                            <div class="col-md-4"><label class="form-label">Fecha fin</label><input type="date" class="form-control reporte-fin" required></div>
+                            <div class="col-md-4"><label class="form-label">Estado</label><select class="form-select reporte-filtro"><option value="">Todos</option><option value="Prestado">Prestado</option><option value="Devuelto">Devuelto</option><option value="Perdido">Perdido</option></select></div>
                         </div>
-
-                        <button class="btn btn-primary mb-3">
-                            Generar reporte
-                        </button>
-
-                        <button class="btn btn-success mb-3">
-                            Exportar Excel
-                        </button>
-
-                        <button class="btn btn-danger mb-3">
-                            Exportar PDF
-                        </button>
-
-                        <div class="table-responsive">
-
-                            <table class="table table-bordered table-hover">
-
-                                <thead class="table-light">
-
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Usuario</th>
-                                        <th>Libro</th>
-                                        <th>Fecha préstamo</th>
-                                        <th>Fecha devolución</th>
-                                        <th>Estado</th>
-                                    </tr>
-
-                                </thead>
-
-                                <tbody id="tablaReportePrestamos"></tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+                        <div class="reporte-actions"><button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button><button type="button" class="btn btn-success btnExportarReporte" data-tipo="Prestamos">Exportar Excel</button><button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Prestamos">Imprimir / PDF</button></div>
+                    </form>
+                    <div class="table-responsive mt-4"><table class="table table-bordered table-hover align-middle"><thead><tr><th>ID</th><th>Usuario</th><th>Libro</th><th>Fecha préstamo</th><th>Fecha devolución</th><th>Estado</th></tr></thead><tbody class="tablaReportes" data-tipo="Prestamos"><tr><td colspan="6" class="text-center text-muted py-4">Seleccione los filtros y genere el reporte.</td></tr></tbody></table></div>
+                </div></div>
             </section>
 
-            <!-- REPORTE DEVOLUCIONES -->
             <section class="tab-pane fade" id="devoluciones">
-
-                <div class="card">
-
-                    <div class="card-header">
-                        Reporte de devoluciones
-                    </div>
-
-                    <div class="card-body">
-
-                        <div class="row g-3 mb-4">
-
-                            <div class="col-md-6">
-                                <label class="form-label">
-                                    Fecha inicio
-                                </label>
-
-                                <input type="date" class="form-control">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">
-                                    Fecha fin
-                                </label>
-
-                                <input type="date" class="form-control">
-                            </div>
-
+                <div class="card reporte-card"><div class="card-body">
+                    <h2>Reporte de devoluciones</h2>
+                    <form class="formReporte" data-tipo="Devoluciones">
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="form-label">Fecha inicio</label><input type="date" class="form-control reporte-inicio" required></div>
+                            <div class="col-md-6"><label class="form-label">Fecha fin</label><input type="date" class="form-control reporte-fin" required></div>
                         </div>
-
-                        <button class="btn btn-primary mb-3">
-                            Generar reporte
-                        </button>
-
-                        <button class="btn btn-success mb-3">
-                            Exportar Excel
-                        </button>
-
-                        <button class="btn btn-danger mb-3">
-                            Exportar PDF
-                        </button>
-
-                        <div class="table-responsive">
-
-                            <table class="table table-bordered table-hover">
-
-                                <thead class="table-light">
-
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Usuario</th>
-                                        <th>Libro</th>
-                                        <th>Fecha devolución</th>
-                                        <th>Días atraso</th>
-                                        <th>Multa</th>
-                                    </tr>
-
-                                </thead>
-
-                                <tbody id="tablaReporteDevoluciones"></tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+                        <div class="reporte-actions"><button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button><button type="button" class="btn btn-success btnExportarReporte" data-tipo="Devoluciones">Exportar Excel</button><button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Devoluciones">Imprimir / PDF</button></div>
+                    </form>
+                    <div class="table-responsive mt-4"><table class="table table-bordered table-hover align-middle"><thead><tr><th>ID</th><th>Usuario</th><th>Libro</th><th>Fecha límite</th><th>Fecha devuelta</th><th>Días atraso</th><th>Observaciones</th></tr></thead><tbody class="tablaReportes" data-tipo="Devoluciones"><tr><td colspan="7" class="text-center text-muted py-4">Seleccione las fechas y genere el reporte.</td></tr></tbody></table></div>
+                </div></div>
             </section>
 
-            <!-- REPORTE MULTAS -->
             <section class="tab-pane fade" id="multas">
-
-                <div class="card">
-
-                    <div class="card-header">
-                        Reporte de multas
-                    </div>
-
-                    <div class="card-body">
-
-                        <div class="row g-3 mb-4">
-
-                            <div class="col-md-4">
-                                <label class="form-label">
-                                    Estado
-                                </label>
-
-                                <select class="form-select">
-
-                                    <option value="">
-                                        Todas
-                                    </option>
-
-                                    <option value="Pendiente">
-                                        Pendientes
-                                    </option>
-
-                                    <option value="Pagada">
-                                        Pagadas
-                                    </option>
-
-                                </select>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">
-                                    Fecha inicio
-                                </label>
-
-                                <input type="date" class="form-control">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">
-                                    Fecha fin
-                                </label>
-
-                                <input type="date" class="form-control">
-                            </div>
-
+                <div class="card reporte-card"><div class="card-body">
+                    <h2>Reporte de multas</h2>
+                    <form class="formReporte" data-tipo="Multas">
+                        <div class="row g-3">
+                            <div class="col-md-4"><label class="form-label">Fecha inicio</label><input type="date" class="form-control reporte-inicio" required></div>
+                            <div class="col-md-4"><label class="form-label">Fecha fin</label><input type="date" class="form-control reporte-fin" required></div>
+                            <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select reporte-filtro"><option value="">Todas</option><option value="Atraso">Atraso</option><option value="Daño">Daño</option><option value="Perdida">Pérdida</option></select></div>
                         </div>
-
-                        <button class="btn btn-primary mb-3">
-                            Generar reporte
-                        </button>
-
-                        <button class="btn btn-success mb-3">
-                            Exportar Excel
-                        </button>
-
-                        <button class="btn btn-danger mb-3">
-                            Exportar PDF
-                        </button>
-
-                        <div class="table-responsive">
-
-                            <table class="table table-bordered table-hover">
-
-                                <thead class="table-light">
-
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Usuario</th>
-                                        <th>Libro</th>
-                                        <th>Monto</th>
-                                        <th>Estado</th>
-                                        <th>Fecha</th>
-                                    </tr>
-
-                                </thead>
-
-                                <tbody id="tablaReporteMultas"></tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+                        <div class="reporte-actions"><button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button><button type="button" class="btn btn-success btnExportarReporte" data-tipo="Multas">Exportar Excel</button><button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Multas">Imprimir / PDF</button></div>
+                    </form>
+                    <div class="table-responsive mt-4"><table class="table table-bordered table-hover align-middle"><thead><tr><th>ID</th><th>Usuario</th><th>Libro</th><th>Fecha</th><th>Tipo</th><th>Días gracia</th><th>Monto</th></tr></thead><tbody class="tablaReportes" data-tipo="Multas"><tr><td colspan="7" class="text-center text-muted py-4">Seleccione los filtros y genere el reporte.</td></tr></tbody></table></div>
+                </div></div>
             </section>
-
         </div>
-
     </main>
 
+    <footer class="footer"><p>SIGAB Libros © 2026</p></footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/reportes.js"></script>
-
 </body>
 
 </html>

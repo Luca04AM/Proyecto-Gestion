@@ -8,25 +8,23 @@ $(document).ready(function () {
         prepararFormularioEdicion(idLibro);
     }
 
-    $("#zonaPortada").on("click", function () {
-        $("#archivoPortada").click();
-    });
-
-    $("#archivoPortada").on("change", function () {
+    $("#txtPortada").on("change", function () {
         const archivo = this.files[0];
 
         if (!archivo) {
             $("#portada").val("");
-            mostrarVistaPortada("", "");
+            $("#previewPortada").attr("src", "../img/autores/subir.png");
+            $("#nombrePortada").text("Ningún archivo seleccionado");
             return;
         }
 
         $("#portada").val(archivo.name);
+        $("#nombrePortada").text(archivo.name);
 
         const lector = new FileReader();
 
         lector.onload = function (e) {
-            mostrarVistaPortada(archivo.name, e.target.result);
+            $("#previewPortada").attr("src", e.target.result);
         };
 
         lector.readAsDataURL(archivo);
@@ -41,7 +39,8 @@ $(document).ready(function () {
             genero: $("#genero").val().trim(),
             descripcion: $("#descripcion").val().trim(),
             portada: $("#portada").val().trim(),
-            estado: $("#estado").val()
+            estado: $("#estado").val(),
+            condicion: $("#condicion").val()
         };
 
         if (modoEdicion) {
@@ -52,7 +51,8 @@ $(document).ready(function () {
             libro.titulo === "" ||
             libro.autor === "" ||
             libro.genero === "" ||
-            libro.descripcion === ""
+            libro.descripcion === "" ||
+            libro.condicion === ""
         ) {
             mostrarMensaje("Debe completar todos los campos obligatorios.", "error");
             return;
@@ -124,16 +124,15 @@ $(document).ready(function () {
         $("#descripcion").val(libro.descripcion);
         $("#portada").val(libro.portada);
         $("#estado").val(libro.estado);
-<<<<<<< Updated upstream
-=======
         $("#condicion").val(libro.condicion || "Excelente");
 
         if (libro.portada) {
-            mostrarVistaPortada(libro.portada, "../img/catalogo/" + libro.portada);
+            $("#previewPortada").attr("src", "../img/catalogo/" + libro.portada);
+            $("#nombrePortada").text(libro.portada);
         } else {
-            mostrarVistaPortada("", "");
+            $("#previewPortada").attr("src", "../img/autores/subir.png");
+            $("#nombrePortada").text("Ningún archivo seleccionado");
         }
->>>>>>> Stashed changes
     }
 
     function limpiarFormulario() {
@@ -142,28 +141,12 @@ $(document).ready(function () {
         $("#genero").val("");
         $("#descripcion").val("");
         $("#portada").val("");
-        $("#archivoPortada").val("");
+        $("#txtPortada").val("");
         $("#estado").val("Disponible");
-<<<<<<< Updated upstream
-=======
         $("#condicion").val("Excelente");
 
-        mostrarVistaPortada("", "");
-    }
-
-    function mostrarVistaPortada(nombreArchivo, rutaImagen) {
-        if (nombreArchivo !== "") {
-            $("#previewPortada").html(`
-                <img src="${rutaImagen}" alt="Portada del libro">
-                <p>${nombreArchivo}</p>
-            `);
-        } else {
-            $("#previewPortada").html(`
-                <span class="icono-subida">⬆</span>
-                <p id="textoPortada">Ninguna portada seleccionada</p>
-            `);
-        }
->>>>>>> Stashed changes
+        $("#previewPortada").attr("src", "../img/autores/subir.png");
+        $("#nombrePortada").text("Ningún archivo seleccionado");
     }
 
     function mostrarMensaje(texto, tipo) {

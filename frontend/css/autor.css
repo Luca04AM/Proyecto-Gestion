@@ -597,3 +597,20 @@ textarea {
 .tabla-dashboard th:nth-child(5) {
   width: 15%;
 }
+/* Ícono de subir fotografía */
+
+.icono-subir{
+
+    width: 90px !important;
+
+    height: 90px !important;
+
+    object-fit: contain !important;
+
+    border: none !important;
+
+    box-shadow: none !important;
+
+    background: transparent !important;
+
+}

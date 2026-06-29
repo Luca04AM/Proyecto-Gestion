@@ -1,129 +1,113 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Detalle de Multa - SIGAB Libros</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Multa | SIGAB Libros</title>
 
-    <link rel="stylesheet" href="../css/estilos.css" />
-    <link rel="stylesheet" href="../css/autor.css" />
+    <link rel="stylesheet" href="../css/estilos.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
+        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
-  <body>
-    <nav class="navbar">
-      <div class="container menu-container">
-        <a href="../index.html" class="logo">
-          <div class="logo-circle">
-            <img src="../img/logo.png" alt="Logo SIGAB" />
-          </div>
-          <span>SIGAB Libros</span>
-        </a>
-      </div>
-    </nav>
+    <script src="../components/Navbar.js" defer></script>
+</head>
+
+<body>
+
+    <nav-bar></nav-bar>
 
     <main class="container">
-      <div class="card detalle-autor">
-        <h1>Detalle de Notificación</h1>
 
-        <div class="detalle-contenido">
-          <div class="detalle-foto">
-            <img src="../img/autores/odisea.jpg" alt="Multa Generada" />
-          </div>
-
-          <div class="detalle-info">
-            <h2>Multa Generada</h2>
-
+        <div class="card">
+            <h1>Detalle de Multa</h1>
             <p>
-              <strong>ID Notificación:</strong>
-              NT-003
+                Consulte la información detallada de la multa seleccionada.
             </p>
-
-            <p>
-              <strong>Fecha:</strong>
-              16/06/2026
-            </p>
-
-            <p>
-              <strong>Estado:</strong>
-
-              <span class="badge badge-disponible"> Leída </span>
-            </p>
-          </div>
         </div>
 
-        <div class="card biografia-card">
-          <h3>Información de la Multa</h3>
+        <br>
 
-          <p>
-            <strong>ID Multa:</strong>
-            M-001
-          </p>
+        <div class="card">
 
-          <p>
-            <strong>Usuario:</strong>
-            Juan Pérez
-          </p>
+            <h2>Información de la Multa</h2>
 
-          <p>
-            <strong>Libro:</strong>
-            La Odisea
-          </p>
+            <div id="mensajeDetalleMulta" style="display:none; margin-bottom:15px;">
+                No se encontró la información de la multa seleccionada.
+            </div>
 
-          <p>
-            <strong>Monto:</strong>
-            ₡1.500
-          </p>
+            <div class="form-grid">
 
-          <p>
-            <strong>Fecha de Generación:</strong>
-            16/06/2026
-          </p>
+                <div class="form-group">
+                    <label>ID de Multa</label>
+                    <input type="text" id="txtIdMulta" readonly>
+                </div>
 
-          <p>
-            <strong>Motivo:</strong>
-            Retraso en la devolución del libro.
-          </p>
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" id="txtUsuarioMulta" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>ID Usuario</label>
+                    <input type="text" id="txtIdUsuario" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Libro</label>
+                    <input type="text" id="txtLibroMulta" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>ID Libro</label>
+                    <input type="text" id="txtIdLibro" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Motivo</label>
+                    <input type="text" id="txtMotivoMulta" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha de Devolución</label>
+                    <input type="text" id="txtFechaDevolucion" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Monto Calculado</label>
+                    <input type="text" id="txtMontoMulta" readonly>
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="acciones-form">
+                <button type="button" id="btnVolver" class="btn btn-secondary">
+                    Volver
+                </button>
+
+                <button type="button" id="btnVerLibro" class="btn btn-editar">
+                    Ver Libro
+                </button>
+            </div>
+
         </div>
 
-        <br />
-
-        <div class="card biografia-card">
-          <h3>Mensaje</h3>
-
-          <p>
-            Se ha generado una multa por un monto de
-            <strong>₡1.500</strong>
-            debido al retraso en la devolución del libro
-            <strong>La Odisea</strong>. Se recomienda regularizar la situación
-            realizando el pago correspondiente para evitar cargos adicionales y
-            mantener actualizado el historial de préstamos.
-          </p>
-        </div>
-
-        <br />
-
-        <div class="acciones-form">
-          <button class="btn btn-secondary">Marcar como Leída</button>
-
-          <button class="btn btn-accent">Eliminar</button>
-
-          <a href="notificaciones.html" class="btn btn-primary"> Volver </a>
-        </div>
-      </div>
     </main>
 
     <footer class="footer">
-      <p>SIGAB Libros © 2026</p>
+        <p>SIGAB Libros © 2026</p>
     </footer>
-  </body>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="module" src="../Controllers/detalleMultaController.js"></script>
+
+</body>
+
 </html>

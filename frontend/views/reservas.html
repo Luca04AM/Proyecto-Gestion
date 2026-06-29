@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Gestion de Reservas | SIGAB Libros </title>
+    <title>Gestión de Reservas | SIGAB Libros</title>
 
     <link rel="stylesheet" href="../css/estilos.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -14,399 +15,194 @@
         href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <script type="module" src="Controllers/appController.js"></script>
+    <script type="module" src="../components/Navbar.js"></script>
 </head>
-
 
 <body>
 
-    <!-- MENÚ PRINCIPAL -->
-    <nav class="navbar">
-        <div class="container menu-container">
-
-            <a href="index.html" class="logo">
-                <div class="logo-circle">
-                    <img src="../img/logo.png" alt="Logo SIGAB">
-                </div>
-                <span>SIGAB Libros</span>
-            </a>
-
-            <ul class="menu">
-
-                <li>
-                    <a href="index.html">Inicio</a>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Mantenimiento</a>
-
-                    <ul class="submenu">
-                        <li><a href="autores.html">Autores</a></li>
-                        <li><a href="genero.html">Géneros</a></li>
-                        <li><a href="portada.html">Portadas</a></li>
-                        <li><a href="usuario.html">Usuarios</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Circulación</a>
-
-                    <ul class="submenu">
-                        <li><a href="prestamo.html">Préstamos</a></li>
-                        <li><a href="devoluciones.html">Devoluciones</a></li>
-                        <li><a href="reservas.html">Reservas</a></li>
-                        <li><a href="multas.html">Multas</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Consultas</a>
-
-                    <ul class="submenu">
-                        <li><a href="catalogo.html">Catálogo</a></li>
-                        <li><a href="busqueda.html">Búsqueda</a></li>
-                        <li><a href="historial.html">Historial</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Administración</a>
-
-                    <ul class="submenu">
-                        <li><a href="notificaciones.html">Notificaciones</a></li>
-                        <li><a href="reportes.html">Reportes</a></li>
-                        <li><a href="panelAdministrador.html">Panel</a></li>
-                        <li><a href="autenticacion.html">Acceso</a></li>
-                    </ul>
-                </li>
-
-            </ul>
-
-        </div>
-    </nav>
+    <nav-bar></nav-bar>
 
     <main class="container">
+
         <div class="card">
             <h1>Gestión de Reservas</h1>
             <p>
-                Administre las reservas de libros realizadas por los usuarios del Sistema de Gestion Bibliotecaria
-                <strong>SIGAB Libros</strong>
+                Administre las reservas de libros realizadas por los usuarios del Sistema de Gestión Bibliotecaria
+                <strong>SIGAB Libros</strong>.
             </p>
         </div>
+
         <br>
-        <!--Estadisticas-->
+
         <div class="card">
             <h2>Resumen de Reservas</h2>
+
             <div class="form-grid">
                 <div class="form-group">
                     <label>Total de Reservas</label>
-                    <input type="text" value="120" readonly>
+                    <input type="text" id="totalReservas" readonly>
                 </div>
+
                 <div class="form-group">
                     <label>Reservas Activas</label>
-                    <input type="text" value="45" readonly>
+                    <input type="text" id="reservasActivas" readonly>
                 </div>
+
                 <div class="form-group">
                     <label>En Espera</label>
-                    <input type="text" value="18" readonly>
+                    <input type="text" id="reservasEspera" readonly>
                 </div>
+
                 <div class="form-group">
                     <label>Libros Disponibles</label>
-                    <input type="text" value="250" readonly>
+                    <input type="text" id="librosDisponibles" readonly>
                 </div>
             </div>
-
         </div>
+
         <br>
 
         <div class="card">
             <h2>Registrar Reserva</h2>
-            <form>
+
+            <form id="formReserva">
+
                 <input type="hidden" id="txtId">
+
                 <div class="form-grid">
+
                     <div class="form-group">
-                        <label for="txtUsuario">Usuario</label>
-                        <select id="txtUsuario" required>
-                            <option value="">Seleccione un usuario</option>
-                            <option value="1">Juan Pérez</option>
-                            <option value="2">María García</option>
-                            <option value="3">Carlos Ramírez</option>
-                            <option value="4">Ana Rodríguez</option>
+                        <label>Usuario</label>
+                        <select id="txtUsuario">
+                            <option value="">Seleccione usuario</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label for="txtLibro">Libro</label>
-                        <select id="txtLibro" required>
-                            <option value="">Seleccione un libro</option>
-                            <option value="1">Boulevard</option>
-                            <option value="2">Todas las personas que fui</option>
-                            <option value="3">El inestable mundo de Alroy</option>
-                            <option value="4">La teoría de Kim</option>
-                            <option value="5">La razón de estar contigo</option>
-                            <option value="6">El principito</option>
-                            <option value="7">Caperucita Roja</option>
-                            <option value="8">Harry Potter</option>
-                            <option value="9">Romeo y Julieta</option>
-                            <option value="10">Alicia en el país de las maravillas</option>
-                            <option value="11">Crepusculo</option>
-                            <option value="12">Las ventajas de ser invisible</option>
-                            <option value="13">Al final mueren los dos</option>
-                            <option value="14">El perfume del Rey</option>
-                            <option value="15">Oscuros</option>
-                            <option value="16">De sangre y cenizas</option>
-                            <option value="17">Cadáver Exquisito</option>
-                            <option value="18">El pecador de Oxford</option>
-                            <option value="19">Alas de Hierro</option>
-                            <option value="20">Novia</option>
+                        <label>Libro</label>
+                        <select id="txtLibro">
+                            <option value="">Cargando libros...</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-
-                        <label for="txtEstadoLibro">Estado de Reserva</label>
-
-                        <select type="text" id="txtEstadoLibro">
-                            <option>Disponible</option>
-                            <option>Reservado</option>
-                            <option>Prestado</option>
-                            <option>En espera</option>
+                        <label>Estado del Libro</label>
+                        <select id="txtEstadoLibro">
+                            <option value="">Seleccione un estado</option>
+                            <option value="Disponible">Disponible</option>
+                            <option value="Reservado">Reservado</option>
+                            <option value="Prestado">Prestado</option>
+                            <option value="No disponible">No disponible</option>
                         </select>
-
                     </div>
+
                     <div class="form-group">
-                        <label for="txtFechaReserva">Fecha de Reserva</label>
+                        <label>Fecha de Reserva</label>
                         <input type="date" id="txtFechaReserva">
-
                     </div>
 
                     <div class="form-group">
-                        <label for="txtFechaLimite">Fecha ímite</label>
+                        <label>Fecha Límite</label>
                         <input type="date" id="txtFechaLimite">
                     </div>
-                    <div clas="form-group">
-                        <label for="txtPosicion">Posición en la lista de espera</label>
-                        <input type="number" id="txtPosicion" min="1" value="1">
-                    </div>
+
                     <div class="form-group">
-                        <label for="txtEstadoReserva">Estado de la Reserva</label>
-                        <select type="text" id="txtEstadoReserva">
-                            <option>Activo</option>
-                            <option>En espera</option>
-                            <option>Cancelado</option>
-                            <option>Finalizado</option>
+                        <label>Posición en lista</label>
+                        <input type="number" id="txtPosicion" min="1" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado de Reserva</label>
+                        <select id="txtEstadoReserva">
+                            <option value="">No aplica</option>
+                            <option value="Activo">Activo</option>
+                            <option value="En espera">En espera</option>
+                            <option value="Cancelado">Cancelado</option>
+                            <option value="Finalizado">Finalizado</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label for="txtObservaciones">Observaciones</label>
+                        <label>Observaciones</label>
                         <textarea id="txtObservaciones" rows="3"
                             placeholder="Ingrese observaciones adicionales..."></textarea>
                     </div>
+
                 </div>
+
                 <br>
+
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Registrar Reserva</button>
-                    <button type="button" class="btn btn-secondary">Actualizar</button>
-                    <button type="button" class="btn btn-danger">Cancelar Reserva</button>
-                    <button type="reset" class="btn btn-secondary">Limpiar</button>
+
+                    <button type="submit" id="btnRegistrarReserva" class="btn btn-primary">
+                        Registrar Reserva
+                    </button>
+
+                    <button type="button" id="btnActualizar" class="btn btn-secondary">
+                        Actualizar
+                    </button>
+
+                    <button type="button" id="btnCancelarReserva" class="btn btn-danger">
+                        Cancelar Reserva
+                    </button>
+
+                    <button type="reset" class="btn btn-secondary">
+                        Limpiar
+                    </button>
+
                 </div>
 
             </form>
         </div>
+
         <br>
 
         <div class="card busqueda">
             <h2>Buscar Reservas</h2>
-            <input type="text" placeholder="Buscar por usuario o libro...">
-        </div>
-        <br>
-
-         <!-- ===================== BÚSQUEDA ===================== -->
-
-        <div class="card busqueda">
-
-            <h2>Buscar Reservas</h2>
-
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Usuario</label>
-                    <input type="text" placeholder="Nombre del usuario">
-                </div>
-
-                <div class="form-group">
-                    <label>Libro</label>
-                    <input type="text" placeholder="Nombre del libro">
-                </div>
-
-                <div class="form-group">
-                    <label>Estado</label>
-
-                    <select>
-
-                        <option>Todas</option>
-                        <option>Reservado</option>
-                        <option>En espera</option>
-                        <option>Cancelada</option>
-                        <option>Finalizada</option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Fecha</label>
-
-                    <input type="date">
-
-                </div>
-
-            </div>
-
+            <input type="text" id="txtBuscar" placeholder="Buscar por usuario, libro o estado...">
         </div>
 
         <br>
-
-        <!-- TABLA -->
 
         <div class="card card-tabla">
 
             <h2>Listado de Reservas</h2>
 
             <table>
-
                 <thead>
-
                     <tr>
-
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>Libro</th>
+                        <th>Estado Libro</th>
                         <th>Posición</th>
                         <th>Fecha Reserva</th>
                         <th>Fecha Límite</th>
-                        <th>Estado</th>
+                        <th>Estado Reserva</th>
+                        <th>Observaciones</th>
                         <th>Acciones</th>
-
                     </tr>
-
                 </thead>
 
-                <tbody>
-
+                <tbody id="tablaReservas">
                     <tr>
-
-                        <td>1</td>
-                        <td>Juan Pérez</td>
-                        <td>Harry Potter</td>
-                        <td>1</td>
-                        <td>15/06/2026</td>
-                        <td>22/06/2026</td>
-
-                        <td>
-
-                            <span class="badge badge-disponible">
-
-                                Reservado
-
-                            </span>
-
+                        <td colspan="10" style="text-align:center;">
+                            Cargando reservas...
                         </td>
-
-                        <td>
-
-                            <button class="btn btn-secondary">
-                                Editar
-                            </button>
-
-                            <button class="btn btn-danger">
-                                Cancelar
-                            </button>
-
-                        </td>
-
                     </tr>
-
-                    <tr>
-
-                        <td>2</td>
-                        <td>María García</td>
-                        <td>El Principito</td>
-                        <td>2</td>
-                        <td>20/06/2026</td>
-                        <td>27/06/2026</td>
-
-                        <td>
-
-                            <span class="badge badge-disponible">
-
-                                En espera
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button class="btn btn-secondary">
-                                Editar
-                            </button>
-
-                            <button class="btn btn-danger">
-                                Cancelar
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>3</td>
-                        <td>Carlos Ramírez</td>
-                        <td>Boulevard</td>
-                        <td>1</td>
-                        <td>21/06/2026</td>
-                        <td>28/06/2026</td>
-
-                        <td>
-
-                            <span class="badge badge-disponible">
-
-                                Finalizada
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button class="btn btn-secondary">
-                                Editar
-                            </button>
-
-                            <button class="btn btn-danger">
-                                Cancelar
-                            </button>
-
-                        </td>
-
-                    </tr>
-
                 </tbody>
-
             </table>
 
         </div>
 
     </main>
 
-    <!-- PIE DE PÁGINA -->
-
     <footer class="footer">
-
-        <p>
-
-            SIGAB Libros © 2026
-
-        </p>
-
+        <p>SIGAB Libros © 2026</p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="module" src="../Controllers/reservasController.js"></script>
 
 </body>
 
