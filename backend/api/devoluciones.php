@@ -95,90 +95,102 @@ try {
             exit;
         }
 
-        $pdo->beginTransaction();
+        $intentos = 0;
+        $maxIntentos = 2;
+        while (true) {
+            try {
+                $pdo->beginTransaction();
 
-        $sql = "INSERT INTO devoluciones (id_prestamo, fecha_devuelto, observaciones)
-                VALUES (:id_prestamo, :fecha_devuelto, :observaciones)";
+                $sql = "INSERT INTO devoluciones (id_prestamo, fecha_devuelto, observaciones)
+                        VALUES (:id_prestamo, :fecha_devuelto, :observaciones)";
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ":id_prestamo" => $id_prestamo,
-            ":fecha_devuelto" => $fecha_devuelto,
-            ":observaciones" => $observaciones
-        ]);
-
-        $stmtActualizarPrestamo = $pdo->prepare("UPDATE prestamos SET estado = 'Devuelto' WHERE id = :id");
-        $stmtActualizarPrestamo->execute([":id" => $id_prestamo]);
-
-        $estadoLibroFinal = (mb_strtolower($estado_libro, "UTF-8") === "muy dañado") ? "No disponible" : "Disponible";
-
-        $stmtActualizarLibro = $pdo->prepare("UPDATE libros SET estado = :estado, condicion = :condicion WHERE id = :id");
-        $stmtActualizarLibro->execute([
-            ":estado" => $estadoLibroFinal,
-            ":condicion" => $estado_libro,
-            ":id" => $prestamo["id_libro"]
-        ]);
-
-        $multasAInsertar = [];
-
-        $fechaDevueltoObj = DateTime::createFromFormat("Y-m-d", $fecha_devuelto);
-        $fechaDevolucionObj = DateTime::createFromFormat("Y-m-d", substr((string) $prestamo["fecha_devolucion"], 0, 10));
-
-        if ($fechaDevueltoObj && $fechaDevolucionObj && $fechaDevueltoObj > $fechaDevolucionObj) {
-            $diasRetraso = (int) $fechaDevolucionObj->diff($fechaDevueltoObj)->format("%a");
-
-            if ($diasRetraso > 0) {
-                $multasAInsertar[] = [
-                    "tipo" => "Atraso",
-<<<<<<< HEAD
-                    "dias_retraso" => $diasRetraso,
-=======
->>>>>>> e68cf88 (Multas backend, logica)
-                    "dias_gracia" => 0
-                ];
-            }
-        }
-
-        if (mb_strtolower($estado_libro, "UTF-8") === "dañado") {
-            $multasAInsertar[] = [
-                "tipo" => "Daño",
-<<<<<<< HEAD
-                "dias_retraso" => 0,
-=======
->>>>>>> e68cf88 (Multas backend, logica)
-                "dias_gracia" => 0
-            ];
-        }
-
-        if (mb_strtolower($estado_libro, "UTF-8") === "muy dañado") {
-            $multasAInsertar[] = [
-                "tipo" => "Perdida",
-<<<<<<< HEAD
-                "dias_retraso" => 0,
-=======
->>>>>>> e68cf88 (Multas backend, logica)
-                "dias_gracia" => 0
-            ];
-        }
-
-        if (!empty($multasAInsertar)) {
-            $stmtMulta = $pdo->prepare("INSERT INTO multas
-                (id_usuario, id_libro, fecha_devolucion, dias_gracia, tipo)
-                VALUES
-                (:id_usuario, :id_libro, :fecha_devolucion, :dias_gracia, :tipo)");
-
-            foreach ($multasAInsertar as $multa) {
-                $stmtMulta->execute([
-                    ":id_usuario" => $prestamo["id_usuario"],
-                    ":id_libro" => $prestamo["id_libro"],
-                    ":fecha_devolucion" => $fecha_devuelto,
-                    ":dias_gracia" => $multa["dias_gracia"],
-                    ":tipo" => $multa["tipo"]
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    ":id_prestamo" => $id_prestamo,
+                    ":fecha_devuelto" => $fecha_devuelto,
+                    ":observaciones" => $observaciones
                 ]);
+
+                $stmtActualizarPrestamo = $pdo->prepare("UPDATE prestamos SET estado = 'Devuelto' WHERE id = :id");
+                $stmtActualizarPrestamo->execute([":id" => $id_prestamo]);
+
+                $estadoLibroFinal = (mb_strtolower($estado_libro, "UTF-8") === "muy dañado") ? "No disponible" : "Disponible";
+
+                $stmtActualizarLibro = $pdo->prepare("UPDATE libros SET estado = :estado, condicion = :condicion WHERE id = :id");
+                $stmtActualizarLibro->execute([
+                    ":estado" => $estadoLibroFinal,
+                    ":condicion" => $estado_libro,
+                    ":id" => $prestamo["id_libro"]
+                ]);
+
+                $multasAInsertar = [];
+
+                $fechaDevueltoObj = DateTime::createFromFormat("Y-m-d", $fecha_devuelto);
+                $fechaDevolucionObj = DateTime::createFromFormat("Y-m-d", substr((string) $prestamo["fecha_devolucion"], 0, 10));
+
+                if ($fechaDevueltoObj && $fechaDevolucionObj && $fechaDevueltoObj > $fechaDevolucionObj) {
+                    $diasRetraso = (int) $fechaDevolucionObj->diff($fechaDevueltoObj)->format("%a");
+
+                    if ($diasRetraso > 0) {
+                        $multasAInsertar[] = [
+                            "tipo" => "Atraso",
+                            "dias_gracia" => 0
+                        ];
+                    }
+                }
+
+                if (mb_strtolower($estado_libro, "UTF-8") === "dañado") {
+                    $multasAInsertar[] = [
+                        "tipo" => "Daño",
+                        "dias_gracia" => 0
+                    ];
+                }
+
+                if (mb_strtolower($estado_libro, "UTF-8") === "muy dañado") {
+                    $multasAInsertar[] = [
+                        "tipo" => "Perdida",
+                        "dias_gracia" => 0
+                    ];
+                }
+
+                if (!empty($multasAInsertar)) {
+                    $stmtMulta = $pdo->prepare("INSERT INTO multas
+                        (id_usuario, id_libro, fecha_devolucion, dias_gracia, tipo, estado, monto_pagado)
+                        VALUES
+                        (:id_usuario, :id_libro, :fecha_devolucion, :dias_gracia, :tipo, :estado, :monto_pagado)");
+
+                    foreach ($multasAInsertar as $multa) {
+                        $stmtMulta->execute([
+                            ":id_usuario" => $prestamo["id_usuario"],
+                            ":id_libro" => $prestamo["id_libro"],
+                            ":fecha_devolucion" => $fecha_devuelto,
+                            ":dias_gracia" => $multa["dias_gracia"],
+                            ":tipo" => $multa["tipo"],
+                            ":estado" => "Pendiente",
+                            ":monto_pagado" => null
+                        ]);
+                    }
+                }
+
+                $pdo->commit();
+                break;
+            } catch (PDOException $eTransaccion) {
+                if (isset($pdo) && $pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+
+                $sqlState = $eTransaccion->getCode();
+                $esDeadlock = $sqlState === "40001" || $sqlState === "1213";
+
+                if ($esDeadlock && $intentos < $maxIntentos - 1) {
+                    $intentos++;
+                    usleep(100000);
+                    continue;
+                }
+
+                throw $eTransaccion;
             }
         }
-
-        $pdo->commit();
 
         echo json_encode([
             "success" => true,
@@ -194,13 +206,9 @@ try {
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (PDOException $e) {
-<<<<<<< HEAD
-=======
     if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
-
->>>>>>> e68cf88 (Multas backend, logica)
     http_response_code(500);
     echo json_encode([
         "success" => false,

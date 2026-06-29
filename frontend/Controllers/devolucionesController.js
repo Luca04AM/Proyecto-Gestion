@@ -1,12 +1,16 @@
 $(document).ready(function () {
     const API = "../../backend/api/devoluciones.php";
     const API_PRESTAMOS = "../../backend/api/prestamos.php";
+    let enviandoDevolucion = false;
 
     cargarPrestamosActivos();
     cargarDevoluciones();
 
     $("#formDevolucion").on("submit", function (e) {
         e.preventDefault();
+        if (enviandoDevolucion) {
+            return;
+        }
         registrarDevolucion();
     });
 
@@ -89,6 +93,9 @@ $(document).ready(function () {
         const observaciones = $("#observaciones").val().trim();
         const estadoLibro = $("#estadoLibro").val();
 
+        enviandoDevolucion = true;
+        $("#formDevolucion button[type='submit']").prop("disabled", true);
+
         $.ajax({
             url: API,
             method: "POST",
@@ -109,10 +116,14 @@ $(document).ready(function () {
                 } else {
                     alert(respuesta.message || "No se pudo registrar la devolución.");
                 }
+                enviandoDevolucion = false;
+                $("#formDevolucion button[type='submit']").prop("disabled", false);
             },
             error: function (xhr) {
                 const respuesta = xhr.responseJSON || {};
                 alert(respuesta.message || "No se pudo registrar la devolución.");
+                enviandoDevolucion = false;
+                $("#formDevolucion button[type='submit']").prop("disabled", false);
             }
         });
     }
