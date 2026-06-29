@@ -36,6 +36,7 @@ $(document).ready(function () {
         $("#detalleAutor").text(libro.autor);
         $("#detalleGenero").text(libro.genero);
         $("#detalleDescripcion").text(libro.descripcion);
+        $("#detalleCondicion").text(libro.condicion || "No especificada");
 
         let claseEstado = "badge-disponible";
 
@@ -56,12 +57,14 @@ $(document).ready(function () {
             .addClass("badge " + claseEstado)
             .text(libro.estado);
 
-        $("#detalleCondicion").text(libro.condicion || "No especificada");
-
         if (libro.portada) {
-            $("#detallePortada").attr("src", "../img/catalogo/" + libro.portada);
+            $("#detallePortada")
+                .attr("src", "../img/catalogo/" + libro.portada)
+                .attr("alt", "Portada de " + libro.titulo);
         } else {
-            $("#detallePortada").attr("src", "../img/catalogo/default.jpg");
+            $("#detallePortada")
+                .attr("src", "../img/autores/subir.png")
+                .attr("alt", "Sin portada disponible");
         }
     }
 
