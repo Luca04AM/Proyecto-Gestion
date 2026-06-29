@@ -81,6 +81,14 @@
                     </div>
 
                     <div>
+                        <label for="estadoMulta">Estado</label>
+                        <select id="estadoMulta">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Pagada">Pagada</option>
+                        </select>
+                    </div>
+
+                    <div>
                         <label for="montoMulta">Monto</label>
                         <input type="text" id="montoMulta" placeholder="0.00" readonly>
                     </div>
@@ -106,11 +114,12 @@
             <div class="encabezado-modulo">
                 <div>
                     <h2>Multas registradas</h2>
-                    <p>Consulta y edita los registros existentes.</p>
+                    <p>Consulta las multas pendientes y pagadas por separado.</p>
                 </div>
             </div>
 
-            <table id="tablaMultas">
+            <h3>Multas pendientes</h3>
+            <table id="tablaMultasPendientes">
 
                 <thead>
                     <tr>
@@ -121,12 +130,36 @@
                         <th>Gracia</th>
                         <th>Tipo</th>
                         <th>Monto</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
 
-                <tbody id="tbodyMultas">
+                <tbody id="tbodyMultasPendientes">
                     <!-- Las multas se cargan desde el API -->
+                </tbody>
+
+            </table>
+
+            <h3 style="margin-top: 24px;">Multas pagadas</h3>
+            <table id="tablaMultasPagadas">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Libro</th>
+                        <th>Fecha devolución</th>
+                        <th>Gracia</th>
+                        <th>Tipo</th>
+                        <th>Monto pagado</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbodyMultasPagadas">
+                    <!-- Las multas pagadas se cargan desde el API -->
                 </tbody>
 
             </table>

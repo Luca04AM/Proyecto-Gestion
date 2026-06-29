@@ -16,6 +16,10 @@ $(document).ready(function () {
         actualizarMonto();
     });
 
+    $("#estadoMulta").on("change", function () {
+        actualizarMonto();
+    });
+
     $("#btnLimpiarFormulario").on("click", function () {
         limpiarFormulario();
         $("#mensajeFormulario").hide();
@@ -50,6 +54,7 @@ $(document).ready(function () {
 
                 $("#idUsuario").html(usuarios);
                 $("#idLibro").html(libros);
+                $("#estadoMulta").val("Pendiente");
                 actualizarMonto();
             },
             error: function () {
@@ -59,12 +64,16 @@ $(document).ready(function () {
     }
 
     function guardarMulta() {
+        const montoCalculado = calcularMontoActual();
+        const estado = $("#estadoMulta").val() || "Pendiente";
         const multa = {
             id_usuario: $("#idUsuario").val(),
             id_libro: $("#idLibro").val(),
             fecha_devolucion: $("#fechaDevolucion").val(),
             dias_gracia: $("#diasGracia").val(),
-            tipo: $("#tipoMulta").val()
+            tipo: $("#tipoMulta").val(),
+            estado: estado,
+            monto_pagado: estado === "Pagada" ? montoCalculado : 0
         };
 
         if (multa.id_usuario === "" || multa.id_libro === "" || multa.fecha_devolucion === "") {
@@ -111,11 +120,13 @@ $(document).ready(function () {
             method: "GET",
             dataType: "json",
             success: function (respuesta) {
-                let filas = "";
+                let filasPendientes = "";
+                let filasPagadas = "";
 
                 if (respuesta.success) {
                     $.each(respuesta.data, function (i, multa) {
-                        filas += `
+                        const monto = obtenerMontoParaFila(multa);
+                        const fila = `
                             <tr>
                                 <td>${multa.id}</td>
                                 <td>${multa.usuario}</td>
@@ -123,7 +134,8 @@ $(document).ready(function () {
                                 <td>${multa.fecha_devolucion}</td>
                                 <td>${multa.dias_gracia}</td>
                                 <td>${multa.tipo}</td>
-                                <td>S/ ${formatearMonto(calcularMontoDesdeFila(multa))}</td>
+                                <td>S/ ${formatearMonto(monto)}</td>
+                                <td>${multa.estado || "Pendiente"}</td>
                                 <td>
                                     <button class="btn btn-secondary btnEditarMulta" data-id="${multa.id}">
                                         Editar
@@ -131,10 +143,17 @@ $(document).ready(function () {
                                 </td>
                             </tr>
                         `;
+
+                        if ((multa.estado || "Pendiente") === "Pagada") {
+                            filasPagadas += fila;
+                        } else {
+                            filasPendientes += fila;
+                        }
                     });
                 }
 
-                $("#tbodyMultas").html(filas);
+                $("#tbodyMultasPendientes").html(filasPendientes);
+                $("#tbodyMultasPagadas").html(filasPagadas);
             },
             error: function () {
                 mostrarMensaje("No se pudieron cargar las multas.", "error");
@@ -161,6 +180,7 @@ $(document).ready(function () {
                 $("#fechaDevolucion").val(String(multa.fecha_devolucion).slice(0, 10));
                 $("#diasGracia").val(multa.dias_gracia);
                 $("#tipoMulta").val(multa.tipo);
+                $("#estadoMulta").val(multa.estado || "Pendiente");
                 actualizarMonto();
 
                 modoEdicion = true;
@@ -182,6 +202,7 @@ $(document).ready(function () {
         $("#fechaDevolucion").val("");
         $("#diasGracia").val("");
         $("#tipoMulta").val("Atraso");
+        $("#estadoMulta").val("Pendiente");
         $("#montoMulta").val("0.00");
         modoEdicion = false;
         $("#tituloFormulario").text("Registrar Multa");
@@ -191,12 +212,7 @@ $(document).ready(function () {
     }
 
     function actualizarMonto() {
-        const tipo = $("#tipoMulta").val();
-        const fechaDevolucion = $("#fechaDevolucion").val();
-        const diasGracia = parseInt($("#diasGracia").val(), 10) || 0;
-
-        const monto = calcularMonto(tipo, fechaDevolucion, diasGracia);
-        $("#montoMulta").val(formatearMonto(monto));
+        $("#montoMulta").val(formatearMonto(calcularMontoActual()));
     }
 
     function calcularMonto(tipo, fechaDevolucion, diasGracia) {
@@ -230,11 +246,29 @@ $(document).ready(function () {
         return fixedFee * diasCobro;
     }
 
+    function calcularMontoActual() {
+        const tipo = $("#tipoMulta").val();
+        const fechaDevolucion = $("#fechaDevolucion").val();
+        const diasGracia = parseInt($("#diasGracia").val(), 10) || 0;
+
+        return calcularMonto(tipo, fechaDevolucion, diasGracia);
+    }
+
     function calcularMontoDesdeFila(multa) {
         const tipo = multa.tipo || "Atraso";
         const fechaDevolucion = multa.fecha_devolucion ? String(multa.fecha_devolucion).slice(0, 10) : "";
         const diasGracia = parseInt(multa.dias_gracia, 10) || 0;
         return calcularMonto(tipo, fechaDevolucion, diasGracia);
+    }
+
+    function obtenerMontoParaFila(multa) {
+        if ((multa.estado || "Pendiente") === "Pagada") {
+            return multa.monto_pagado !== null && multa.monto_pagado !== undefined && multa.monto_pagado !== ""
+                ? multa.monto_pagado
+                : calcularMontoDesdeFila(multa);
+        }
+
+        return calcularMontoDesdeFila(multa);
     }
 
     function formatearMonto(monto) {

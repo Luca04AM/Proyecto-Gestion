@@ -553,7 +553,8 @@ function usuarioTieneMultasPendientes($pdo, $idUsuario)
 {
     $sql = "SELECT COUNT(*) AS total
             FROM multas
-            WHERE id_usuario = :id_usuario";
+            WHERE id_usuario = :id_usuario
+              AND estado = 'Pendiente'";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([":id_usuario" => $idUsuario]);
