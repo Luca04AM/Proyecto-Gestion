@@ -115,10 +115,11 @@ try {
 
         [$nombre, $descripcion, $estado] = validarGenero($data);
 
-        $existe = $pdo->prepare("SELECT id FROM generos WHERE id = :id");
+        $existe = $pdo->prepare("SELECT id, nombre FROM generos WHERE id = :id");
         $existe->execute([":id" => $id]);
+        $generoActual = $existe->fetch(PDO::FETCH_ASSOC);
 
-        if (!$existe->fetch()) {
+        if (!$generoActual) {
             responderGenero(false, "El género que desea editar no existe.", null, 404);
         }
 
@@ -128,6 +129,8 @@ try {
         if ($duplicado->fetch()) {
             responderGenero(false, "Ya existe otro género con ese nombre.", null, 409);
         }
+
+        $pdo->beginTransaction();
 
         $stmt = $pdo->prepare(
             "UPDATE generos
@@ -141,6 +144,18 @@ try {
             ":estado" => $estado
         ]);
 
+        if ($generoActual["nombre"] !== $nombre) {
+            $actualizarLibros = $pdo->prepare(
+                "UPDATE libros SET genero = :nombre_nuevo WHERE genero = :nombre_anterior"
+            );
+            $actualizarLibros->execute([
+                ":nombre_nuevo" => $nombre,
+                ":nombre_anterior" => $generoActual["nombre"]
+            ]);
+        }
+
+        $pdo->commit();
+
         responderGenero(true, "Género actualizado correctamente.");
     }
 
@@ -150,6 +165,21 @@ try {
 
         if ($id <= 0) {
             responderGenero(false, "El id del género es obligatorio.", null, 400);
+        }
+
+        $genero = $pdo->prepare("SELECT nombre FROM generos WHERE id = :id");
+        $genero->execute([":id" => $id]);
+        $generoActual = $genero->fetch(PDO::FETCH_ASSOC);
+
+        if (!$generoActual) {
+            responderGenero(false, "El género que desea eliminar no existe.", null, 404);
+        }
+
+        $enUso = $pdo->prepare("SELECT COUNT(*) FROM libros WHERE genero = :nombre");
+        $enUso->execute([":nombre" => $generoActual["nombre"]]);
+
+        if ((int) $enUso->fetchColumn() > 0) {
+            responderGenero(false, "No se puede eliminar el género porque está asignado a uno o más libros. Puede marcarlo como inactivo.", null, 409);
         }
 
         $stmt = $pdo->prepare("DELETE FROM generos WHERE id = :id");
@@ -164,6 +194,9 @@ try {
 
     responderGenero(false, "Método no permitido.", null, 405);
 } catch (PDOException $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     $status = $e->getCode() === "23000" ? 409 : 500;
     responderGenero(false, $status === 409
         ? "No se puede completar la operación porque el género está relacionado con otros datos."

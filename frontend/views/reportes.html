@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reportes - SIGAB Libros</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="../css/reportes.css">
@@ -22,126 +21,83 @@
             <div>
                 <span class="reportes-kicker">Administración</span>
                 <h1>Módulo de Reportes</h1>
-                <p>Genere y administre el historial de reportes del sistema.</p>
+                <p>Consulte movimientos reales por rango de fechas y exporte los resultados.</p>
             </div>
             <div class="reportes-total">
                 <strong id="totalReportes">0</strong>
-                <span>reportes generados</span>
+                <span>resultados mostrados</span>
             </div>
         </header>
 
         <div id="alertaReportes" aria-live="polite"></div>
 
+        <section class="reportes-resumen" id="resumenReportes" hidden>
+            <div class="resumen-totales">
+                <div><strong id="resumenPrestamos">0</strong><span>Préstamos</span></div>
+                <div><strong id="resumenDevoluciones">0</strong><span>Devoluciones</span></div>
+                <div><strong id="resumenMultas">0</strong><span>Multas</span></div>
+            </div>
+            <div class="resumen-rankings">
+                <div>
+                    <h2>Libros más prestados</h2>
+                    <ol class="list-group" id="librosMasPrestados"></ol>
+                </div>
+                <div>
+                    <h2>Usuarios más activos</h2>
+                    <ol class="list-group" id="usuariosMasActivos"></ol>
+                </div>
+            </div>
+        </section>
+
         <ul class="nav nav-tabs mb-4" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#prestamos" type="button">Préstamos</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#devoluciones" type="button">Devoluciones</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#multas" type="button">Multas</button>
-            </li>
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#prestamos" type="button">Préstamos</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#devoluciones" type="button">Devoluciones</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#multas" type="button">Multas</button></li>
         </ul>
 
         <div class="tab-content">
             <section class="tab-pane fade show active" id="prestamos">
-                <div class="card reporte-card">
-                    <div class="card-body">
-                        <h2>Reporte de préstamos</h2>
-                        <form class="formReporte" data-tipo="Prestamos">
-                            <input type="hidden" class="reporte-id">
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <label class="form-label">ID del responsable</label>
-                                    <input type="number" min="1" class="form-control reporte-usuario" placeholder="Opcional">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Fecha inicio</label>
-                                    <input type="date" class="form-control reporte-inicio" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Fecha fin</label>
-                                    <input type="date" class="form-control reporte-fin" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Estado</label>
-                                    <select class="form-select reporte-estado">
-                                        <option value="Generado">Generado</option>
-                                        <option value="Archivado">Archivado</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="reporte-actions">
-                                <button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button>
-                                <button type="button" class="btn btn-success btnExportarReporte" data-tipo="Prestamos">Exportar CSV</button>
-                                <button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Prestamos">Imprimir / PDF</button>
-                            </div>
-                        </form>
-                        <div class="table-responsive mt-4">
-                            <table class="table table-bordered table-hover align-middle">
-                                <thead><tr><th>ID</th><th>Responsable</th><th>Inicio</th><th>Fin</th><th>Generado</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody class="tablaReportes" data-tipo="Prestamos"></tbody>
-                            </table>
+                <div class="card reporte-card"><div class="card-body">
+                    <h2>Reporte de préstamos</h2>
+                    <form class="formReporte" data-tipo="Prestamos">
+                        <div class="row g-3">
+                            <div class="col-md-4"><label class="form-label">Fecha inicio</label><input type="date" class="form-control reporte-inicio" required></div>
+                            <div class="col-md-4"><label class="form-label">Fecha fin</label><input type="date" class="form-control reporte-fin" required></div>
+                            <div class="col-md-4"><label class="form-label">Estado</label><select class="form-select reporte-filtro"><option value="">Todos</option><option value="Prestado">Prestado</option><option value="Devuelto">Devuelto</option><option value="Perdido">Perdido</option></select></div>
                         </div>
-                    </div>
-                </div>
+                        <div class="reporte-actions"><button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button><button type="button" class="btn btn-success btnExportarReporte" data-tipo="Prestamos">Exportar Excel</button><button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Prestamos">Imprimir / PDF</button></div>
+                    </form>
+                    <div class="table-responsive mt-4"><table class="table table-bordered table-hover align-middle"><thead><tr><th>ID</th><th>Usuario</th><th>Libro</th><th>Fecha préstamo</th><th>Fecha devolución</th><th>Estado</th></tr></thead><tbody class="tablaReportes" data-tipo="Prestamos"><tr><td colspan="6" class="text-center text-muted py-4">Seleccione los filtros y genere el reporte.</td></tr></tbody></table></div>
+                </div></div>
             </section>
 
             <section class="tab-pane fade" id="devoluciones">
-                <div class="card reporte-card">
-                    <div class="card-body">
-                        <h2>Reporte de devoluciones</h2>
-                        <form class="formReporte" data-tipo="Devoluciones">
-                            <input type="hidden" class="reporte-id">
-                            <div class="row g-3">
-                                <div class="col-md-3"><label class="form-label">ID del responsable</label><input type="number" min="1" class="form-control reporte-usuario" placeholder="Opcional"></div>
-                                <div class="col-md-3"><label class="form-label">Fecha inicio</label><input type="date" class="form-control reporte-inicio" required></div>
-                                <div class="col-md-3"><label class="form-label">Fecha fin</label><input type="date" class="form-control reporte-fin" required></div>
-                                <div class="col-md-3"><label class="form-label">Estado</label><select class="form-select reporte-estado"><option value="Generado">Generado</option><option value="Archivado">Archivado</option></select></div>
-                            </div>
-                            <div class="reporte-actions">
-                                <button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button>
-                                <button type="button" class="btn btn-success btnExportarReporte" data-tipo="Devoluciones">Exportar CSV</button>
-                                <button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Devoluciones">Imprimir / PDF</button>
-                            </div>
-                        </form>
-                        <div class="table-responsive mt-4">
-                            <table class="table table-bordered table-hover align-middle">
-                                <thead><tr><th>ID</th><th>Responsable</th><th>Inicio</th><th>Fin</th><th>Generado</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody class="tablaReportes" data-tipo="Devoluciones"></tbody>
-                            </table>
+                <div class="card reporte-card"><div class="card-body">
+                    <h2>Reporte de devoluciones</h2>
+                    <form class="formReporte" data-tipo="Devoluciones">
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="form-label">Fecha inicio</label><input type="date" class="form-control reporte-inicio" required></div>
+                            <div class="col-md-6"><label class="form-label">Fecha fin</label><input type="date" class="form-control reporte-fin" required></div>
                         </div>
-                    </div>
-                </div>
+                        <div class="reporte-actions"><button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button><button type="button" class="btn btn-success btnExportarReporte" data-tipo="Devoluciones">Exportar Excel</button><button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Devoluciones">Imprimir / PDF</button></div>
+                    </form>
+                    <div class="table-responsive mt-4"><table class="table table-bordered table-hover align-middle"><thead><tr><th>ID</th><th>Usuario</th><th>Libro</th><th>Fecha límite</th><th>Fecha devuelta</th><th>Días atraso</th><th>Observaciones</th></tr></thead><tbody class="tablaReportes" data-tipo="Devoluciones"><tr><td colspan="7" class="text-center text-muted py-4">Seleccione las fechas y genere el reporte.</td></tr></tbody></table></div>
+                </div></div>
             </section>
 
             <section class="tab-pane fade" id="multas">
-                <div class="card reporte-card">
-                    <div class="card-body">
-                        <h2>Reporte de multas</h2>
-                        <form class="formReporte" data-tipo="Multas">
-                            <input type="hidden" class="reporte-id">
-                            <div class="row g-3">
-                                <div class="col-md-3"><label class="form-label">ID del responsable</label><input type="number" min="1" class="form-control reporte-usuario" placeholder="Opcional"></div>
-                                <div class="col-md-3"><label class="form-label">Fecha inicio</label><input type="date" class="form-control reporte-inicio" required></div>
-                                <div class="col-md-3"><label class="form-label">Fecha fin</label><input type="date" class="form-control reporte-fin" required></div>
-                                <div class="col-md-3"><label class="form-label">Estado</label><select class="form-select reporte-estado"><option value="Generado">Generado</option><option value="Archivado">Archivado</option></select></div>
-                            </div>
-                            <div class="reporte-actions">
-                                <button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button>
-                                <button type="button" class="btn btn-success btnExportarReporte" data-tipo="Multas">Exportar CSV</button>
-                                <button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Multas">Imprimir / PDF</button>
-                            </div>
-                        </form>
-                        <div class="table-responsive mt-4">
-                            <table class="table table-bordered table-hover align-middle">
-                                <thead><tr><th>ID</th><th>Responsable</th><th>Inicio</th><th>Fin</th><th>Generado</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody class="tablaReportes" data-tipo="Multas"></tbody>
-                            </table>
+                <div class="card reporte-card"><div class="card-body">
+                    <h2>Reporte de multas</h2>
+                    <form class="formReporte" data-tipo="Multas">
+                        <div class="row g-3">
+                            <div class="col-md-4"><label class="form-label">Fecha inicio</label><input type="date" class="form-control reporte-inicio" required></div>
+                            <div class="col-md-4"><label class="form-label">Fecha fin</label><input type="date" class="form-control reporte-fin" required></div>
+                            <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select reporte-filtro"><option value="">Todas</option><option value="Atraso">Atraso</option><option value="Daño">Daño</option><option value="Perdida">Pérdida</option></select></div>
                         </div>
-                    </div>
-                </div>
+                        <div class="reporte-actions"><button type="submit" class="btn btn-primary btnGuardarReporte">Generar reporte</button><button type="button" class="btn btn-success btnExportarReporte" data-tipo="Multas">Exportar Excel</button><button type="button" class="btn btn-outline-secondary btnImprimirReporte" data-tipo="Multas">Imprimir / PDF</button></div>
+                    </form>
+                    <div class="table-responsive mt-4"><table class="table table-bordered table-hover align-middle"><thead><tr><th>ID</th><th>Usuario</th><th>Libro</th><th>Fecha</th><th>Tipo</th><th>Días gracia</th><th>Monto</th></tr></thead><tbody class="tablaReportes" data-tipo="Multas"><tr><td colspan="7" class="text-center text-muted py-4">Seleccione los filtros y genere el reporte.</td></tr></tbody></table></div>
+                </div></div>
             </section>
         </div>
     </main>

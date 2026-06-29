@@ -55,10 +55,157 @@ function validarReporte($data)
     return [$idUsuario, $tipo, $fechaInicio, $fechaFin, $estado];
 }
 
+function obtenerDatosReporte($pdo)
+{
+    $tipo = trim($_GET["tipo"] ?? "");
+    $fechaInicio = trim($_GET["fecha_inicio"] ?? "");
+    $fechaFin = trim($_GET["fecha_fin"] ?? "");
+    $filtro = trim($_GET["filtro"] ?? "");
+
+    if (!in_array($tipo, ["Prestamos", "Devoluciones", "Multas"], true)) {
+        responderReporte(false, "El tipo de reporte no es válido.", null, 400);
+    }
+
+    if ($fechaInicio === "" || $fechaFin === "" || $fechaInicio > $fechaFin) {
+        responderReporte(false, "Debe indicar un rango de fechas válido.", null, 400);
+    }
+
+    $params = [
+        ":fecha_inicio" => $fechaInicio,
+        ":fecha_fin" => $fechaFin
+    ];
+
+    if ($tipo === "Prestamos") {
+        $sql = "SELECT p.id, u.nombre AS usuario, l.titulo AS libro,
+                       p.fecha_prestamo, p.fecha_devolucion, p.estado
+                FROM prestamos p
+                INNER JOIN usuarios u ON u.id = p.id_usuario
+                INNER JOIN libros l ON l.id = p.id_libro
+                WHERE DATE(p.fecha_prestamo) BETWEEN :fecha_inicio AND :fecha_fin";
+
+        if ($filtro !== "") {
+            if (!in_array($filtro, ["Prestado", "Devuelto", "Perdido"], true)) {
+                responderReporte(false, "El estado de préstamo no es válido.", null, 400);
+            }
+            $sql .= " AND p.estado = :filtro";
+            $params[":filtro"] = $filtro;
+        }
+
+        $sql .= " ORDER BY p.fecha_prestamo DESC, p.id DESC";
+    } elseif ($tipo === "Devoluciones") {
+        $sql = "SELECT d.id, u.nombre AS usuario, l.titulo AS libro,
+                       p.fecha_devolucion AS fecha_limite, d.fecha_devuelto,
+                       GREATEST(DATEDIFF(DATE(d.fecha_devuelto), DATE(p.fecha_devolucion)), 0) AS dias_atraso,
+                       d.observaciones
+                FROM devoluciones d
+                INNER JOIN prestamos p ON p.id = d.id_prestamo
+                INNER JOIN usuarios u ON u.id = p.id_usuario
+                INNER JOIN libros l ON l.id = p.id_libro
+                WHERE DATE(d.fecha_devuelto) BETWEEN :fecha_inicio AND :fecha_fin
+                ORDER BY d.fecha_devuelto DESC, d.id DESC";
+    } else {
+        $sql = "SELECT m.id, u.nombre AS usuario, l.titulo AS libro,
+                       m.fecha_devolucion, m.tipo, m.dias_gracia,
+                       (CASE m.tipo
+                            WHEN 'Daño' THEN 3000
+                            WHEN 'Perdida' THEN 10000
+                            ELSE 1000
+                        END * GREATEST(DATEDIFF(CURDATE(), DATE(m.fecha_devolucion)) - m.dias_gracia, 1)) AS monto
+                FROM multas m
+                INNER JOIN usuarios u ON u.id = m.id_usuario
+                INNER JOIN libros l ON l.id = m.id_libro
+                WHERE DATE(m.fecha_devolucion) BETWEEN :fecha_inicio AND :fecha_fin";
+
+        if ($filtro !== "") {
+            if (!in_array($filtro, ["Atraso", "Daño", "Perdida"], true)) {
+                responderReporte(false, "El tipo de multa no es válido.", null, 400);
+            }
+            $sql .= " AND m.tipo = :filtro";
+            $params[":filtro"] = $filtro;
+        }
+
+        $sql .= " ORDER BY m.fecha_devolucion DESC, m.id DESC";
+    }
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    responderReporte(true, "Reporte generado correctamente.", $stmt->fetchAll(PDO::FETCH_ASSOC));
+}
+
+function obtenerResumenReporte($pdo)
+{
+    $fechaInicio = trim($_GET["fecha_inicio"] ?? "");
+    $fechaFin = trim($_GET["fecha_fin"] ?? "");
+
+    if ($fechaInicio === "" || $fechaFin === "" || $fechaInicio > $fechaFin) {
+        responderReporte(false, "Debe indicar un rango de fechas válido.", null, 400);
+    }
+
+    $params = [":fecha_inicio" => $fechaInicio, ":fecha_fin" => $fechaFin];
+
+    $prestamos = $pdo->prepare(
+        "SELECT COUNT(*) FROM prestamos
+         WHERE DATE(fecha_prestamo) BETWEEN :fecha_inicio AND :fecha_fin"
+    );
+    $prestamos->execute($params);
+
+    $devoluciones = $pdo->prepare(
+        "SELECT COUNT(*) FROM devoluciones
+         WHERE DATE(fecha_devuelto) BETWEEN :fecha_inicio AND :fecha_fin"
+    );
+    $devoluciones->execute($params);
+
+    $multas = $pdo->prepare(
+        "SELECT COUNT(*) FROM multas
+         WHERE DATE(fecha_devolucion) BETWEEN :fecha_inicio AND :fecha_fin"
+    );
+    $multas->execute($params);
+
+    $libros = $pdo->prepare(
+        "SELECT l.titulo AS nombre, COUNT(*) AS total
+         FROM prestamos p
+         INNER JOIN libros l ON l.id = p.id_libro
+         WHERE DATE(p.fecha_prestamo) BETWEEN :fecha_inicio AND :fecha_fin
+         GROUP BY l.id, l.titulo
+         ORDER BY total DESC, l.titulo ASC
+         LIMIT 5"
+    );
+    $libros->execute($params);
+
+    $usuarios = $pdo->prepare(
+        "SELECT u.nombre, COUNT(*) AS total
+         FROM prestamos p
+         INNER JOIN usuarios u ON u.id = p.id_usuario
+         WHERE DATE(p.fecha_prestamo) BETWEEN :fecha_inicio AND :fecha_fin
+         GROUP BY u.id, u.nombre
+         ORDER BY total DESC, u.nombre ASC
+         LIMIT 5"
+    );
+    $usuarios->execute($params);
+
+    responderReporte(true, "Resumen generado correctamente.", [
+        "totales" => [
+            "prestamos" => (int) $prestamos->fetchColumn(),
+            "devoluciones" => (int) $devoluciones->fetchColumn(),
+            "multas" => (int) $multas->fetchColumn()
+        ],
+        "libros_mas_prestados" => $libros->fetchAll(PDO::FETCH_ASSOC),
+        "usuarios_mas_activos" => $usuarios->fetchAll(PDO::FETCH_ASSOC)
+    ]);
+}
+
 try {
     $method = $_SERVER["REQUEST_METHOD"];
 
     if ($method === "GET") {
+        if (($_GET["accion"] ?? "") === "datos") {
+            obtenerDatosReporte($pdo);
+        }
+
+        if (($_GET["accion"] ?? "") === "resumen") {
+            obtenerResumenReporte($pdo);
+        }
+
         $id = isset($_GET["id"]) ? (int) $_GET["id"] : 0;
         $tipo = trim($_GET["tipo"] ?? "");
         $sql = "SELECT r.id, r.id_usuario, COALESCE(u.nombre, 'Sin asignar') AS usuario,

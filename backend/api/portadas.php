@@ -51,7 +51,7 @@ function guardarArchivoPortada($archivo)
         responderPortada(false, "Solo se permiten imágenes JPG, PNG o WEBP.", null, 400);
     }
 
-    $directorio = __DIR__ . "/../../frontend/img/portadas";
+    $directorio = __DIR__ . "/../../frontend/img/catalogo";
 
     if (!is_dir($directorio) && !mkdir($directorio, 0775, true)) {
         responderPortada(false, "No fue posible preparar la carpeta de portadas.", null, 500);
@@ -66,7 +66,7 @@ function guardarArchivoPortada($archivo)
 
     return [
         "nombre" => $nombre,
-        "ruta" => "../img/portadas/" . $nombre,
+        "ruta" => "../img/catalogo/" . $nombre,
         "formato" => strtoupper($formatos[$mime]),
         "tamano" => (int) $archivo["size"]
     ];
@@ -74,11 +74,17 @@ function guardarArchivoPortada($archivo)
 
 function eliminarArchivoPortada($ruta)
 {
-    if (!$ruta || strpos($ruta, "../img/portadas/") !== 0) {
+    $esCatalogo = strpos((string) $ruta, "../img/catalogo/") === 0;
+    $esRutaAnterior = strpos((string) $ruta, "../img/portadas/") === 0;
+    $nombre = basename((string) $ruta);
+
+    if ((!$esCatalogo && !$esRutaAnterior)
+        || !preg_match('/^[a-f0-9]{20}\.(jpg|png|webp)$/', $nombre)) {
         return;
     }
 
-    $archivo = __DIR__ . "/../../frontend/img/portadas/" . basename($ruta);
+    $carpeta = $esCatalogo ? "catalogo" : "portadas";
+    $archivo = __DIR__ . "/../../frontend/img/" . $carpeta . "/" . $nombre;
 
     if (is_file($archivo)) {
         unlink($archivo);
@@ -97,6 +103,10 @@ function validarDatosPortada($data)
 
     if (!in_array($estado, ["Activo", "Inactivo"], true)) {
         responderPortada(false, "El estado indicado no es válido.", null, 400);
+    }
+
+    if ($estado === "Inactivo" && $predeterminada === 1) {
+        responderPortada(false, "Una portada inactiva no puede ser predeterminada.", null, 400);
     }
 
     return [$idLibro, $estado, $predeterminada];
@@ -136,11 +146,16 @@ try {
         $esEdicion = ($data["accion"] ?? "") === "editar" || $id > 0;
         [$idLibro, $estado, $predeterminada] = validarDatosPortada($data);
 
-        $libro = $pdo->prepare("SELECT id FROM libros WHERE id = :id");
+        $libro = $pdo->prepare("SELECT id, portada FROM libros WHERE id = :id");
         $libro->execute([":id" => $idLibro]);
+        $libroActual = $libro->fetch(PDO::FETCH_ASSOC);
 
-        if (!$libro->fetch()) {
+        if (!$libroActual) {
             responderPortada(false, "El libro seleccionado no existe.", null, 404);
+        }
+
+        if (!$esEdicion && $estado === "Activo" && empty($libroActual["portada"])) {
+            $predeterminada = 1;
         }
 
         $archivoNuevo = guardarArchivoPortada($_FILES["imagen"] ?? null);
@@ -195,6 +210,24 @@ try {
                 ":estado" => $estado
             ]);
 
+            $eraPredeterminada = (int) $portadaActual["es_predeterminada"] === 1;
+            $cambioLibro = (int) $portadaActual["id_libro"] !== $idLibro;
+
+            if ($eraPredeterminada && ($cambioLibro || !$predeterminada)) {
+                $limpiarLibroAnterior = $pdo->prepare(
+                    "UPDATE libros SET portada = NULL WHERE id = :id AND portada = :portada"
+                );
+                $limpiarLibroAnterior->execute([
+                    ":id" => $portadaActual["id_libro"],
+                    ":portada" => $portadaActual["nombre_archivo"]
+                ]);
+            }
+
+            if ($predeterminada) {
+                $actualizarLibro = $pdo->prepare("UPDATE libros SET portada = :portada WHERE id = :id");
+                $actualizarLibro->execute([":portada" => $archivo["nombre"], ":id" => $idLibro]);
+            }
+
             $pdo->commit();
 
             if ($archivoNuevo) {
@@ -221,6 +254,12 @@ try {
         ]);
 
         $nuevoId = $pdo->lastInsertId();
+
+        if ($predeterminada) {
+            $actualizarLibro = $pdo->prepare("UPDATE libros SET portada = :portada WHERE id = :id");
+            $actualizarLibro->execute([":portada" => $archivoNuevo["nombre"], ":id" => $idLibro]);
+        }
+
         $pdo->commit();
         responderPortada(true, "Portada registrada correctamente.", ["id" => $nuevoId], 201);
     }
@@ -233,7 +272,10 @@ try {
             responderPortada(false, "El id de la portada es obligatorio.", null, 400);
         }
 
-        $stmt = $pdo->prepare("SELECT ruta_archivo FROM portadas WHERE id = :id");
+        $stmt = $pdo->prepare(
+            "SELECT id_libro, nombre_archivo, ruta_archivo, es_predeterminada
+             FROM portadas WHERE id = :id"
+        );
         $stmt->execute([":id" => $id]);
         $portada = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -241,8 +283,22 @@ try {
             responderPortada(false, "La portada que desea eliminar no existe.", null, 404);
         }
 
+        $pdo->beginTransaction();
+
         $stmt = $pdo->prepare("DELETE FROM portadas WHERE id = :id");
         $stmt->execute([":id" => $id]);
+
+        if ((int) $portada["es_predeterminada"] === 1) {
+            $limpiarLibro = $pdo->prepare(
+                "UPDATE libros SET portada = NULL WHERE id = :id AND portada = :portada"
+            );
+            $limpiarLibro->execute([
+                ":id" => $portada["id_libro"],
+                ":portada" => $portada["nombre_archivo"]
+            ]);
+        }
+
+        $pdo->commit();
         eliminarArchivoPortada($portada["ruta_archivo"]);
         responderPortada(true, "Portada eliminada correctamente.");
     }
