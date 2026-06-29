@@ -8,6 +8,30 @@ $(document).ready(function () {
         prepararFormularioEdicion(idLibro);
     }
 
+    $("#zonaPortada").on("click", function () {
+        $("#archivoPortada").click();
+    });
+
+    $("#archivoPortada").on("change", function () {
+        const archivo = this.files[0];
+
+        if (!archivo) {
+            $("#portada").val("");
+            mostrarVistaPortada("", "");
+            return;
+        }
+
+        $("#portada").val(archivo.name);
+
+        const lector = new FileReader();
+
+        lector.onload = function (e) {
+            mostrarVistaPortada(archivo.name, e.target.result);
+        };
+
+        lector.readAsDataURL(archivo);
+    });
+
     $("#formLibro").on("submit", function (e) {
         e.preventDefault();
 
@@ -100,6 +124,16 @@ $(document).ready(function () {
         $("#descripcion").val(libro.descripcion);
         $("#portada").val(libro.portada);
         $("#estado").val(libro.estado);
+<<<<<<< Updated upstream
+=======
+        $("#condicion").val(libro.condicion || "Excelente");
+
+        if (libro.portada) {
+            mostrarVistaPortada(libro.portada, "../img/catalogo/" + libro.portada);
+        } else {
+            mostrarVistaPortada("", "");
+        }
+>>>>>>> Stashed changes
     }
 
     function limpiarFormulario() {
@@ -108,7 +142,28 @@ $(document).ready(function () {
         $("#genero").val("");
         $("#descripcion").val("");
         $("#portada").val("");
+        $("#archivoPortada").val("");
         $("#estado").val("Disponible");
+<<<<<<< Updated upstream
+=======
+        $("#condicion").val("Excelente");
+
+        mostrarVistaPortada("", "");
+    }
+
+    function mostrarVistaPortada(nombreArchivo, rutaImagen) {
+        if (nombreArchivo !== "") {
+            $("#previewPortada").html(`
+                <img src="${rutaImagen}" alt="Portada del libro">
+                <p>${nombreArchivo}</p>
+            `);
+        } else {
+            $("#previewPortada").html(`
+                <span class="icono-subida">⬆</span>
+                <p id="textoPortada">Ninguna portada seleccionada</p>
+            `);
+        }
+>>>>>>> Stashed changes
     }
 
     function mostrarMensaje(texto, tipo) {
