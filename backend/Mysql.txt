@@ -68,3 +68,38 @@ CREATE TABLE multas (
     tipo ENUM('Atraso','Daño','Perdida') DEFAULT 'Atraso',
     dias_gracia INT DEFAULT 0
 );
+
+CREATE TABLE generos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT NOT NULL,
+    estado ENUM('Activo','Inactivo') DEFAULT 'Activo',
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE portadas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_libro INT NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_archivo VARCHAR(255) NOT NULL,
+    formato VARCHAR(10) NOT NULL,
+    tamano_archivo INT UNSIGNED NOT NULL,
+    fecha_carga DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    es_predeterminada TINYINT(1) DEFAULT 0,
+    estado ENUM('Activo','Inactivo') DEFAULT 'Activo',
+    CONSTRAINT fk_portadas_libro FOREIGN KEY (id_libro) REFERENCES libros(id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE reportes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NULL,
+    tipo_reporte ENUM('Prestamos','Devoluciones','Multas') NOT NULL,
+    fecha_generacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    estado ENUM('Generado','Archivado') DEFAULT 'Generado',
+    CONSTRAINT fk_reportes_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+        ON UPDATE CASCADE ON DELETE SET NULL
+);

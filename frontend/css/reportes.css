@@ -91,6 +91,63 @@ body {
     font-size: 22px;
 }
 
+.reportes-resumen {
+    margin-bottom: 24px;
+}
+
+.resumen-totales {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-bottom: 16px;
+    border: 1px solid rgba(131, 153, 88, 0.55);
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.resumen-totales div {
+    padding: 18px;
+    text-align: center;
+}
+
+.resumen-totales div + div {
+    border-left: 1px solid rgba(131, 153, 88, 0.4);
+}
+
+.resumen-totales strong,
+.resumen-totales span {
+    display: block;
+}
+
+.resumen-totales strong {
+    color: var(--report-dark);
+    font-size: 26px;
+}
+
+.resumen-totales span {
+    color: var(--report-blue);
+    font-size: 13px;
+}
+
+.resumen-rankings {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.resumen-rankings > div {
+    padding: 20px;
+    border: 1px solid rgba(131, 153, 88, 0.55);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.resumen-rankings h2 {
+    margin-bottom: 14px;
+    color: var(--report-dark);
+    font-size: 18px;
+}
+
 .reporte-actions {
     display: flex;
     flex-wrap: wrap;
@@ -124,5 +181,9 @@ body {
         align-items: stretch;
         flex-direction: column;
         padding: 22px 18px;
+    }
+
+    .resumen-rankings {
+        grid-template-columns: 1fr;
     }
 }

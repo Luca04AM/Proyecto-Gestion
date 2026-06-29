@@ -1,212 +1,286 @@
 $(document).ready(function () {
     const API = "../../backend/api/reportes.php";
-    let reportes = [];
+    const datosPorTipo = {
+        Prestamos: [],
+        Devoluciones: [],
+        Multas: []
+    };
 
     establecerFechasIniciales();
-    listarReportes();
 
     $(".formReporte").on("submit", function (event) {
         event.preventDefault();
 
         const form = $(this);
-        const id = Number(form.find(".reporte-id").val()) || 0;
-        const data = {
-            id,
-            id_usuario: form.find(".reporte-usuario").val().trim() || null,
-            tipo_reporte: form.data("tipo"),
-            fecha_inicio: form.find(".reporte-inicio").val(),
-            fecha_fin: form.find(".reporte-fin").val(),
-            estado: form.find(".reporte-estado").val()
-        };
+        const tipo = form.data("tipo");
+        const fechaInicio = form.find(".reporte-inicio").val();
+        const fechaFin = form.find(".reporte-fin").val();
+        const filtro = form.find(".reporte-filtro").val() || "";
 
-        if (!data.fecha_inicio || !data.fecha_fin) {
+        if (!fechaInicio || !fechaFin) {
             mostrarAlerta("Seleccione el rango de fechas del reporte.", "danger");
             return;
         }
 
-        $.ajax({
-            url: API,
-            method: id ? "PUT" : "POST",
-            contentType: "application/json",
-            dataType: "json",
-            data: JSON.stringify(data),
-            success: function (respuesta) {
-                mostrarAlerta(respuesta.message, "success");
-                limpiarFormulario(form);
-                listarReportes();
-            },
-            error: function (xhr) {
-                mostrarAlerta(obtenerMensajeError(xhr), "danger");
-            }
-        });
-    });
-
-    $(document).on("click", ".btnEditarReporte", function () {
-        const id = Number($(this).data("id"));
-        const reporte = reportes.find(function (item) {
-            return Number(item.id) === id;
-        });
-
-        if (!reporte) {
+        if (fechaInicio > fechaFin) {
+            mostrarAlerta("La fecha inicial no puede ser posterior a la fecha final.", "danger");
             return;
         }
 
-        const form = $(`.formReporte[data-tipo="${reporte.tipo_reporte}"]`);
-        form.find(".reporte-id").val(reporte.id);
-        form.find(".reporte-usuario").val(reporte.id_usuario || "");
-        form.find(".reporte-inicio").val(reporte.fecha_inicio);
-        form.find(".reporte-fin").val(reporte.fecha_fin);
-        form.find(".reporte-estado").val(reporte.estado);
-        form.find(".btnGuardarReporte").text("Actualizar reporte");
-        window.scrollTo({ top: form.offset().top - 120, behavior: "smooth" });
-    });
+        form.find(".btnGuardarReporte").prop("disabled", true).text("Generando...");
 
-    $(document).on("click", ".btnEliminarReporte", function () {
-        const id = Number($(this).data("id"));
-
-        if (!confirm("¿Desea eliminar este reporte del historial?")) {
-            return;
-        }
-
-        $.ajax({
-            url: API,
-            method: "DELETE",
-            contentType: "application/json",
-            dataType: "json",
-            data: JSON.stringify({ id }),
-            success: function (respuesta) {
-                mostrarAlerta(respuesta.message, "success");
-                listarReportes();
-            },
-            error: function (xhr) {
-                mostrarAlerta(obtenerMensajeError(xhr), "danger");
-            }
-        });
+        registrarGeneracion(tipo, fechaInicio, fechaFin)
+            .always(function () {
+                cargarDatos(tipo, fechaInicio, fechaFin, filtro, form);
+            });
     });
 
     $(".btnExportarReporte").on("click", function () {
-        exportarCsv($(this).data("tipo"));
+        exportarExcel($(this).data("tipo"));
     });
 
     $(".btnImprimirReporte").on("click", function () {
         imprimirReporte($(this).data("tipo"));
     });
 
-    function listarReportes() {
+    function registrarGeneracion(tipo, fechaInicio, fechaFin) {
+        return $.ajax({
+            url: API,
+            method: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({
+                id_usuario: null,
+                tipo_reporte: tipo,
+                fecha_inicio: fechaInicio,
+                fecha_fin: fechaFin,
+                estado: "Generado"
+            })
+        });
+    }
+
+    function cargarDatos(tipo, fechaInicio, fechaFin, filtro, form) {
         $.ajax({
             url: API,
             method: "GET",
             dataType: "json",
+            data: {
+                accion: "datos",
+                tipo,
+                fecha_inicio: fechaInicio,
+                fecha_fin: fechaFin,
+                filtro
+            },
             success: function (respuesta) {
-                reportes = respuesta.data || [];
-                ["Prestamos", "Devoluciones", "Multas"].forEach(renderizarTipo);
-                $("#totalReportes").text(reportes.length);
+                datosPorTipo[tipo] = respuesta.data || [];
+                renderizarDatos(tipo);
+                actualizarTotal();
+                cargarResumen(fechaInicio, fechaFin);
+                mostrarAlerta(`${respuesta.message} Se encontraron ${datosPorTipo[tipo].length} registros.`, "success");
             },
             error: function (xhr) {
+                datosPorTipo[tipo] = [];
+                renderizarDatos(tipo);
                 mostrarAlerta(obtenerMensajeError(xhr), "danger");
+            },
+            complete: function () {
+                form.find(".btnGuardarReporte").prop("disabled", false).text("Generar reporte");
             }
         });
     }
 
-    function renderizarTipo(tipo) {
-        const lista = reportes.filter(function (item) {
-            return item.tipo_reporte === tipo;
-        });
+    function renderizarDatos(tipo) {
+        const lista = datosPorTipo[tipo];
         const tbody = $(`.tablaReportes[data-tipo="${tipo}"]`);
+        const columnas = tipo === "Prestamos" ? 6 : (tipo === "Devoluciones" ? 7 : 7);
 
         if (!lista.length) {
-            tbody.html('<tr><td colspan="7" class="text-center text-muted py-4">No hay reportes generados.</td></tr>');
+            tbody.html(`<tr><td colspan="${columnas}" class="text-center text-muted py-4">No hay datos para el rango seleccionado.</td></tr>`);
             return;
         }
 
-        tbody.html(lista.map(function (reporte) {
-            const badge = reporte.estado === "Generado" ? "text-bg-success" : "text-bg-secondary";
-            return `
-                <tr>
-                    <td>${Number(reporte.id)}</td>
-                    <td>${escapar(reporte.usuario)}</td>
-                    <td>${escapar(reporte.fecha_inicio)}</td>
-                    <td>${escapar(reporte.fecha_fin)}</td>
-                    <td>${escapar(reporte.fecha_generacion)}</td>
-                    <td><span class="badge ${badge}">${escapar(reporte.estado)}</span></td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-outline-primary btnEditarReporte" data-id="${Number(reporte.id)}">Editar</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger btnEliminarReporte" data-id="${Number(reporte.id)}">Eliminar</button>
-                    </td>
+        if (tipo === "Prestamos") {
+            tbody.html(lista.map(function (item) {
+                return `<tr>
+                    <td>${Number(item.id)}</td>
+                    <td>${escapar(item.usuario)}</td>
+                    <td>${escapar(item.libro)}</td>
+                    <td>${formatearFecha(item.fecha_prestamo)}</td>
+                    <td>${formatearFecha(item.fecha_devolucion)}</td>
+                    <td><span class="badge ${claseEstadoPrestamo(item.estado)}">${escapar(item.estado)}</span></td>
                 </tr>`;
+            }).join(""));
+            return;
+        }
+
+        if (tipo === "Devoluciones") {
+            tbody.html(lista.map(function (item) {
+                return `<tr>
+                    <td>${Number(item.id)}</td>
+                    <td>${escapar(item.usuario)}</td>
+                    <td>${escapar(item.libro)}</td>
+                    <td>${formatearFecha(item.fecha_limite)}</td>
+                    <td>${formatearFecha(item.fecha_devuelto)}</td>
+                    <td>${Number(item.dias_atraso)}</td>
+                    <td>${escapar(item.observaciones || "Sin observaciones")}</td>
+                </tr>`;
+            }).join(""));
+            return;
+        }
+
+        tbody.html(lista.map(function (item) {
+            return `<tr>
+                <td>${Number(item.id)}</td>
+                <td>${escapar(item.usuario)}</td>
+                <td>${escapar(item.libro)}</td>
+                <td>${formatearFecha(item.fecha_devolucion)}</td>
+                <td>${escapar(item.tipo)}</td>
+                <td>${Number(item.dias_gracia)}</td>
+                <td>₡${Number(item.monto || 0).toLocaleString("es-CR")}</td>
+            </tr>`;
         }).join(""));
     }
 
-    function exportarCsv(tipo) {
-        const lista = reportes.filter(function (item) {
-            return item.tipo_reporte === tipo;
-        });
+    function exportarExcel(tipo) {
+        const lista = datosPorTipo[tipo];
 
         if (!lista.length) {
-            mostrarAlerta("No hay datos para exportar.", "warning");
+            mostrarAlerta("Primero genere un reporte con datos para exportar.", "warning");
             return;
         }
 
-        const filas = [["ID", "Usuario", "Tipo", "Fecha inicio", "Fecha fin", "Generado", "Estado"]];
-        lista.forEach(function (item) {
-            filas.push([item.id, item.usuario, item.tipo_reporte, item.fecha_inicio, item.fecha_fin, item.fecha_generacion, item.estado]);
-        });
-
-        const csv = filas.map(function (fila) {
-            return fila.map(function (valor) {
-                return '"' + String(valor == null ? "" : valor).replace(/"/g, '""') + '"';
-            }).join(",");
-        }).join("\r\n");
-
+        const configuracion = obtenerConfiguracion(tipo);
+        const encabezados = configuracion.encabezados.map(function (valor) {
+            return `<th>${escapar(valor)}</th>`;
+        }).join("");
+        const filas = lista.map(function (item) {
+            return `<tr>${configuracion.valores(item).map(function (valor) {
+                return `<td>${escapar(valor)}</td>`;
+            }).join("")}</tr>`;
+        }).join("");
+        const contenido = `<!doctype html><html><head><meta charset="UTF-8"></head><body><table><thead><tr>${encabezados}</tr></thead><tbody>${filas}</tbody></table></body></html>`;
+        const url = URL.createObjectURL(new Blob([contenido], { type: "application/vnd.ms-excel;charset=utf-8" }));
         const enlace = document.createElement("a");
-        enlace.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
-        enlace.download = "reporte-" + tipo.toLowerCase() + ".csv";
+        enlace.href = url;
+        enlace.download = `reporte-${tipo.toLowerCase()}.xls`;
         enlace.click();
-        URL.revokeObjectURL(enlace.href);
+        URL.revokeObjectURL(url);
+    }
+
+    function cargarResumen(fechaInicio, fechaFin) {
+        $.ajax({
+            url: API,
+            method: "GET",
+            dataType: "json",
+            data: {
+                accion: "resumen",
+                fecha_inicio: fechaInicio,
+                fecha_fin: fechaFin
+            },
+            success: function (respuesta) {
+                const resumen = respuesta.data || {};
+                const totales = resumen.totales || {};
+                $("#resumenPrestamos").text(totales.prestamos || 0);
+                $("#resumenDevoluciones").text(totales.devoluciones || 0);
+                $("#resumenMultas").text(totales.multas || 0);
+                renderizarRanking("#librosMasPrestados", resumen.libros_mas_prestados || []);
+                renderizarRanking("#usuariosMasActivos", resumen.usuarios_mas_activos || []);
+                $("#resumenReportes").prop("hidden", false);
+            }
+        });
+    }
+
+    function renderizarRanking(selector, elementos) {
+        if (!elementos.length) {
+            $(selector).html('<li class="list-group-item text-muted">Sin datos en este período</li>');
+            return;
+        }
+
+        $(selector).html(elementos.map(function (item, indice) {
+            return `<li class="list-group-item d-flex justify-content-between align-items-center"><span>${indice + 1}. ${escapar(item.nombre)}</span><span class="badge text-bg-primary rounded-pill">${Number(item.total)}</span></li>`;
+        }).join(""));
     }
 
     function imprimirReporte(tipo) {
-        const lista = reportes.filter(function (item) {
-            return item.tipo_reporte === tipo;
-        });
+        const lista = datosPorTipo[tipo];
 
         if (!lista.length) {
-            mostrarAlerta("No hay datos para imprimir.", "warning");
+            mostrarAlerta("Primero genere un reporte con datos para imprimir.", "warning");
             return;
         }
 
-        const filas = lista.map(function (item) {
-            return `<tr><td>${Number(item.id)}</td><td>${escapar(item.usuario)}</td><td>${escapar(item.fecha_inicio)}</td><td>${escapar(item.fecha_fin)}</td><td>${escapar(item.estado)}</td></tr>`;
+        const configuracion = obtenerConfiguracion(tipo);
+        const encabezados = configuracion.encabezados.map(function (item) {
+            return `<th>${escapar(item)}</th>`;
         }).join("");
-        const ventana = window.open("", "_blank", "width=900,height=650");
+        const filas = lista.map(function (item) {
+            return `<tr>${configuracion.valores(item).map(function (valor) {
+                return `<td>${escapar(valor)}</td>`;
+            }).join("")}</tr>`;
+        }).join("");
+        const ventana = window.open("", "_blank", "width=1000,height=700");
 
         if (!ventana) {
             mostrarAlerta("El navegador bloqueó la ventana de impresión.", "warning");
             return;
         }
 
-        ventana.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte de ${tipo}</title><style>body{font-family:Arial;padding:28px;color:#0A3323}table{width:100%;border-collapse:collapse}th,td{border:1px solid #839958;padding:9px;text-align:left}th{background:#0A3323;color:white}</style></head><body><h1>Reporte de ${tipo}</h1><table><thead><tr><th>ID</th><th>Usuario</th><th>Inicio</th><th>Fin</th><th>Estado</th></tr></thead><tbody>${filas}</tbody></table></body></html>`);
+        ventana.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte de ${tipo}</title><style>body{font-family:Arial;padding:28px;color:#0A3323}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #839958;padding:8px;text-align:left}th{background:#0A3323;color:white}</style></head><body><h1>Reporte de ${tipo}</h1><table><thead><tr>${encabezados}</tr></thead><tbody>${filas}</tbody></table></body></html>`);
         ventana.document.close();
         ventana.focus();
         ventana.print();
     }
 
+    function obtenerConfiguracion(tipo) {
+        if (tipo === "Prestamos") {
+            return {
+                encabezados: ["ID", "Usuario", "Libro", "Fecha préstamo", "Fecha devolución", "Estado"],
+                valores: item => [item.id, item.usuario, item.libro, item.fecha_prestamo, item.fecha_devolucion, item.estado]
+            };
+        }
+
+        if (tipo === "Devoluciones") {
+            return {
+                encabezados: ["ID", "Usuario", "Libro", "Fecha límite", "Fecha devuelta", "Días atraso", "Observaciones"],
+                valores: item => [item.id, item.usuario, item.libro, item.fecha_limite, item.fecha_devuelto, item.dias_atraso, item.observaciones || ""]
+            };
+        }
+
+        return {
+            encabezados: ["ID", "Usuario", "Libro", "Fecha", "Tipo", "Días gracia", "Monto"],
+            valores: item => [item.id, item.usuario, item.libro, item.fecha_devolucion, item.tipo, item.dias_gracia, item.monto]
+        };
+    }
+
     function establecerFechasIniciales() {
         const hoy = new Date();
         const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-        const formato = function (fecha) {
-            return fecha.toISOString().slice(0, 10);
-        };
-
-        $(".reporte-inicio").val(formato(inicio));
-        $(".reporte-fin").val(formato(hoy));
+        $(".reporte-inicio").val(formatearFechaInput(inicio));
+        $(".reporte-fin").val(formatearFechaInput(hoy));
     }
 
-    function limpiarFormulario(form) {
-        form[0].reset();
-        form.find(".reporte-id").val("");
-        form.find(".btnGuardarReporte").text("Generar reporte");
-        establecerFechasIniciales();
+    function actualizarTotal() {
+        const total = Object.values(datosPorTipo).reduce(function (acumulado, lista) {
+            return acumulado + lista.length;
+        }, 0);
+        $("#totalReportes").text(total);
+    }
+
+    function formatearFechaInput(fecha) {
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, "0");
+        const day = String(fecha.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatearFecha(valor) {
+        return escapar(String(valor || "").replace("T", " ").slice(0, 16));
+    }
+
+    function claseEstadoPrestamo(estado) {
+        if (estado === "Devuelto") return "text-bg-success";
+        if (estado === "Perdido") return "text-bg-danger";
+        return "text-bg-primary";
     }
 
     function mostrarAlerta(mensaje, tipo) {

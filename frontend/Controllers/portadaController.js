@@ -132,7 +132,8 @@ $(document).ready(function () {
             success: function (respuesta) {
                 const libros = respuesta.data || [];
                 const opciones = libros.map(function (libro) {
-                    return `<option value="${Number(libro.id)}">${escapar(libro.titulo)}</option>`;
+                    const condicion = libro.condicion ? ` - ${escapar(libro.condicion)}` : "";
+                    return `<option value="${Number(libro.id)}">${escapar(libro.titulo)}${condicion}</option>`;
                 }).join("");
 
                 $("#txtLibroPortada").html('<option value="">Seleccione un libro</option>' + opciones);
