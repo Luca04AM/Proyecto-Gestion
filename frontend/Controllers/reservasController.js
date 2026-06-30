@@ -1,12 +1,17 @@
+console.log("reservasController.js actualizado sin btn-editar v30");
+
 const API_URL = "../../backend/api/reservas.php";
 const API_USUARIOS = "../../backend/api/usuarios.php";
 const API_LIBROS = "../../backend/api/libros.php";
 
 let reservasGlobal = [];
 let librosGlobal = [];
+let modoActualizacion = false;
 
 $(document).ready(function () {
   const DIAS_LIMITE = 3;
+
+  inicializarFormulario();
 
   cargarUsuarios();
 
@@ -15,8 +20,35 @@ $(document).ready(function () {
     cargarEstadisticas();
   });
 
+  function inicializarFormulario() {
+    $("#txtEstadoLibro").prop("disabled", true);
+    $("#txtEstadoReserva").prop("disabled", true);
+    $("#txtPosicion").prop("readonly", true);
+
+    $("#btnActualizar").prop("disabled", true);
+    $("#btnRegistrarReserva").prop("disabled", false);
+
+    modoActualizacion = false;
+  }
+
+  function activarModoActualizacion() {
+    modoActualizacion = true;
+
+    $("#btnActualizar").prop("disabled", false);
+    $("#btnRegistrarReserva").prop("disabled", true);
+  }
+
+  function desactivarModoActualizacion() {
+    modoActualizacion = false;
+
+    $("#btnActualizar").prop("disabled", true);
+    $("#btnRegistrarReserva").prop("disabled", false);
+  }
+
   function normalizarTexto(texto) {
-    return String(texto ?? "").toLowerCase().trim();
+    return String(texto ?? "")
+      .toLowerCase()
+      .trim();
   }
 
   function obtenerFechaHoy() {
@@ -63,7 +95,9 @@ $(document).ready(function () {
   }
 
   function obtenerEstadoLibro(libro) {
-    return libro.estado_libro ?? libro.estado ?? libro.disponibilidad ?? "Disponible";
+    return (
+      libro.estado_libro ?? libro.estado ?? libro.disponibilidad ?? "Disponible"
+    );
   }
 
   function obtenerIdReserva(reserva) {
@@ -78,16 +112,45 @@ $(document).ready(function () {
     return reserva.usuario_id ?? reserva.id_usuario;
   }
 
+  function obtenerReservaPorId(id) {
+    return reservasGlobal.find(r => {
+      return String(obtenerIdReserva(r)) === String(id);
+    });
+  }
+
   function esReservaVigente(reserva) {
     const estado = normalizarTexto(reserva.estado);
+
     return estado === "activo" || estado === "activa" || estado === "en espera";
   }
 
-  function libroTieneReservaActiva(libroId) {
+  function esReservaEditable(estado) {
+    const estadoNormalizado = normalizarTexto(estado);
+
+    return (
+      estadoNormalizado === "activo" ||
+      estadoNormalizado === "activa" ||
+      estadoNormalizado === "en espera"
+    );
+  }
+
+  function esReservaNoEditable(estado) {
+    const estadoNormalizado = normalizarTexto(estado);
+
+    return (
+      estadoNormalizado === "cancelado" ||
+      estadoNormalizado === "cancelada" ||
+      estadoNormalizado === "finalizado" ||
+      estadoNormalizado === "finalizada" ||
+      estadoNormalizado === "inactivo" ||
+      estadoNormalizado === "inactiva"
+    );
+  }
+
+  function libroTieneReservaVigente(libroId) {
     return reservasGlobal.some(r => {
       const mismoLibro = String(obtenerIdLibroReserva(r)) === String(libroId);
-      const estado = normalizarTexto(r.estado);
-      return mismoLibro && (estado === "activo" || estado === "activa");
+      return mismoLibro && esReservaVigente(r);
     });
   }
 
@@ -96,7 +159,10 @@ $(document).ready(function () {
     const estadoBase = obtenerEstadoLibro(libro);
     const estadoBaseNormalizado = normalizarTexto(estadoBase);
 
-    if (estadoBaseNormalizado === "disponible" && libroTieneReservaActiva(libroId)) {
+    if (
+      estadoBaseNormalizado === "disponible" &&
+      libroTieneReservaVigente(libroId)
+    ) {
       return "Reservado";
     }
 
@@ -114,7 +180,8 @@ $(document).ready(function () {
   function usuarioYaReservoLibro(usuarioId, libroId, idActual = "") {
     return reservasGlobal.some(r => {
       const idReserva = String(obtenerIdReserva(r));
-      const mismoUsuario = String(obtenerIdUsuarioReserva(r)) === String(usuarioId);
+      const mismoUsuario =
+        String(obtenerIdUsuarioReserva(r)) === String(usuarioId);
       const mismoLibro = String(obtenerIdLibroReserva(r)) === String(libroId);
 
       if (idActual && idReserva === String(idActual)) {
@@ -125,72 +192,21 @@ $(document).ready(function () {
     });
   }
 
-  function obtenerSiguientePosicionBackend(libroId, callback) {
-    $.ajax({
-      url: API_URL,
-      method: "GET",
-      dataType: "json",
-      data: {
-        next_position: 1,
-        libro_id: libroId,
-      },
-      success: function (res) {
-        console.log("SIGUIENTE POSICIÓN:", res);
-
-        if (res.success) {
-          callback(Number(res.posicion));
-        } else {
-          callback(1);
-        }
-      },
-      error: function (xhr) {
-        console.error("Error obteniendo posición:", xhr.responseText);
-        callback(1);
-      },
-    });
-  }
-
-  function configurarOpcionesEstadoLibro(estadoReal) {
-    $("#txtEstadoLibro option").prop("disabled", false).prop("hidden", false);
-
-    const estadoNormalizado = normalizarTexto(estadoReal);
-
-    if (
-      estadoNormalizado === "reservado" ||
-      estadoNormalizado === "prestado" ||
-      estadoNormalizado === "no disponible"
-    ) {
-      $("#txtEstadoLibro option[value='Disponible']")
-        .prop("disabled", true)
-        .prop("hidden", true);
-    }
-  }
-
   function limpiarFormulario() {
     $("#txtId").val("");
     $("#txtUsuario").val("");
     $("#txtLibro").val("");
-    $("#txtEstadoLibro option").prop("disabled", false).prop("hidden", false);
     $("#txtEstadoLibro").val("");
     $("#txtFechaReserva").val("");
     $("#txtFechaLimite").val("");
     $("#txtPosicion").val("");
     $("#txtEstadoReserva").val("");
     $("#txtObservaciones").val("");
+
+    desactivarModoActualizacion();
   }
 
-  function aplicarLogicaPorEstado() {
-    const libroId = $("#txtLibro").val();
-    const estadoLibro = $("#txtEstadoLibro").val();
-    const estadoNormalizado = normalizarTexto(estadoLibro);
-
-    if (!libroId || !estadoLibro) {
-      $("#txtEstadoReserva").val("");
-      $("#txtPosicion").val("");
-      $("#txtObservaciones").val("");
-      return;
-    }
-
+  function prepararFechas() {
     if (!$("#txtFechaReserva").val()) {
       $("#txtFechaReserva").val(obtenerFechaHoy());
     }
@@ -198,33 +214,71 @@ $(document).ready(function () {
     if (!$("#txtFechaLimite").val()) {
       $("#txtFechaLimite").val(obtenerFechaLimite());
     }
+  }
 
-    if (estadoNormalizado === "disponible") {
-      $("#txtEstadoReserva").val("Activo");
-      $("#txtPosicion").val("");
-      $("#txtObservaciones").val("El libro está disponible, no requiere reservar.");
-      return;
-    }
+  function aplicarLogicaPorBackend() {
+    const libroId = $("#txtLibro").val();
+    const idActual = $("#txtId").val();
 
-    if (estadoNormalizado === "prestado" || estadoNormalizado === "reservado") {
-      $("#txtEstadoReserva").val("En espera");
-
-      obtenerSiguientePosicionBackend(libroId, function (posicion) {
-        $("#txtPosicion").val(posicion);
-        $("#txtObservaciones").val(
-          `El libro está ${estadoLibro}. La reserva queda en lista de espera en la posición ${posicion}.`
-        );
-      });
-
-      return;
-    }
-
-    if (estadoNormalizado === "no disponible") {
+    if (!libroId) {
+      $("#txtEstadoLibro").val("");
       $("#txtEstadoReserva").val("");
       $("#txtPosicion").val("");
-      $("#txtObservaciones").val("El libro no está disponible para reservar.");
+      $("#txtObservaciones").val("");
+
+      if (!modoActualizacion) {
+        $("#btnRegistrarReserva").prop("disabled", false);
+      }
+
       return;
     }
+
+    prepararFechas();
+
+    $.ajax({
+      url: API_URL,
+      method: "GET",
+      dataType: "json",
+      data: {
+        preview: 1,
+        libro_id: libroId,
+        id_actual: idActual || 0,
+      },
+      success: function (res) {
+        console.log("PREVIEW RESERVA:", res);
+
+        $("#txtEstadoLibro").val(res.estado_reserva ?? "");
+        $("#txtEstadoReserva").val(res.estado ?? "");
+        $("#txtPosicion").val(res.posicion ?? "");
+        $("#txtObservaciones").val(res.observaciones ?? "");
+
+        if (!modoActualizacion) {
+          $("#btnRegistrarReserva").prop("disabled", false);
+        }
+      },
+      error: function (xhr) {
+        console.error("Error preview reserva:", xhr.responseText);
+
+        let mensaje = "No se puede registrar reserva para este libro.";
+
+        try {
+          const res = JSON.parse(xhr.responseText);
+          mensaje = res.message ?? mensaje;
+        } catch (e) {}
+
+        const libro = buscarLibroSeleccionado();
+        const estadoLibro = libro ? obtenerEstadoRealLibro(libro) : "";
+
+        $("#txtEstadoLibro").val(estadoLibro);
+        $("#txtEstadoReserva").val("");
+        $("#txtPosicion").val("");
+        $("#txtObservaciones").val(mensaje);
+
+        if (!modoActualizacion) {
+          $("#btnRegistrarReserva").prop("disabled", true);
+        }
+      },
+    });
   }
 
   function aplicarLogicaAlSeleccionarLibro() {
@@ -235,72 +289,29 @@ $(document).ready(function () {
       $("#txtEstadoReserva").val("");
       $("#txtPosicion").val("");
       $("#txtObservaciones").val("");
+
+      if (!modoActualizacion) {
+        $("#btnRegistrarReserva").prop("disabled", false);
+      }
+
       return;
     }
 
-    const estadoReal = obtenerEstadoRealLibro(libro);
-
-    configurarOpcionesEstadoLibro(estadoReal);
-
-    $("#txtEstadoLibro").val(estadoReal);
-    $("#txtFechaReserva").val(obtenerFechaHoy());
-    $("#txtFechaLimite").val(obtenerFechaLimite());
-
-    aplicarLogicaPorEstado();
+    prepararFechas();
+    aplicarLogicaPorBackend();
   }
 
   function prepararDatosFormulario() {
     const id = $("#txtId").val();
-    const usuarioId = $("#txtUsuario").val();
-    const libroId = $("#txtLibro").val();
-    const estadoLibro = $("#txtEstadoLibro").val();
-    const estadoLibroNormalizado = normalizarTexto(estadoLibro);
-
-    let estadoReserva = "";
-    let posicion = 0;
-    let observaciones = $("#txtObservaciones").val();
-
-    if (estadoLibroNormalizado === "disponible") {
-      estadoReserva = "Activo";
-      posicion = 0;
-
-      if (!observaciones.trim()) {
-        observaciones = "El libro está disponible, no requiere reservar.";
-      }
-    } else if (estadoLibroNormalizado === "prestado" || estadoLibroNormalizado === "reservado") {
-      estadoReserva = "En espera";
-      posicion = Number($("#txtPosicion").val() || 0);
-
-      if (!observaciones.trim()) {
-        observaciones = `El libro está ${estadoLibro}. La reserva queda en lista de espera en la posición ${posicion}.`;
-      }
-    } else if (estadoLibroNormalizado === "no disponible") {
-      estadoReserva = "";
-      posicion = 0;
-
-      if (!observaciones.trim()) {
-        observaciones = "El libro no está disponible para reservar.";
-      }
-    }
-
-    const estadoSeleccionado = $("#txtEstadoReserva").val();
-
-    if (estadoSeleccionado === "Cancelado" || estadoSeleccionado === "Finalizado") {
-      estadoReserva = estadoSeleccionado;
-      posicion = 0;
-    }
 
     return {
       id: id,
       id_reserva: id,
-      usuario_id: usuarioId,
-      libro_id: libroId,
-      estado_reserva: estadoLibro,
+      usuario_id: $("#txtUsuario").val(),
+      libro_id: $("#txtLibro").val(),
       fecha_reserva: $("#txtFechaReserva").val() || obtenerFechaHoy(),
       fecha_limite: $("#txtFechaLimite").val() || obtenerFechaLimite(),
-      posicion_lista_espera: posicion,
-      estado: estadoReserva,
-      observaciones: observaciones,
+      observaciones: $("#txtObservaciones").val(),
     };
   }
 
@@ -325,7 +336,8 @@ $(document).ready(function () {
       const usuarioId = obtenerIdUsuarioReserva(r);
       const libroId = obtenerIdLibroReserva(r);
 
-      const usuario = r.usuario ?? r.nombre_usuario ?? r.nombre ?? "Sin usuario";
+      const usuario =
+        r.usuario ?? r.nombre_usuario ?? r.nombre ?? "Sin usuario";
       const libro = r.libro ?? r.titulo ?? r.nombre_libro ?? "Sin libro";
       const estadoLibro = r.estado_reserva ?? r.estado_libro ?? "";
       const posicionNumero = Number(r.posicion_lista_espera ?? 0);
@@ -335,8 +347,29 @@ $(document).ready(function () {
       const estado = r.estado ?? "";
       const observaciones = r.observaciones ?? "";
 
-      const estadoNormalizado = normalizarTexto(estado);
-      const puedeGestionar = estadoNormalizado === "activo" || estadoNormalizado === "en espera";
+      const puedeGestionar = esReservaEditable(estado);
+      const puedeActualizar = esReservaEditable(estado);
+
+      const botonActualizar = puedeActualizar
+        ? `
+          <button type="button" class="btn btn-secondary btn-actualizar-fila"
+            data-id="${escaparHtml(id)}"
+            data-usuario="${escaparHtml(usuarioId)}"
+            data-libro="${escaparHtml(libroId)}"
+            data-estado-libro="${escaparHtml(estadoLibro)}"
+            data-fecha="${escaparHtml(fechaReserva)}"
+            data-limite="${escaparHtml(fechaLimite)}"
+            data-posicion="${escaparHtml(posicion)}"
+            data-estado="${escaparHtml(estado)}"
+            data-observaciones="${escaparHtml(observaciones)}">
+            Actualizar
+          </button>
+        `
+        : `
+          <button type="button" class="btn btn-secondary" disabled>
+            No actualizar
+          </button>
+        `;
 
       const botonAsignar = puedeGestionar
         ? `
@@ -378,21 +411,8 @@ $(document).ready(function () {
           <td>${escaparHtml(estado)}</td>
           <td>${escaparHtml(observaciones)}</td>
           <td>
-            <button type="button" class="btn btn-secondary btn-editar"
-              data-id="${escaparHtml(id)}"
-              data-usuario="${escaparHtml(usuarioId)}"
-              data-libro="${escaparHtml(libroId)}"
-              data-estado-libro="${escaparHtml(estadoLibro)}"
-              data-fecha="${escaparHtml(fechaReserva)}"
-              data-limite="${escaparHtml(fechaLimite)}"
-              data-posicion="${escaparHtml(posicion)}"
-              data-estado="${escaparHtml(estado)}"
-              data-observaciones="${escaparHtml(observaciones)}">
-              Editar
-            </button>
-
+            ${botonActualizar}
             ${botonAsignar}
-
             ${botonCancelar}
           </td>
         </tr>
@@ -434,8 +454,10 @@ $(document).ready(function () {
 
     const data = prepararDatosFormulario();
 
-    if (data.id) {
-      alert("Está editando una reserva existente. Use el botón Actualizar.");
+    if (modoActualizacion || data.id) {
+      alert(
+        "Está actualizando una reserva existente. Use el botón Actualizar del formulario.",
+      );
       return;
     }
 
@@ -449,18 +471,15 @@ $(document).ready(function () {
       return;
     }
 
-    if (!data.estado_reserva) {
-      alert("Seleccione el estado del libro.");
-      return;
-    }
-
-    if (normalizarTexto(data.estado_reserva) === "no disponible") {
-      alert("El libro está no disponible, por lo tanto no se puede registrar reserva.");
+    if ($("#btnRegistrarReserva").prop("disabled")) {
+      alert("Este libro no permite reservación.");
       return;
     }
 
     if (usuarioYaReservoLibro(data.usuario_id, data.libro_id, data.id)) {
-      alert("Este usuario ya tiene una reserva activa o en espera para este mismo libro.");
+      alert(
+        "Este usuario ya tiene una reserva activa o en espera para este mismo libro.",
+      );
       return;
     }
 
@@ -479,9 +498,13 @@ $(document).ready(function () {
         }
 
         if (res.estado === "En espera") {
-          alert(`Reserva registrada. Posición en lista de espera: ${res.posicion}`);
+          alert(
+            `Reserva registrada. Posición en lista de espera: ${res.posicion}`,
+          );
         } else if (res.estado === "Activo") {
-          alert("Reserva registrada correctamente como activa.");
+          alert(
+            `Reserva registrada correctamente. Posición en lista: ${res.posicion}`,
+          );
         } else {
           alert(res.message ?? "Reserva registrada correctamente.");
         }
@@ -509,34 +532,95 @@ $(document).ready(function () {
     });
   });
 
-  $(document).on("click", ".btn-editar", function (e) {
+  $(document).on("click", ".btn-actualizar-fila", function (e) {
     e.preventDefault();
 
-    $("#txtId").val($(this).data("id"));
-    $("#txtUsuario").val(String($(this).data("usuario")));
-    $("#txtLibro").val(String($(this).data("libro")));
+    const id = $(this).data("id");
+    const reservaOriginal = obtenerReservaPorId(id);
 
-    $("#txtEstadoLibro option").prop("disabled", false).prop("hidden", false);
-    $("#txtEstadoLibro").val($(this).data("estado-libro"));
+    if (!reservaOriginal) {
+      alert("No se encontró la reserva seleccionada.");
+      limpiarFormulario();
+      return;
+    }
 
-    $("#txtFechaReserva").val($(this).data("fecha"));
-    $("#txtFechaLimite").val($(this).data("limite"));
-    $("#txtPosicion").val($(this).data("posicion"));
-    $("#txtEstadoReserva").val($(this).data("estado"));
-    $("#txtObservaciones").val($(this).data("observaciones"));
+    if (esReservaNoEditable(reservaOriginal.estado)) {
+      alert(
+        "No se puede actualizar una reserva cancelada, finalizada o inactiva.",
+      );
+      limpiarFormulario();
+      return;
+    }
+
+    if (!esReservaEditable(reservaOriginal.estado)) {
+      alert("Esta reserva no se puede actualizar por su estado actual.");
+      limpiarFormulario();
+      return;
+    }
+
+    $("#txtId").val(obtenerIdReserva(reservaOriginal));
+    $("#txtUsuario").val(String(obtenerIdUsuarioReserva(reservaOriginal)));
+    $("#txtLibro").val(String(obtenerIdLibroReserva(reservaOriginal)));
+
+    $("#txtEstadoLibro").val(
+      reservaOriginal.estado_reserva ?? reservaOriginal.estado_libro ?? "",
+    );
+    $("#txtFechaReserva").val(reservaOriginal.fecha_reserva ?? "");
+    $("#txtFechaLimite").val(reservaOriginal.fecha_limite ?? "");
+    $("#txtPosicion").val(reservaOriginal.posicion_lista_espera ?? "");
+    $("#txtEstadoReserva").val(reservaOriginal.estado ?? "");
+    $("#txtObservaciones").val(reservaOriginal.observaciones ?? "");
+
+    activarModoActualizacion();
+
+    window.scrollTo({
+      top: $("#formReserva").offset().top - 120,
+      behavior: "smooth",
+    });
   });
 
-  $("#btnActualizar").click(function (e) {
+  $("#btnActualizar").on("click", function (e) {
     e.preventDefault();
+
+    if ($("#btnActualizar").prop("disabled")) {
+      return;
+    }
 
     const id = $("#txtId").val();
 
     if (!id) {
       alert("Seleccione una reserva para actualizar.");
+      limpiarFormulario();
+      return;
+    }
+
+    const reservaOriginal = obtenerReservaPorId(id);
+
+    if (!reservaOriginal) {
+      alert("No se encontró la reserva seleccionada.");
+      limpiarFormulario();
+      return;
+    }
+
+    if (esReservaNoEditable(reservaOriginal.estado)) {
+      alert(
+        "No se puede actualizar una reserva cancelada, finalizada o inactiva.",
+      );
+      limpiarFormulario();
+      return;
+    }
+
+    if (!esReservaEditable(reservaOriginal.estado)) {
+      alert("Esta reserva no se puede actualizar por su estado actual.");
+      limpiarFormulario();
       return;
     }
 
     const data = prepararDatosFormulario();
+
+    data.estado = reservaOriginal.estado;
+    data.estado_reserva = reservaOriginal.estado_reserva;
+    data.posicion_lista_espera = reservaOriginal.posicion_lista_espera;
 
     if (!data.usuario_id) {
       alert("Seleccione un usuario.");
@@ -548,18 +632,10 @@ $(document).ready(function () {
       return;
     }
 
-    if (!data.estado_reserva) {
-      alert("Seleccione el estado del libro.");
-      return;
-    }
-
-    if (normalizarTexto(data.estado_reserva) === "no disponible") {
-      alert("No se puede actualizar una reserva con libro no disponible.");
-      return;
-    }
-
     if (usuarioYaReservoLibro(data.usuario_id, data.libro_id, data.id)) {
-      alert("Este usuario ya tiene otra reserva activa o en espera para este mismo libro.");
+      alert(
+        "Este usuario ya tiene otra reserva activa o en espera para este mismo libro.",
+      );
       return;
     }
 
@@ -613,12 +689,18 @@ $(document).ready(function () {
       return;
     }
 
-    if (estado !== "activo" && estado !== "en espera") {
-      alert("No se puede asignar este libro porque la reserva ya está finalizada, cancelada o inactiva.");
+    if (estado !== "activo" && estado !== "activa" && estado !== "en espera") {
+      alert(
+        "No se puede asignar este libro porque la reserva ya está finalizada, cancelada o inactiva.",
+      );
       return;
     }
 
-    if (!confirm("¿Deseas asignar este libro al usuario y finalizar la reserva?")) {
+    if (
+      !confirm(
+        "¿Deseas asignar este libro al usuario, generar el préstamo y finalizar la reserva?",
+      )
+    ) {
       return;
     }
 
@@ -639,7 +721,9 @@ $(document).ready(function () {
           return;
         }
 
-        alert("Libro asignado correctamente. La reserva fue finalizada y la cola actualizada.");
+        alert(
+          "Libro asignado correctamente. Se generó el préstamo y la cola fue actualizada.",
+        );
 
         $("#formReserva")[0].reset();
         limpiarFormulario();
@@ -689,7 +773,15 @@ $(document).ready(function () {
       },
       error: function (xhr) {
         console.error("Error DELETE:", xhr.responseText);
-        alert("Error al cancelar la reserva.");
+
+        let mensaje = "Error al cancelar la reserva.";
+
+        try {
+          const res = JSON.parse(xhr.responseText);
+          mensaje = res.message ?? mensaje;
+        } catch (e) {}
+
+        alert(mensaje);
       },
     });
   }
@@ -700,8 +792,10 @@ $(document).ready(function () {
     const id = $(this).data("id");
     const estado = normalizarTexto($(this).data("estado"));
 
-    if (estado !== "activo" && estado !== "en espera") {
-      alert("No se puede cancelar una reserva finalizada, cancelada o inactiva.");
+    if (estado !== "activo" && estado !== "activa" && estado !== "en espera") {
+      alert(
+        "No se puede cancelar una reserva finalizada, cancelada o inactiva.",
+      );
       return;
     }
 
@@ -710,19 +804,31 @@ $(document).ready(function () {
     cancelarReserva(id);
   });
 
-  $("#btnCancelarReserva").click(function (e) {
+  $("#btnCancelarReserva").on("click", function (e) {
     e.preventDefault();
 
     const id = $("#txtId").val();
-    const estado = normalizarTexto($("#txtEstadoReserva").val());
 
     if (!id) {
       alert("Seleccione una reserva para cancelar.");
       return;
     }
 
-    if (estado !== "activo" && estado !== "en espera") {
-      alert("No se puede cancelar una reserva finalizada, cancelada o inactiva.");
+    const reservaOriginal = obtenerReservaPorId(id);
+
+    if (!reservaOriginal) {
+      alert("No se encontró la reserva seleccionada.");
+      limpiarFormulario();
+      return;
+    }
+
+    const estado = normalizarTexto(reservaOriginal.estado);
+
+    if (estado !== "activo" && estado !== "activa" && estado !== "en espera") {
+      alert(
+        "No se puede cancelar una reserva finalizada, cancelada o inactiva.",
+      );
+      limpiarFormulario();
       return;
     }
 
@@ -761,18 +867,15 @@ $(document).ready(function () {
   });
 
   $("#txtEstadoLibro").on("change", function () {
-    aplicarLogicaPorEstado();
+    if (!modoActualizacion) {
+      aplicarLogicaPorBackend();
+    }
   });
 
   $("#txtEstadoReserva").on("change", function () {
-    const estadoReserva = $("#txtEstadoReserva").val();
-
-    if (estadoReserva === "Cancelado" || estadoReserva === "Finalizado") {
-      $("#txtPosicion").val("");
-      return;
+    if (!modoActualizacion) {
+      aplicarLogicaPorBackend();
     }
-
-    aplicarLogicaPorEstado();
   });
 
   $("#formReserva").on("reset", function () {
@@ -795,7 +898,8 @@ $(document).ready(function () {
 
         data.forEach(u => {
           const idUsuario = u.id_usuario ?? u.id;
-          const nombreUsuario = u.nombre ?? u.nombre_usuario ?? u.usuario ?? "Sin nombre";
+          const nombreUsuario =
+            u.nombre ?? u.nombre_usuario ?? u.usuario ?? "Sin nombre";
 
           html += `
             <option value="${escaparHtml(idUsuario)}">

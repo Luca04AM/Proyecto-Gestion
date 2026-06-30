@@ -64,6 +64,21 @@ function obtenerLibro($pdo, $libro_id) {
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+function libroTienePrestamoActivo($pdo, $libro_id) {
+    $sql = "SELECT id
+            FROM prestamos
+            WHERE id_libro = :libro_id
+              AND estado = 'Prestado'
+            LIMIT 1";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ":libro_id" => $libro_id
+    ]);
+
+    return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
+}
+
 function existeReservaVigenteUsuario($pdo, $usuario_id, $libro_id, $id_actual = 0) {
     $sql = "SELECT id
             FROM reservas
@@ -89,35 +104,11 @@ function existeReservaVigenteUsuario($pdo, $usuario_id, $libro_id, $id_actual = 
     return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
 }
 
-function libroTieneReservaActiva($pdo, $libro_id, $id_actual = 0) {
-    $sql = "SELECT id
+function contarReservasVigentesLibro($pdo, $libro_id, $id_actual = 0) {
+    $sql = "SELECT COUNT(*) AS total
             FROM reservas
             WHERE libro_id = :libro_id
-              AND estado = 'Activo'";
-
-    $params = [
-        ":libro_id" => $libro_id
-    ];
-
-    if ($id_actual > 0) {
-        $sql .= " AND id <> :id_actual";
-        $params[":id_actual"] = $id_actual;
-    }
-
-    $sql .= " LIMIT 1";
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
-}
-
-function calcularSiguientePosicion($pdo, $libro_id, $id_actual = 0) {
-    $sql = "SELECT COUNT(*) + 1 AS siguiente
-            FROM reservas
-            WHERE libro_id = :libro_id
-              AND estado_reserva IN ('Prestado', 'Reservado')
-              AND estado = 'En espera'";
+              AND estado IN ('Activo', 'En espera')";
 
     $params = [
         ":libro_id" => $libro_id
@@ -133,11 +124,87 @@ function calcularSiguientePosicion($pdo, $libro_id, $id_actual = 0) {
 
     $fila = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    return intval($fila["siguiente"]);
+    return intval($fila["total"] ?? 0);
+}
+
+function calcularLogicaReserva($pdo, $libro_id, $id_actual = 0) {
+    $libro = obtenerLibro($pdo, $libro_id);
+
+    if (!$libro) {
+        return [
+            "success" => false,
+            "message" => "El libro seleccionado no existe"
+        ];
+    }
+
+    $estadoLibroActual = trim($libro["estado"] ?? "");
+    $estadoNormalizado = mb_strtolower($estadoLibroActual, "UTF-8");
+
+    $tienePrestamoActivo = libroTienePrestamoActivo($pdo, $libro_id);
+    $cantidadReservasVigentes = contarReservasVigentesLibro($pdo, $libro_id, $id_actual);
+    $siguientePosicion = $cantidadReservasVigentes + 1;
+
+    if ($estadoNormalizado === "no disponible") {
+        return [
+            "success" => false,
+            "message" => "El libro no está disponible para reservar",
+            "estado_actual_libro" => $estadoLibroActual
+        ];
+    }
+
+    if ($estadoNormalizado === "disponible" && !$tienePrestamoActivo && $cantidadReservasVigentes === 0) {
+        return [
+            "success" => false,
+            "message" => "El libro está disponible, no requiere reservación",
+            "estado_actual_libro" => $estadoLibroActual
+        ];
+    }
+
+    if ($tienePrestamoActivo || $estadoNormalizado === "prestado") {
+
+        if ($cantidadReservasVigentes === 0) {
+            return [
+                "success" => true,
+                "estado_reserva" => "Prestado",
+                "estado" => "Activo",
+                "posicion" => 1,
+                "observaciones" => "El libro está Prestado. La reserva queda activa como primera persona en la lista.",
+                "estado_actual_libro" => $estadoLibroActual
+            ];
+        }
+
+        return [
+            "success" => true,
+            "estado_reserva" => "Reservado",
+            "estado" => "En espera",
+            "posicion" => $siguientePosicion,
+            "observaciones" => "El libro está Prestado y ya tiene reservas. La reserva queda en lista de espera en la posición " . $siguientePosicion . ".",
+            "estado_actual_libro" => $estadoLibroActual
+        ];
+    }
+
+    if ($estadoNormalizado === "reservado" || $cantidadReservasVigentes > 0) {
+        return [
+            "success" => true,
+            "estado_reserva" => "Reservado",
+            "estado" => "En espera",
+            "posicion" => $siguientePosicion,
+            "observaciones" => "El libro está Reservado. La reserva queda en lista de espera en la posición " . $siguientePosicion . ".",
+            "estado_actual_libro" => $estadoLibroActual
+        ];
+    }
+
+    return [
+        "success" => false,
+        "message" => "No se puede registrar la reserva con el estado actual del libro",
+        "estado_actual_libro" => $estadoLibroActual
+    ];
 }
 
 function reordenarCola($pdo, $libro_id) {
-
+    /*
+        Limpia reservas que ya no pertenecen a la fila.
+    */
     $sqlLimpiar = "UPDATE reservas
                    SET posicion_lista_espera = 0
                    WHERE libro_id = :libro_id
@@ -148,12 +215,22 @@ function reordenarCola($pdo, $libro_id) {
         ":libro_id" => $libro_id
     ]);
 
+    /*
+        Busca únicamente reservas vivas del libro.
+        La primera será Activa/Prestado.
+        Las demás serán En espera/Reservado.
+    */
     $sql = "SELECT id
             FROM reservas
             WHERE libro_id = :libro_id
-              AND estado_reserva IN ('Prestado', 'Reservado')
-              AND estado = 'En espera'
-            ORDER BY posicion_lista_espera ASC, fecha_reserva ASC, id ASC";
+              AND estado IN ('Activo', 'En espera')
+            ORDER BY 
+                CASE 
+                    WHEN posicion_lista_espera > 0 THEN posicion_lista_espera
+                    ELSE 999999
+                END ASC,
+                fecha_reserva ASC,
+                id ASC";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
@@ -165,13 +242,30 @@ function reordenarCola($pdo, $libro_id) {
     $posicion = 1;
 
     foreach ($reservas as $reserva) {
+
+        if ($posicion === 1) {
+            $estadoReserva = "Activo";
+            $estadoLibroReserva = "Prestado";
+            $observaciones = "El libro está Prestado. La reserva queda activa como primera persona en la lista.";
+        } else {
+            $estadoReserva = "En espera";
+            $estadoLibroReserva = "Reservado";
+            $observaciones = "El libro está Reservado. La reserva queda en lista de espera en la posición " . $posicion . ".";
+        }
+
         $sqlUpdate = "UPDATE reservas
-                      SET posicion_lista_espera = :posicion
+                      SET posicion_lista_espera = :posicion,
+                          estado = :estado,
+                          estado_reserva = :estado_reserva,
+                          observaciones = :observaciones
                       WHERE id = :id";
 
         $stmtUpdate = $pdo->prepare($sqlUpdate);
         $stmtUpdate->execute([
             ":posicion" => $posicion,
+            ":estado" => $estadoReserva,
+            ":estado_reserva" => $estadoLibroReserva,
+            ":observaciones" => $observaciones,
             ":id" => $reserva["id"]
         ]);
 
@@ -179,72 +273,37 @@ function reordenarCola($pdo, $libro_id) {
     }
 }
 
-function actualizarEstadoLibro($pdo, $libro_id) {
+function actualizarEstadoLibroSegunSistema($pdo, $libro_id) {
     $libro = obtenerLibro($pdo, $libro_id);
 
     if (!$libro) {
         return;
     }
 
-    $estadoActual = $libro["estado"];
-
-    if ($estadoActual === "Prestado" || $estadoActual === "No disponible") {
+    if ($libro["estado"] === "No disponible") {
         return;
     }
 
-    $sql = "SELECT COUNT(*) AS total
-            FROM reservas
-            WHERE libro_id = :libro_id
-              AND estado IN ('Activo', 'En espera')";
+    $tienePrestamoActivo = libroTienePrestamoActivo($pdo, $libro_id);
+    $cantidadReservas = contarReservasVigentesLibro($pdo, $libro_id);
+
+    if ($tienePrestamoActivo) {
+        $nuevoEstado = "Prestado";
+    } elseif ($cantidadReservas > 0) {
+        $nuevoEstado = "Reservado";
+    } else {
+        $nuevoEstado = "Disponible";
+    }
+
+    $sql = "UPDATE libros
+            SET estado = :estado
+            WHERE id = :libro_id";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        ":libro_id" => $libro_id
-    ]);
-
-    $fila = $stmt->fetch(PDO::FETCH_ASSOC);
-    $total = intval($fila["total"]);
-
-    $nuevoEstado = $total > 0 ? "Reservado" : "Disponible";
-
-    $sqlUpdate = "UPDATE libros
-                  SET estado = :estado
-                  WHERE id = :libro_id
-                    AND estado IN ('Disponible', 'Reservado')";
-
-    $stmtUpdate = $pdo->prepare($sqlUpdate);
-    $stmtUpdate->execute([
         ":estado" => $nuevoEstado,
         ":libro_id" => $libro_id
     ]);
-}
-
-function aplicarEstadoLibroSeleccionado($pdo, $libro_id, $estado_reserva, $estado_final) {
-    if ($estado_reserva === "Disponible" && $estado_final === "Activo") {
-        $sql = "UPDATE libros
-                SET estado = 'Reservado'
-                WHERE id = :libro_id
-                  AND estado = 'Disponible'";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ":libro_id" => $libro_id
-        ]);
-
-        return;
-    }
-
-    if ($estado_reserva === "Prestado" || $estado_reserva === "Reservado") {
-        $sql = "UPDATE libros
-                SET estado = :estado
-                WHERE id = :libro_id";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ":estado" => $estado_reserva,
-            ":libro_id" => $libro_id
-        ]);
-    }
 }
 
 try {
@@ -253,6 +312,22 @@ try {
 
         $id = isset($_GET["id"]) ? intval($_GET["id"]) : 0;
         $buscar = isset($_GET["buscar"]) ? trim($_GET["buscar"]) : "";
+
+        if (isset($_GET["preview"])) {
+            $libro_id = isset($_GET["libro_id"]) ? intval($_GET["libro_id"]) : 0;
+            $id_actual = isset($_GET["id_actual"]) ? intval($_GET["id_actual"]) : 0;
+
+            if ($libro_id <= 0) {
+                responder([
+                    "success" => false,
+                    "message" => "El id del libro es obligatorio"
+                ], 400);
+            }
+
+            $logica = calcularLogicaReserva($pdo, $libro_id, $id_actual);
+
+            responder($logica, $logica["success"] ? 200 : 400);
+        }
 
         if (isset($_GET["next_position"])) {
             $libro_id = isset($_GET["libro_id"]) ? intval($_GET["libro_id"]) : 0;
@@ -264,7 +339,7 @@ try {
                 ], 400);
             }
 
-            $posicion = calcularSiguientePosicion($pdo, $libro_id);
+            $posicion = contarReservasVigentesLibro($pdo, $libro_id) + 1;
 
             responder([
                 "success" => true,
@@ -369,45 +444,14 @@ try {
 
         $usuario_id = intval($input["usuario_id"] ?? 0);
         $libro_id = intval($input["libro_id"] ?? 0);
-        $estado_reserva = normalizarEstadoLibro($input["estado_reserva"] ?? "");
-        $fecha_reserva = trim($input["fecha_reserva"] ?? "");
-        $fecha_limite = trim($input["fecha_limite"] ?? "");
-        $observaciones = trim($input["observaciones"] ?? "");
+        $fecha_reserva = trim($input["fecha_reserva"] ?? date("Y-m-d"));
+        $fecha_limite = trim($input["fecha_limite"] ?? date("Y-m-d", strtotime("+3 days")));
+        $observacionesUsuario = trim($input["observaciones"] ?? "");
 
         if ($usuario_id <= 0 || $libro_id <= 0) {
             responder([
                 "success" => false,
                 "message" => "Debe seleccionar usuario y libro"
-            ], 400);
-        }
-
-        if ($estado_reserva === "") {
-            responder([
-                "success" => false,
-                "message" => "Debe seleccionar el estado del libro"
-            ], 400);
-        }
-
-        if ($fecha_reserva === "" || $fecha_limite === "") {
-            responder([
-                "success" => false,
-                "message" => "Debe completar fecha de reserva y fecha límite"
-            ], 400);
-        }
-
-        $libro = obtenerLibro($pdo, $libro_id);
-
-        if (!$libro) {
-            responder([
-                "success" => false,
-                "message" => "El libro seleccionado no existe"
-            ], 404);
-        }
-
-        if ($estado_reserva === "No disponible") {
-            responder([
-                "success" => false,
-                "message" => "El libro está no disponible, por lo tanto no se puede registrar reserva"
             ], 400);
         }
 
@@ -418,31 +462,23 @@ try {
             ], 400);
         }
 
-        if ($estado_reserva === "Disponible" && libroTieneReservaActiva($pdo, $libro_id)) {
-            $estado_reserva = "Reservado";
-        }
+        $pdo->beginTransaction();
 
-        if ($estado_reserva === "Disponible") {
-            $estado = "Activo";
-            $posicion = 0;
+        $logica = calcularLogicaReserva($pdo, $libro_id);
 
-            if ($observaciones === "") {
-                $observaciones = "El libro está disponible, no requiere reservar.";
-            }
-        } elseif ($estado_reserva === "Prestado" || $estado_reserva === "Reservado") {
-            $estado = "En espera";
-            $posicion = calcularSiguientePosicion($pdo, $libro_id);
+        if (!$logica["success"]) {
+            $pdo->rollBack();
 
-            $observaciones = "El libro está " . $estado_reserva .
-                ". La reserva queda en lista de espera en la posición " . $posicion . ".";
-        } else {
             responder([
                 "success" => false,
-                "message" => "Estado del libro no válido"
+                "message" => $logica["message"]
             ], 400);
         }
 
-        $pdo->beginTransaction();
+        $estado_reserva = $logica["estado_reserva"];
+        $estado = $logica["estado"];
+        $posicion = intval($logica["posicion"]);
+        $observaciones = $observacionesUsuario !== "" ? $observacionesUsuario : $logica["observaciones"];
 
         $sql = "INSERT INTO reservas
                     (usuario_id, libro_id, estado_reserva, fecha_reserva, fecha_limite, posicion_lista_espera, estado, observaciones)
@@ -463,8 +499,8 @@ try {
 
         $idNuevo = $pdo->lastInsertId();
 
-        aplicarEstadoLibroSeleccionado($pdo, $libro_id, $estado_reserva, $estado);
         reordenarCola($pdo, $libro_id);
+        actualizarEstadoLibroSegunSistema($pdo, $libro_id);
 
         $pdo->commit();
 
@@ -472,9 +508,9 @@ try {
             "success" => true,
             "message" => "Reserva registrada correctamente",
             "id" => $idNuevo,
-            "posicion" => $posicion,
+            "estado_reserva" => $estado_reserva,
             "estado" => $estado,
-            "estado_reserva" => $estado_reserva
+            "posicion" => $posicion
         ]);
     }
 
@@ -536,12 +572,42 @@ try {
                 ], 400);
             }
 
+            $usuario_id = intval($reserva["usuario_id"]);
             $libro_id = intval($reserva["libro_id"]);
+            $fecha_limite = trim($reserva["fecha_limite"] ?? "");
+
+            if ($fecha_limite === "") {
+                $fecha_limite = date("Y-m-d");
+            }
+
+            if (libroTienePrestamoActivo($pdo, $libro_id)) {
+                $pdo->rollBack();
+
+                responder([
+                    "success" => false,
+                    "message" => "Este libro ya tiene un préstamo activo. Primero debe registrar la devolución del préstamo actual."
+                ], 400);
+            }
+
+            $sqlInsertPrestamo = "INSERT INTO prestamos
+                                      (id_usuario, id_libro, fecha_prestamo, fecha_devolucion, estado)
+                                  VALUES
+                                      (:id_usuario, :id_libro, NOW(), :fecha_devolucion, 'Prestado')";
+
+            $stmtInsertPrestamo = $pdo->prepare($sqlInsertPrestamo);
+            $stmtInsertPrestamo->execute([
+                ":id_usuario" => $usuario_id,
+                ":id_libro" => $libro_id,
+                ":fecha_devolucion" => $fecha_limite
+            ]);
+
+            $idPrestamo = $pdo->lastInsertId();
 
             $sqlUpdateReserva = "UPDATE reservas
                                  SET estado = 'Finalizado',
+                                     estado_reserva = 'Prestado',
                                      posicion_lista_espera = 0,
-                                     observaciones = 'Libro asignado al usuario. Reserva finalizada.'
+                                     observaciones = 'Libro asignado al usuario. Reserva finalizada y préstamo generado.'
                                  WHERE id = :id";
 
             $stmtUpdateReserva = $pdo->prepare($sqlUpdateReserva);
@@ -559,12 +625,14 @@ try {
             ]);
 
             reordenarCola($pdo, $libro_id);
+            actualizarEstadoLibroSegunSistema($pdo, $libro_id);
 
             $pdo->commit();
 
             responder([
                 "success" => true,
-                "message" => "Libro asignado correctamente. Reserva finalizada y cola actualizada."
+                "message" => "Libro asignado correctamente. Reserva finalizada, préstamo generado y cola actualizada.",
+                "id_prestamo" => $idPrestamo
             ]);
         }
 
@@ -590,44 +658,15 @@ try {
 
         $usuario_id = intval($input["usuario_id"] ?? $reservaActual["usuario_id"]);
         $libro_id = intval($input["libro_id"] ?? $reservaActual["libro_id"]);
-        $estado_reserva = normalizarEstadoLibro($input["estado_reserva"] ?? $reservaActual["estado_reserva"]);
         $fecha_reserva = trim($input["fecha_reserva"] ?? $reservaActual["fecha_reserva"]);
         $fecha_limite = trim($input["fecha_limite"] ?? $reservaActual["fecha_limite"]);
-        $estado = normalizarEstadoReserva($input["estado"] ?? $reservaActual["estado"]);
         $observaciones = trim($input["observaciones"] ?? $reservaActual["observaciones"]);
+        $estadoFormulario = normalizarEstadoReserva($input["estado"] ?? $reservaActual["estado"]);
 
         if ($usuario_id <= 0 || $libro_id <= 0) {
             responder([
                 "success" => false,
                 "message" => "Debe seleccionar usuario y libro"
-            ], 400);
-        }
-
-        if ($estado_reserva === "") {
-            responder([
-                "success" => false,
-                "message" => "Debe seleccionar el estado del libro"
-            ], 400);
-        }
-
-        if ($fecha_reserva === "" || $fecha_limite === "") {
-            responder([
-                "success" => false,
-                "message" => "Debe completar fecha de reserva y fecha límite"
-            ], 400);
-        }
-
-        if (!obtenerLibro($pdo, $libro_id)) {
-            responder([
-                "success" => false,
-                "message" => "El libro seleccionado no existe"
-            ], 404);
-        }
-
-        if ($estado_reserva === "No disponible") {
-            responder([
-                "success" => false,
-                "message" => "No se puede actualizar una reserva con libro no disponible"
             ], 400);
         }
 
@@ -638,39 +677,45 @@ try {
             ], 400);
         }
 
-        if ($estado === "Cancelado" || $estado === "Finalizado" || $estado === "Inactivo") {
-            $posicion = 0;
-        } elseif ($estado_reserva === "Disponible") {
-            $estado = "Activo";
+        $pdo->beginTransaction();
+
+        if ($estadoFormulario === "Cancelado" || $estadoFormulario === "Finalizado" || $estadoFormulario === "Inactivo") {
+
+            $estado = $estadoFormulario;
+            $estado_reserva = $reservaActual["estado_reserva"];
             $posicion = 0;
 
-            if ($observaciones === "") {
-                $observaciones = "El libro está disponible, no requiere reservar.";
-            }
-        } elseif ($estado_reserva === "Prestado" || $estado_reserva === "Reservado") {
-            $estado = "En espera";
+        } else {
 
-            $mismaReservaEnEspera =
+            $mismaReservaVigente =
                 intval($reservaActual["libro_id"]) === $libro_id &&
-                $reservaActual["estado"] === "En espera" &&
-                intval($reservaActual["posicion_lista_espera"]) > 0;
+                in_array($reservaActual["estado"], ["Activo", "En espera"]);
 
-            if ($mismaReservaEnEspera) {
+            if ($mismaReservaVigente) {
+                $estado = $reservaActual["estado"];
+                $estado_reserva = $reservaActual["estado_reserva"];
                 $posicion = intval($reservaActual["posicion_lista_espera"]);
             } else {
-                $posicion = calcularSiguientePosicion($pdo, $libro_id, $id);
+                $logica = calcularLogicaReserva($pdo, $libro_id, $id);
+
+                if (!$logica["success"]) {
+                    $pdo->rollBack();
+
+                    responder([
+                        "success" => false,
+                        "message" => $logica["message"]
+                    ], 400);
+                }
+
+                $estado = $logica["estado"];
+                $estado_reserva = $logica["estado_reserva"];
+                $posicion = intval($logica["posicion"]);
+
+                if ($observaciones === "") {
+                    $observaciones = $logica["observaciones"];
+                }
             }
-
-            $observaciones = "El libro está " . $estado_reserva .
-                ". La reserva queda en lista de espera en la posición " . $posicion . ".";
-        } else {
-            responder([
-                "success" => false,
-                "message" => "Estado del libro no válido"
-            ], 400);
         }
-
-        $pdo->beginTransaction();
 
         $sql = "UPDATE reservas
                 SET usuario_id = :usuario_id,
@@ -702,10 +747,8 @@ try {
             reordenarCola($pdo, $libro_id);
         }
 
-        actualizarEstadoLibro($pdo, $libroAnterior);
-        actualizarEstadoLibro($pdo, $libro_id);
-
-        aplicarEstadoLibroSeleccionado($pdo, $libro_id, $estado_reserva, $estado);
+        actualizarEstadoLibroSegunSistema($pdo, $libroAnterior);
+        actualizarEstadoLibroSegunSistema($pdo, $libro_id);
 
         $pdo->commit();
 
@@ -713,9 +756,9 @@ try {
             "success" => true,
             "message" => "Reserva actualizada correctamente",
             "id" => $id,
-            "posicion" => $posicion,
             "estado" => $estado,
-            "estado_reserva" => $estado_reserva
+            "estado_reserva" => $estado_reserva,
+            "posicion" => $posicion
         ]);
     }
 
@@ -763,7 +806,8 @@ try {
 
         $sql = "UPDATE reservas
                 SET estado = 'Cancelado',
-                    posicion_lista_espera = 0
+                    posicion_lista_espera = 0,
+                    observaciones = 'Reserva cancelada.'
                 WHERE id = :id";
 
         $stmt = $pdo->prepare($sql);
@@ -772,7 +816,7 @@ try {
         ]);
 
         reordenarCola($pdo, $libro_id);
-        actualizarEstadoLibro($pdo, $libro_id);
+        actualizarEstadoLibroSegunSistema($pdo, $libro_id);
 
         $pdo->commit();
 
