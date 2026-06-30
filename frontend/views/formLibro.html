@@ -87,23 +87,20 @@
                     </div>
 
                     <div class="campo-completo">
-    <label for="archivoPortada">Portada del Libro</label>
+                        <label for="portadaSelect">Portada del Libro</label>
 
-    <div class="zona-archivo" id="zonaPortada">
-            <div id="previewPortada" class="preview-portada">
-                <p id="textoPortada">Ninguna portada seleccionada</p>
-            </div>
-        </div>
+                        <select id="portadaSelect">
+                            <option value="">Cargando portadas...</option>
+                        </select>
 
-        <input 
-            type="file" 
-            id="archivoPortada" 
-            accept="image/*"
-            class="input-archivo"
-        >
+                        <div class="zona-archivo" id="zonaPortada" style="margin-top: 12px;">
+                            <div id="previewPortada" class="preview-portada">
+                                <p id="textoPortada">Ninguna portada seleccionada</p>
+                            </div>
+                        </div>
 
-        <input type="hidden" id="portada">
-    </div>
+                        <input type="hidden" id="portada">
+                    </div>
 
                 </div>
 
