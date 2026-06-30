@@ -29,15 +29,29 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) {
+    console.log("Página restaurada desde caché. Recargando datos...");
+    pintarCargando();
+    cargarDatosIniciales();
+  }
+});
+
 /* ===================== CARGA INICIAL ===================== */
 
 async function cargarDatosIniciales() {
   try {
-    const usuarios = await consultarApi(API_USUARIOS);
-    const libros = await consultarApi(API_LIBROS);
-    const prestamos = await consultarApi(API_PRESTAMOS);
-    const multas = await consultarApi(API_MULTAS);
-    const reservas = await consultarApi(API_RESERVAS);
+    console.log(
+      "Recargando datos de usuarios, libros, préstamos, multas y reservas...",
+    );
+
+    const [usuarios, libros, prestamos, multas, reservas] = await Promise.all([
+      consultarApi(API_USUARIOS),
+      consultarApi(API_LIBROS),
+      consultarApi(API_PRESTAMOS),
+      consultarApi(API_MULTAS),
+      consultarApi(API_RESERVAS),
+    ]);
 
     usuariosGlobal = obtenerData(usuarios);
     librosGlobal = obtenerData(libros);
@@ -45,11 +59,11 @@ async function cargarDatosIniciales() {
     multasGlobal = obtenerData(multas);
     reservasGlobal = obtenerData(reservas);
 
-    console.log("USUARIOS:", usuariosGlobal);
-    console.log("LIBROS:", librosGlobal);
-    console.log("PRÉSTAMOS:", prestamosGlobal);
-    console.log("MULTAS:", multasGlobal);
-    console.log("RESERVAS:", reservasGlobal);
+    console.log("USUARIOS RECARGADOS:", usuariosGlobal);
+    console.log("LIBROS RECARGADOS:", librosGlobal);
+    console.log("PRÉSTAMOS RECARGADOS:", prestamosGlobal);
+    console.log("MULTAS RECARGADAS:", multasGlobal);
+    console.log("RESERVAS RECARGADAS:", reservasGlobal);
 
     generarNotificaciones();
   } catch (error) {
@@ -60,12 +74,20 @@ async function cargarDatosIniciales() {
 
 async function consultarApi(url) {
   try {
-    const respuesta = await fetch(url, {
+    const separador = url.includes("?") ? "&" : "?";
+    const urlSinCache = `${url}${separador}_t=${Date.now()}`;
+
+    const respuesta = await fetch(urlSinCache, {
       method: "GET",
+      cache: "no-store",
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
 
     if (!respuesta.ok) {
-      console.error("Error HTTP consultando:", url, respuesta.status);
+      console.error("Error HTTP consultando:", urlSinCache, respuesta.status);
       return [];
     }
 
@@ -78,7 +100,7 @@ async function consultarApi(url) {
     try {
       return JSON.parse(texto);
     } catch (errorJson) {
-      console.error("La API no devolvió JSON válido:", url, texto);
+      console.error("La API no devolvió JSON válido:", urlSinCache, texto);
       return [];
     }
   } catch (error) {
@@ -345,6 +367,10 @@ function obtenerDiasGracia(multa) {
   return parseInt(multa.dias_gracia ?? 0, 10) || 0;
 }
 
+function obtenerEstadoMulta(multa) {
+  return multa.estado ?? "Pendiente";
+}
+
 function calcularMonto(tipo, fechaDevolucion, diasGracia) {
   const hoy = obtenerHoy();
 
@@ -478,6 +504,12 @@ function generarNotificaciones() {
   });
 
   multasGlobal.forEach(multa => {
+    const estadoMulta = normalizarTexto(obtenerEstadoMulta(multa));
+
+    if (estadoMulta === "pagada") {
+      return;
+    }
+
     const id = obtenerIdMulta(multa);
     const libro = obtenerLibroMulta(multa);
     const usuario = obtenerUsuarioMulta(multa);
@@ -515,7 +547,9 @@ function generarNotificaciones() {
       estadoReserva === "en espera";
 
     const libroDisponible =
-      estadoLibro === "disponible" || estadoLibro === "reservado";
+      estadoLibro === "disponible" ||
+      estadoLibro === "reservado" ||
+      estadoLibro === "prestado";
 
     if (esReservaActiva && libroDisponible) {
       generadas.push(
@@ -630,9 +664,11 @@ function pintarNotificaciones(data) {
       notificacion.categoria,
       notificacion.leida,
     );
+
     const claseBadge = notificacion.leida
       ? "badge badge-disponible"
       : "badge badge-atrasado";
+
     const textoEstado = notificacion.leida ? "Leída" : "No Leída";
     const icono = obtenerIcono(notificacion.categoria);
 
