@@ -11,16 +11,12 @@ let librosGlobal = [];
 $(document).ready(function () {
   cargarDatosIniciales();
 
-  /* ===================== CARGA INICIAL ===================== */
-
   function cargarDatosIniciales() {
     $.when(cargarUsuarios(), cargarLibros()).always(function () {
       cargarPrestamos();
       cargarMultas();
     });
   }
-
-  /* ===================== AUXILIARES ===================== */
 
   function normalizarTexto(texto) {
     return String(texto ?? "")
@@ -91,6 +87,54 @@ $(document).ready(function () {
     return "";
   }
 
+  function fechaEnRango(fecha, fechaInicio, fechaFin) {
+    const fechaBase = fechaComparable(fecha);
+
+    if (!fechaBase) {
+      return false;
+    }
+
+    if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
+      const temporal = fechaInicio;
+      fechaInicio = fechaFin;
+      fechaFin = temporal;
+    }
+
+    if (fechaInicio && fechaBase < fechaInicio) {
+      return false;
+    }
+
+    if (fechaFin && fechaBase > fechaFin) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function prestamoCoincideConFechas(prestamo, fechaInicio, fechaFin) {
+    if (!fechaInicio && !fechaFin) {
+      return true;
+    }
+
+    const fechaPrestamo = fechaComparable(obtenerFechaPrestamo(prestamo));
+    const fechaDevolucion = fechaComparable(
+      obtenerFechaDevolucionPrestamo(prestamo),
+    );
+
+    if (fechaInicio && !fechaFin) {
+      return fechaPrestamo === fechaInicio || fechaDevolucion === fechaInicio;
+    }
+
+    if (!fechaInicio && fechaFin) {
+      return fechaPrestamo === fechaFin || fechaDevolucion === fechaFin;
+    }
+
+    return (
+      fechaEnRango(fechaPrestamo, fechaInicio, fechaFin) ||
+      fechaEnRango(fechaDevolucion, fechaInicio, fechaFin)
+    );
+  }
+
   function formatearMonto(monto) {
     const numero = Number(monto ?? 0);
     return "₡" + numero.toLocaleString("es-CR");
@@ -99,23 +143,23 @@ $(document).ready(function () {
   function obtenerClaseBadge(valor) {
     const valorNormalizado = normalizarTexto(valor);
 
-    if (valorNormalizado === "devuelto") {
+    if (valorNormalizado === "devuelto" || valorNormalizado === "pagada") {
       return "badge badge-disponible";
     }
 
-    if (valorNormalizado === "prestado") {
+    if (
+      valorNormalizado === "prestado" ||
+      valorNormalizado === "pendiente" ||
+      valorNormalizado === "atraso"
+    ) {
       return "badge badge-reservado";
     }
 
-    if (valorNormalizado === "perdido") {
-      return "badge badge-no-disponible";
-    }
-
-    if (valorNormalizado === "atraso") {
-      return "badge badge-reservado";
-    }
-
-    if (valorNormalizado === "daño" || valorNormalizado === "perdida") {
+    if (
+      valorNormalizado === "perdido" ||
+      valorNormalizado === "perdida" ||
+      valorNormalizado === "daño"
+    ) {
       return "badge badge-no-disponible";
     }
 
@@ -173,8 +217,6 @@ $(document).ready(function () {
     return obtenerTituloLibro(libro);
   }
 
-  /* ===================== USUARIOS Y LIBROS ===================== */
-
   function cargarUsuarios() {
     return $.ajax({
       url: API_USUARIOS,
@@ -206,8 +248,6 @@ $(document).ready(function () {
       },
     });
   }
-
-  /* ===================== CAMPOS PRÉSTAMOS ===================== */
 
   function obtenerIdPrestamo(prestamo) {
     return prestamo.id_prestamo ?? prestamo.id ?? "";
@@ -252,8 +292,6 @@ $(document).ready(function () {
     return prestamo.estado ?? "";
   }
 
-  /* ===================== PRÉSTAMOS ===================== */
-
   function cargarPrestamos() {
     $.ajax({
       url: API_PRESTAMOS,
@@ -276,7 +314,6 @@ $(document).ready(function () {
           </tr>
         `);
 
-        $("#mensajeSinPrestamos").hide();
         $("#mensajeSinRegistros").hide();
       },
     });
@@ -294,12 +331,10 @@ $(document).ready(function () {
         </tr>
       `);
 
-      $("#mensajeSinPrestamos").show();
       $("#mensajeSinRegistros").show();
       return;
     }
 
-    $("#mensajeSinPrestamos").hide();
     $("#mensajeSinRegistros").hide();
 
     data.forEach(prestamo => {
@@ -332,7 +367,7 @@ $(document).ready(function () {
                 Ver Detalle
               </button>
 
-              <a href="detalleLibro.html?id=${escaparHtml(idLibro)}" class="btn btn-editar">
+              <a href="detalleLibro.html?id=${escaparHtml(idLibro)}" class="btn btn-primary">
                 Libro
               </a>
             </div>
@@ -373,22 +408,16 @@ $(document).ready(function () {
   });
 
   function filtrarPrestamos() {
-    const usuario = normalizarTexto(
-      $("#txtUsuarioPrestamo").val() || $("#txtUsuario").val(),
-    );
-    const estado = normalizarTexto(
-      $("#txtEstadoPrestamo").val() || $("#txtEstado").val(),
-    );
-    const fechaInicio =
-      $("#txtFechaInicioPrestamo").val() || $("#txtFechaInicio").val();
-    const fechaFin = $("#txtFechaFinPrestamo").val() || $("#txtFechaFin").val();
-    const ordenar = $("#txtOrdenarPrestamo").val() || $("#txtOrdenar").val();
+    const usuario = normalizarTexto($("#txtUsuario").val());
+    const estado = normalizarTexto($("#txtEstado").val());
+    const fechaInicio = $("#txtFechaInicio").val();
+    const fechaFin = $("#txtFechaFin").val();
+    const ordenar = $("#txtOrdenar").val();
 
     let filtrados = prestamosGlobal.filter(prestamo => {
       const usuarioPrestamo = normalizarTexto(obtenerUsuarioPrestamo(prestamo));
       const idUsuario = normalizarTexto(obtenerIdUsuarioPrestamo(prestamo));
       const estadoPrestamo = normalizarTexto(obtenerEstadoPrestamo(prestamo));
-      const fechaPrestamo = fechaComparable(obtenerFechaPrestamo(prestamo));
 
       const cumpleUsuario =
         !usuario ||
@@ -396,12 +425,14 @@ $(document).ready(function () {
         idUsuario.includes(usuario);
 
       const cumpleEstado = !estado || estadoPrestamo === estado;
-      const cumpleFechaInicio = !fechaInicio || fechaPrestamo >= fechaInicio;
-      const cumpleFechaFin = !fechaFin || fechaPrestamo <= fechaFin;
 
-      return (
-        cumpleUsuario && cumpleEstado && cumpleFechaInicio && cumpleFechaFin
+      const cumpleFecha = prestamoCoincideConFechas(
+        prestamo,
+        fechaInicio,
+        fechaFin,
       );
+
+      return cumpleUsuario && cumpleEstado && cumpleFecha;
     });
 
     filtrados = ordenarPrestamos(filtrados, ordenar);
@@ -419,23 +450,17 @@ $(document).ready(function () {
       const libroB = normalizarTexto(obtenerLibroPrestamo(b));
       const estadoA = normalizarTexto(obtenerEstadoPrestamo(a));
       const estadoB = normalizarTexto(obtenerEstadoPrestamo(b));
-      const usuarioA = normalizarTexto(obtenerUsuarioPrestamo(a));
-      const usuarioB = normalizarTexto(obtenerUsuarioPrestamo(b));
 
-      if (ordenar === "antigua" || ordenar === "Fecha más antigua") {
+      if (ordenar === "antigua") {
         return fechaA.localeCompare(fechaB);
       }
 
-      if (ordenar === "libro" || ordenar === "Título del libro") {
+      if (ordenar === "libro") {
         return libroA.localeCompare(libroB);
       }
 
-      if (ordenar === "estado" || ordenar === "Estado") {
+      if (ordenar === "estado") {
         return estadoA.localeCompare(estadoB);
-      }
-
-      if (ordenar === "usuario") {
-        return usuarioA.localeCompare(usuarioB);
       }
 
       return fechaB.localeCompare(fechaA);
@@ -455,13 +480,12 @@ $(document).ready(function () {
     }, 100);
   });
 
-  $(
-    "#txtUsuarioPrestamo, #txtEstadoPrestamo, #txtFechaInicioPrestamo, #txtFechaFinPrestamo, #txtOrdenarPrestamo, #txtUsuario, #txtEstado, #txtFechaInicio, #txtFechaFin, #txtOrdenar",
-  ).on("change keyup", function () {
-    filtrarPrestamos();
-  });
-
-  /* ===================== CAMPOS MULTAS ===================== */
+  $("#txtUsuario, #txtEstado, #txtFechaInicio, #txtFechaFin, #txtOrdenar").on(
+    "change keyup",
+    function () {
+      filtrarPrestamos();
+    },
+  );
 
   function obtenerIdMulta(multa) {
     return multa.id_multa ?? multa.id ?? "";
@@ -506,13 +530,29 @@ $(document).ready(function () {
     return parseInt(multa.dias_gracia ?? 0, 10) || 0;
   }
 
-  /* ===================== CÁLCULO MONTO MULTA ===================== */
+  function obtenerEstadoMulta(multa) {
+    return multa.estado ?? "Pendiente";
+  }
+
+  function obtenerMontoPagado(multa) {
+    const montoPagado = multa.monto_pagado;
+
+    if (
+      montoPagado === null ||
+      montoPagado === undefined ||
+      montoPagado === ""
+    ) {
+      return 0;
+    }
+
+    return Number(montoPagado) || 0;
+  }
 
   function calcularMonto(tipo, fechaDevolucion, diasGracia) {
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 
-    let daysLate = 0;
+    let diasAtraso = 0;
 
     if (fechaDevolucion) {
       const soloFecha = String(fechaDevolucion).split(" ")[0];
@@ -522,34 +562,32 @@ $(document).ready(function () {
       const diffMs = hoy - fecha;
 
       if (diffMs > 0) {
-        daysLate = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        diasAtraso = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
       }
     }
 
-    const diasCobro = Math.max(daysLate - diasGracia, 1);
+    const diasCobro = Math.max(diasAtraso - diasGracia, 1);
 
-    let fixedFee = 1000;
+    let montoBase = 1000;
 
     if (tipo === "Daño") {
-      fixedFee = 3000;
+      montoBase = 3000;
     }
 
     if (tipo === "Perdida") {
-      fixedFee = 10000;
+      montoBase = 10000;
     }
 
-    return fixedFee * diasCobro;
+    return montoBase * diasCobro;
   }
 
   function obtenerMontoMulta(multa) {
-    const tipo = obtenerTipoMulta(multa);
-    const fechaDevolucion = obtenerFechaDevolucionMulta(multa);
-    const diasGracia = obtenerDiasGracia(multa);
-
-    return calcularMonto(tipo, fechaDevolucion, diasGracia);
+    return calcularMonto(
+      obtenerTipoMulta(multa),
+      obtenerFechaDevolucionMulta(multa),
+      obtenerDiasGracia(multa),
+    );
   }
-
-  /* ===================== MULTAS ===================== */
 
   function cargarMultas() {
     $.ajax({
@@ -568,7 +606,7 @@ $(document).ready(function () {
 
         $("#tablaMultas").html(`
           <tr>
-            <td colspan="7" style="text-align:center;">
+            <td colspan="9" style="text-align:center;">
               Error al cargar las multas.
             </td>
           </tr>
@@ -586,7 +624,7 @@ $(document).ready(function () {
     if (!data || data.length === 0) {
       $("#tablaMultas").html(`
         <tr>
-          <td colspan="7" style="text-align:center;">
+          <td colspan="9" style="text-align:center;">
             No hay multas registradas.
           </td>
         </tr>
@@ -605,14 +643,34 @@ $(document).ready(function () {
       const monto = obtenerMontoMulta(multa);
       const fechaDevolucion = obtenerFechaDevolucionMulta(multa);
       const diasGracia = obtenerDiasGracia(multa);
-      const claseBadge = obtenerClaseBadge(motivo);
+      const estado = obtenerEstadoMulta(multa);
+      const montoPagado = obtenerMontoPagado(multa);
+      const claseMotivo = obtenerClaseBadge(motivo);
+      const claseEstado = obtenerClaseBadge(estado);
+
+      const botonPago =
+        normalizarTexto(estado) === "pagada"
+          ? `
+          <button type="button"
+            class="btn btn-secondary btn-marcar-pendiente"
+            data-id="${escaparHtml(id)}">
+            Marcar pendiente
+          </button>
+        `
+          : `
+          <button type="button"
+            class="btn btn-primary btn-pagar-multa"
+            data-id="${escaparHtml(id)}">
+            Registrar pago
+          </button>
+        `;
 
       html += `
         <tr>
           <td>${escaparHtml(id)}</td>
           <td>${escaparHtml(libro)}</td>
           <td>
-            <span class="${escaparHtml(claseBadge)}">
+            <span class="${escaparHtml(claseMotivo)}">
               ${escaparHtml(motivo)}
             </span>
           </td>
@@ -620,12 +678,20 @@ $(document).ready(function () {
           <td>${escaparHtml(formatearFecha(fechaDevolucion))}</td>
           <td>${escaparHtml(diasGracia)}</td>
           <td>
+            <span class="${escaparHtml(claseEstado)}">
+              ${escaparHtml(estado)}
+            </span>
+          </td>
+          <td>${escaparHtml(formatearMonto(montoPagado))}</td>
+          <td>
             <div class="acciones-tabla">
               <button type="button"
                 class="btn btn-secondary btn-detalle-multa"
                 data-id="${escaparHtml(id)}">
                 Ver Detalle
               </button>
+
+              ${botonPago}
             </div>
           </td>
         </tr>
@@ -635,111 +701,37 @@ $(document).ready(function () {
     $("#tablaMultas").html(html);
   }
 
-  $(document).on("click", ".btn-detalle-multa", function () {
-    const id = $(this).data("id");
-
-    const multa = multasGlobal.find(m => {
-      return String(obtenerIdMulta(m)) === String(id);
-    });
-
-    if (!multa) {
-      alert("No se encontró la información de la multa seleccionada.");
-      return;
-    }
-
-    const detalleMulta = {
-      id: obtenerIdMulta(multa),
-      id_usuario: obtenerIdUsuarioMulta(multa),
-      usuario: obtenerUsuarioMulta(multa),
-      id_libro: obtenerIdLibroMulta(multa),
-      libro: obtenerLibroMulta(multa),
-      tipo: obtenerTipoMulta(multa),
-      motivo: obtenerTipoMulta(multa),
-      fecha_devolucion: obtenerFechaDevolucionMulta(multa),
-      dias_gracia: obtenerDiasGracia(multa),
-      monto: obtenerMontoMulta(multa),
-    };
-
-    sessionStorage.setItem("detalleMulta", JSON.stringify(detalleMulta));
-
-    window.location.href = `detalleMulta.html?id=${encodeURIComponent(id)}`;
-  });
-
-  function filtrarMultas() {
-    const usuario = normalizarTexto($("#txtUsuarioMulta").val());
-    const libro = normalizarTexto($("#txtLibroMulta").val());
-    const tipo = normalizarTexto(
-      $("#txtTipoMulta").val() || $("#txtEstadoMulta").val(),
-    );
-    const fechaInicio = $("#txtFechaInicioMulta").val();
-    const fechaFin = $("#txtFechaFinMulta").val();
-
-    const filtradas = multasGlobal.filter(multa => {
-      const usuarioMulta = normalizarTexto(obtenerUsuarioMulta(multa));
-      const idUsuario = normalizarTexto(obtenerIdUsuarioMulta(multa));
-      const libroMulta = normalizarTexto(obtenerLibroMulta(multa));
-      const idLibro = normalizarTexto(obtenerIdLibroMulta(multa));
-      const tipoMulta = normalizarTexto(obtenerTipoMulta(multa));
-      const fechaMulta = fechaComparable(obtenerFechaDevolucionMulta(multa));
-
-      const cumpleUsuario =
-        !usuario ||
-        usuarioMulta.includes(usuario) ||
-        idUsuario.includes(usuario);
-
-      const cumpleLibro =
-        !libro || libroMulta.includes(libro) || idLibro.includes(libro);
-
-      const cumpleTipo = !tipo || tipoMulta === tipo;
-      const cumpleFechaInicio = !fechaInicio || fechaMulta >= fechaInicio;
-      const cumpleFechaFin = !fechaFin || fechaMulta <= fechaFin;
-
-      return (
-        cumpleUsuario &&
-        cumpleLibro &&
-        cumpleTipo &&
-        cumpleFechaInicio &&
-        cumpleFechaFin
-      );
-    });
-
-    pintarMultas(filtradas);
-    cargarResumenMultas(filtradas);
-  }
-
   function cargarResumenMultas(data) {
     const total = data.length;
 
-    const totalAtraso = data.filter(multa => {
-      return normalizarTexto(obtenerTipoMulta(multa)) === "atraso";
+    const pendientes = data.filter(multa => {
+      return normalizarTexto(obtenerEstadoMulta(multa)) === "pendiente";
     }).length;
 
-    const totalDano = data.filter(multa => {
-      return normalizarTexto(obtenerTipoMulta(multa)) === "daño";
+    const pagadas = data.filter(multa => {
+      return normalizarTexto(obtenerEstadoMulta(multa)) === "pagada";
     }).length;
 
-    const totalPerdida = data.filter(multa => {
-      return normalizarTexto(obtenerTipoMulta(multa)) === "perdida";
-    }).length;
+    const totalAdeudado = data.reduce((acumulado, multa) => {
+      const estado = normalizarTexto(obtenerEstadoMulta(multa));
+      const monto = obtenerMontoMulta(multa);
+      const pagado = obtenerMontoPagado(multa);
 
-    const totalCalculado = data.reduce((acumulado, multa) => {
-      return acumulado + obtenerMontoMulta(multa);
+      if (estado === "pagada") {
+        return acumulado;
+      }
+
+      return acumulado + Math.max(monto - pagado, 0);
     }, 0);
 
     $("#totalMultas").val(total);
-    $("#totalAtraso").val(totalAtraso);
-    $("#totalDano").val(totalDano);
-    $("#totalPerdida").val(totalPerdida);
-    $("#totalCalculadoMultas").val(formatearMonto(totalCalculado));
-
-    $("#multasPendientes").val(totalAtraso + totalDano + totalPerdida);
-    $("#multasPagadas").val(0);
-    $("#totalAdeudado").val(formatearMonto(totalCalculado));
+    $("#multasPendientes").val(pendientes);
+    $("#multasPagadas").val(pagadas);
+    $("#totalAdeudado").val(formatearMonto(totalAdeudado));
   }
 
   $("#formMultas").on("submit", function (e) {
     e.preventDefault();
-    filtrarMultas();
   });
 
   $("#formMultas").on("reset", function () {
@@ -747,11 +739,5 @@ $(document).ready(function () {
       pintarMultas(multasGlobal);
       cargarResumenMultas(multasGlobal);
     }, 100);
-  });
-
-  $(
-    "#txtUsuarioMulta, #txtLibroMulta, #txtTipoMulta, #txtEstadoMulta, #txtFechaInicioMulta, #txtFechaFinMulta",
-  ).on("change keyup", function () {
-    filtrarMultas();
   });
 });

@@ -49,9 +49,9 @@
                         <label>Estado</label>
                         <select id="txtEstado">
                             <option value="">Todos</option>
-                            <option value="Activo">Activo</option>
+                            <option value="Prestado">Prestado</option>
                             <option value="Devuelto">Devuelto</option>
-                            <option value="Atrasado">Atrasado</option>
+                            <option value="Perdido">Perdido</option>
                         </select>
                     </div>
 
@@ -78,7 +78,7 @@
                 </div>
 
                 <div class="acciones-form">
-                    <button type="submit" class="btn">Buscar</button>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
                     <button type="reset" class="btn btn-secondary">Limpiar</button>
                 </div>
             </form>
@@ -105,7 +105,7 @@
 
                 <tbody id="tablaPrestamos">
                     <tr>
-                        <td colspan="6" style="text-align:center;">Cargando préstamos...</td>
+                        <td colspan="7" style="text-align:center;">Cargando préstamos...</td>
                     </tr>
                 </tbody>
             </table>
@@ -155,6 +155,16 @@
                         <input type="text" id="txtLibroMulta" placeholder="Nombre del libro">
                     </div>
 
+                    <div class="form-group">
+                        <label>Motivo</label>
+                        <select id="txtTipoMulta">
+                            <option value="">Todos</option>
+                            <option value="Atraso">Atraso</option>
+                            <option value="Daño">Daño</option>
+                            <option value="Perdida">Pérdida</option>
+                        </select>
+                    </div>
+
                 </div>
 
                 <div class="acciones-form">
@@ -180,14 +190,16 @@
                         <th>Motivo</th>
                         <th>Monto</th>
                         <th>Fecha de devolución</th>
-                        <th>Dias de gracia</th>
+                        <th>Días de gracia</th>
+                        <th>Estado</th>
+                        <th>Monto pagado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
 
                 <tbody id="tablaMultas">
                     <tr>
-                        <td colspan="7" style="text-align:center;">Cargando multas...</td>
+                        <td colspan="9" style="text-align:center;">Cargando multas...</td>
                     </tr>
                 </tbody>
             </table>
@@ -241,7 +253,7 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script type="module" src="../Controllers/historialController.js"></script>
+    <script src="../Controllers/historialController.js?v=5"></script>
 
 </body>
 
