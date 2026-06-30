@@ -1,4 +1,5 @@
 backend/config/database.php
+backend\config\database.php
 .codex/
 .agents/
 .php-cs-fixer.dist.php

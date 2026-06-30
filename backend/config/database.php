@@ -1,7 +1,7 @@
 <?php
 
 $host = "127.0.0.1";
-$port = "3307";
+$port = "3315";
 $dbname = "ProyectoGestion";
 $username = "api_usergestion";
 $password = "12345";
